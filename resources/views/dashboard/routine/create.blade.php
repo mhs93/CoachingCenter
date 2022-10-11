@@ -14,9 +14,9 @@
                 @csrf
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <input type="hidden" name="batch_id" id="batchId">
+                        <input type="hidden" name="batch_id" id="batchId" >
                         <label for="batch">Select Batch</label>
-                        <select name="batch_id" id="batch" class="form-control">
+                        <select name="batch_id" id="batchSelect" class="form-control">
                             <option>Select</option>
                             @forelse ($batches as $batch)
                                 <option value="{{ $batch->id }}" {{ old('batch_id') === $batch->id ? 'selected' : '' }}>
@@ -82,10 +82,11 @@
             });
             $('#subList').hide();
             $(document).ready(function () {
-                $('#batch').on('change',function () {
+                $('#batchSelect').on('change',function () {
                     $('#subList').show();
                     let batch_id = $(this).val();
-                    $("$subjectTime").empty();
+                    console.log('12');
+                    $("#subjectTime").empty();
                     $.ajax({
                         url: "{{ route('admin.routine.getsub') }}",
                         type: 'get',
@@ -95,44 +96,45 @@
                             $.each(response, function (key, value) {
                                 console.log(value.id)
                                 $("#subjectTime").append('<tr align="center">'+
-                                                                '<td>'+value.name+
-                                                                    '<input type="hidden" name="subject_id[]" id="subjectId" value="'+value.id+'">'+
-                                                                '</td>' +
-                                                                '<td>' +
-                                                                    '<div class="row">'+
-                                                                        '<div class="form-group col-md-4">'+
-                                                                            '<label for="day">Day</label>'+
-                                                                            '<select name="day" id="day" class="form-select @error("day") is-invalid @enderror">'+
-                                                                            '<option value="">--Select Day--</option>'+
-                                                                            '<option value="1">Saturday</option>'+
-                                                                            '<option value="2">Sunday</option>'+
-                                                                            '<option value="3">Monday</option>'+
-                                                                            '<option value="4">Tuesday</option>'+
-                                                                            '<option value="5">Wednesday</option>'+
-                                                                            '<option value="6">Thursday</option>'+
-                                                                            '<option value="7">Friday</option>'+
-                                                                            '</select>'+
-                                                                            '@error("day")'+
-                                                                                '<span class="invalid-feedback" role="alert">'+
-                                                                                    '<strong>{{ $message }}</strong>'+
-                                                                                '</span>'+
-                                                                            '@enderror'+
-                                                                        '</div>'+
-                                                                        '<div class="form-group col-md-4">'+
-                                                                            '<h6>Start Time</h6>'+
-                                                                            '<input type="datetime-local" name="start_time[]" class="form-control" placeholder="Start Time">'+
-                                                                        '</div>'+
-                                                                        '<div class="form-group col-md-4">'+
-                                                                            '<h6>Exam End Time</h6>'+
-                                                                            '<input type="datetime-local" name="end_time[]" class="form-control" placeholder="End Time">'+
-                                                                            '@error("end_time")'+
-                                                                                '<div class="text-danger">{{ $message }}</div>'+
-                                                                            '@enderror'+
-                                                                        '</div>'+
-                                                                    '</div>'+
-                                                                '</td>'+
-                                                        '</tr>');
-                        };
+                                    '<td>'+value.name+
+                                    '<input type="hidden" name="subject_id[]" id="subjectId" value="'+value.id+'">'+
+                                    '</td>' +
+                                    '<td>' +
+                                    '<div class="row">'+
+                                    '<div class="form-group col-md-4">'+
+                                    '<label for="day">Day</label>'+
+                                    '<select name="day" id="day" class="form-select @error("day") is-invalid @enderror">'+
+                                    '<option value="">--Select Day--</option>'+
+                                    '<option value="1">Saturday</option>'+
+                                    '<option value="2">Sunday</option>'+
+                                    '<option value="3">Monday</option>'+
+                                    '<option value="4">Tuesday</option>'+
+                                    '<option value="5">Wednesday</option>'+
+                                    '<option value="6">Thursday</option>'+
+                                    '<option value="7">Friday</option>'+
+                                    '</select>'+
+                                    '@error("day")'+
+                                    '<span class="invalid-feedback" role="alert">'+
+                                    '<strong>{{ $message }}</strong>'+
+                                    '</span>'+
+                                    '@enderror'+
+                                    '</div>'+
+                                    '<div class="form-group col-md-4">'+
+                                    '<h6>Start Time</h6>'+
+                                    '<input type="datetime-local" name="start_time[]" class="form-control" placeholder="Start Time">'+
+                                    '</div>'+
+                                    '<div class="form-group col-md-4">'+
+                                    '<h6>Exam End Time</h6>'+
+                                    '<input type="datetime-local" name="end_time[]" class="form-control" placeholder="End Time">'+
+                                    '@error("end_time")'+
+                                    '<div class="text-danger">{{ $message }}</div>'+
+                                    '@enderror'+
+                                    '</div>'+
+                                    '</div>'+
+                                    '</td>'+
+                                    '</tr>');
+                            });
+                        }
                     });
                 })
             });

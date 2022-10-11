@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Routine;
 
 use App\Http\Controllers\Controller;
 use App\Models\Batch;
+use App\Models\Subject;
 use Illuminate\Http\Request;
+use function Symfony\Component\String\length;
 
 class RoutineController extends Controller
 {
@@ -26,14 +28,10 @@ class RoutineController extends Controller
 
     public function getSubject(Request $request)
     {
-        $array = [];
-        $batchs = Batch::whereIn('id', $request->batchId)->select('subject_id')->get();
-        foreach($batchs as $batch) {
-            $array[] = json_decode($batch->subject_id);
-        }
-        $batchIds = array_unique(call_user_func_array('array_merge', $array));
 
-        $subjects = Subject::whereIn('id', $batchIds)->get();
+        $batch = Batch::where('id', $request->batchId)->select('subject_id')->first();
+        $batchs = json_decode($batch->subject_id);
+        $subjects = Subject::whereIn('id', $batchs)->get();
         return $subjects;
     }
 

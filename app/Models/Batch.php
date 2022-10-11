@@ -12,6 +12,6 @@ class Batch extends Model
     use HasFactory ,SoftDeletes;
     public function subjects()
     {
-        return $this->hasMany(Subject::class, 'subject_id', 'id')->withTrashed();
+        return $this->hasMany(Subject::class, 'id' )->withTrashed();
     }
 }
