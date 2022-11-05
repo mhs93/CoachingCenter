@@ -2,6 +2,14 @@
 
 @section('title', 'Create Class Routine')
 
+@push('css')
+    <style>
+        .ck-editor__editable[role="textbox"] {
+            min-height: 320px;
+        }
+    </style>
+@endpush
+
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
@@ -15,7 +23,11 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <input type="hidden" name="batch_id" id="batchId" >
+<<<<<<< HEAD
                         <label for="batch">Select Batch</label>
+=======
+                        <label for="batch"><b>Select Batch</b>  <span style="color: red">*</span></label>
+>>>>>>> f5e37c0317a3f71f1aa5959af818ea288b2558f2
                         <select name="batch_id" id="batchSelect" class="form-control">
                             <option>Select</option>
                             @forelse ($batches as $batch)
@@ -29,12 +41,12 @@
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
+
                     <div class="form-group col-md-6">
                         <div class="form-group">
-                            <label for="status">Status</label>
+                            <label for="status"><b>Status</b><span style="color: red">*</span></label>
                             <select name="status" class="form-control" id="batchStatus">
-                                <option>Select status</option>
-                                <option value="1">Active</option>
+                                <option value="1" selected>Active</option>
                                 <option value="0">Deactive</option>
                             </select>
                             <div id="validStatus" class="text-danger"></div>
@@ -45,8 +57,8 @@
                 <div class="form-group mt-3 col-md-12" id="subList" >
                     <table class="table-bordered col-md-12 mt-6">
                         <thead align="center">
-                            <th>Subjects</th>
-                            <th>Day and Time</th>
+                        <th>Subjects</th>
+                        <th>Day and Time</th>
                         </thead>
                         <tbody id="subjectTime">
 
@@ -54,18 +66,17 @@
                     </table>
                 </div>
                 <div class="form-group mt-3">
-                    <label for="note">Exam Note</label>
+                    <label for="note"><b>Exam Note</b> </label>
                     <textarea name="note" class="form-control" id="note" cols="40" rows="6"></textarea>
                     @error('note')
                     <span class="text-danger" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                        <strong>{{ $message }}</strong>
+                    </span>
                     @enderror
                 </div>
 
-
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-info">Save</button>
+                <div class="form-group mt-3 float-right">
+                    <button type="submit" class="btn btn-info float-right">Save</button>
                 </div>
             </form>
         </div>
@@ -85,15 +96,18 @@
                 $('#batchSelect').on('change',function () {
                     $('#subList').show();
                     let batch_id = $(this).val();
+<<<<<<< HEAD
                     console.log('12');
+=======
+>>>>>>> f5e37c0317a3f71f1aa5959af818ea288b2558f2
                     $("#subjectTime").empty();
                     $.ajax({
                         url: "{{ route('admin.routine.getsub') }}",
                         type: 'get',
                         data: {batchId: batch_id},
                         success: function (response) {
-                            console.log(response);
                             $.each(response, function (key, value) {
+<<<<<<< HEAD
                                 console.log(value.id)
                                 $("#subjectTime").append('<tr align="center">'+
                                     '<td>'+value.name+
@@ -134,10 +148,99 @@
                                     '</td>'+
                                     '</tr>');
                             });
+=======
+                                $("#subjectTime").append(
+                                    '<tr align="center">'+
+                                                '<td>'+value.name+
+                                                    '<input type="hidden" name="subject_id[]" id="subjectId" value="'+value.id+'">'+
+                                                '</td>' +
+                                                '<td>' +
+                                                    '<div class="row new-day-row_'+key+'" id="newDay">'+
+                                                        '<div class="form-group col-md-4">'+
+                                                            '<label for="day">Day</label>'+
+                                                            '<select name="day_'+value.id+'[]" id="day" class="form-select @error("day") is-invalid @enderror">'+
+                                                                '<option value="">--Select Day--</option>'+
+                                                                '<option value="1">Saturday</option>'+
+                                                                '<option value="2">Sunday</option>'+
+                                                                '<option value="3">Monday</option>'+
+                                                                '<option value="4">Tuesday</option>'+
+                                                                '<option value="5">Wednesday</option>'+
+                                                                '<option value="6">Thursday</option>'+
+                                                                '<option value="7">Friday</option>'+
+                                                            '</select>'+
+                                                            '@error("day_'+value.id+'")'+
+                                                                '<span class="invalid-feedback" role="alert">'+
+                                                                    '<strong>{{ $message }}</strong>'+
+                                                                '</span>'+
+                                                            '@enderror'+
+
+                                                        '</div>'+
+                                                        '<div class="form-group col-md-3">'+
+                                                            '<h6>Class Start Time</h6>'+
+                                                            '<input type="time" name="start_time[]" class="form-control">'+
+                                                        '</div>'+
+                                                        '<div class="form-group col-md-3">'+
+                                                            '<h6>Class End Time</h6>'+
+                                                            '<input type="time" name="end_time[]" class="form-control">'+
+                                                            '@error("end_time")'+
+                                                                '<div class="text-danger">{{ $message }}</div>'+
+                                                            '@enderror'+
+                                                        '</div>'+
+                                                        '<div class="form-group col-md-2 mt-4" align="center">'+
+                                                            '<button class="btn btn-primary btn-sm" type="button" id="appendButton'+key+'" onclick="addRow('+key+','+value.id+')">+</button>'+
+                                                        '</div>'+
+                                                    '</div>'+
+                                                '</td>'+
+                                    '</tr>');
+                                });
+>>>>>>> f5e37c0317a3f71f1aa5959af818ea288b2558f2
                         }
                     });
                 })
             });
+            var counter= 1;
+            function addRow(key, value){
+                counter++;
+                $('.new-day-row_'+key+'#newDay').append(
+                    '<div class="row" id="append-row-'+counter+'">'+
+                        '<div class="form-group col-md-4">'+
+                            '<label for="day">Day</label>'+
+                            '<select name="day_'+value+'[]" id="day" class="form-select @error("day_'+value+'") is-invalid @enderror">'+
+                            '<option value="">--Select Day--</option>'+
+                            '<option value="1">Saturday</option>'+
+                            '<option value="2">Sunday</option>'+
+                            '<option value="3">Monday</option>'+
+                            '<option value="4">Tuesday</option>'+
+                            '<option value="5">Wednesday</option>'+
+                            '<option value="6">Thursday</option>'+
+                            '<option value="7">Friday</option>'+
+                            '</select>'+
+                            '@error("day")'+
+                                '<span class="invalid-feedback" role="alert">'+
+                                '<strong>{{ $message }}</strong>'+
+                                '</span>'+
+                            '@enderror'+
+                        '</div>'+
+                            '<div class="form-group col-md-3">'+
+                                '<h6>Class Start Time</h6>'+
+                                '<input type="time" name="start_time[]" class="form-control">'+
+                            '</div>'+
+                            '<div class="form-group col-md-3">'+
+                            '<h6>Class End Time</h6>'+
+                            '<input type="time" name="end_time[]" class="form-control">'+
+                            '@error("end_time")'+
+                                '<div class="text-danger">{{ $message }}</div>'+
+                            '@enderror'+
+                        '</div>'+
+                        '<div class="form-group col-md-2 mt-4" align="center">'+
+                            '<button class="btn btn-danger btn-sm " type="button" id="removeBtn'+key+'" onclick="DeleteRow('+counter+')">-</button>'+
+                        '</div>'+
+                    '</div>'
+                );
+            }
+            function DeleteRow(key) {
+                $('#append-row-'+key).remove();
+            }
 
         </script>
 

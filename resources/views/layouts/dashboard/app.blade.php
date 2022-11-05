@@ -50,7 +50,7 @@
         }
     </style>
 
-    @stack('css');
+    @stack('css')
 </head>
 <body>
 {{-- Sidebar --}}
@@ -68,8 +68,10 @@
         </div>
     </div>
     <footer class="footer">
-        <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io">Bootstrap Admin Template</a> © 2022 creativeLabs.</div>
-        <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">CoreUI UI Components</a></div>
+        <div>Coaching Center © 2022 Wardan Tech Limited.</div>
+        <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">Wardan Tech Limited</a></div>
+        {{-- <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io">Bootstrap Admin Template</a> © 2022 creativeLabs.</div>
+        <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">CoreUI UI Components</a></div> --}}
     </footer>
 </div>
 

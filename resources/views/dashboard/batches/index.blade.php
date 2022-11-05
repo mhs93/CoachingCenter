@@ -41,7 +41,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Batch lists</p>
             @can('batches_create')
-            <a href="{{ route('admin.batches.create') }}" class="btn btn-sm btn-info">Create Batch</a>
+            <a href="{{ route('admin.batches.create') }}" title="create" class="btn btn-sm btn-info">Create Batch</a>
             @endcan
         </div>
         <div class="card-body">

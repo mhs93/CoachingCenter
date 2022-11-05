@@ -15,8 +15,9 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Class Room Information</p>
+            <a href="{{ route('admin.class-rooms.index') }}" class="btn btn-sm btn-dark">Back</a>
         </div>
         <div class="card-body">
             <div class="row">

@@ -2,8 +2,6 @@
 
 @section('title', 'Create Resource')
 
-
-
 @push('css')
     {{-- Select2 CDN --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -14,6 +12,9 @@
     <style>
         .dropify-wrapper .dropify-message p {
             font-size: initial;
+        }
+        .ck-editor__editable[role="textbox"] {
+            min-height: 320px;
         }
     </style>
 @endpush
@@ -35,13 +36,13 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <p class="m-0">Upload Resource</p>
+                        <p class="m-0">Upload Resource <span style="color: red">*</span></p>
                         <a href="{{ route('admin.resources.index') }}" class="btn btn-sm btn-dark">Back</a>
                     </div>
                     <div class="card-body">
                         {{-- Title --}}
                         <div class="form-group mt-3">
-                            <label for="last_name">Title</label>
+                            <label for="last_name">Title <span style="color: red">*</span></label>
                             <input type="text" name="title" id="title"
                                 class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}"
                                 placeholder="Enter Title">
@@ -55,7 +56,7 @@
 
                         {{-- Dependancy Start --}}
                         <div class="form-group mt-3">
-                            <label for="batch">Select Batch</label>
+                            <label for="batch">Select Batch <span style="color: red">*</span></label>
                             <select name="batch_id[]" id="batchIdEx"
                                 class="multi-batch mySelect2 form-control @error('batch_id') is-invalid @enderror"
                                 multiple="multiple">
@@ -75,9 +76,10 @@
                             @enderror
                         </div>
 
+
                         {{-- Subjects --}}
                         <div class="form-group mt-3">
-                            <label for="batch">Select Subjects</label>
+                            <label for="batch">Select Subjects <span style="color: red">*</span></label>
                             {{-- <select name="subject_id[]" id="subjectEx" class="form-control"> --}}
                             <select name="subject_id[]" id="subjectEx"
                                 class="multi-subject mySelect2 form-control @error('subject_id') is-invalid @enderror"
@@ -110,7 +112,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        Upload file
+                        Upload file <span style="color: red">*</span>
                     </div>
                     <div class="card-body">
                         <div class="form-group mt-3">
@@ -130,6 +132,7 @@
                 </div>
             </div>
         </div>
+        
     </form>
     <div class="mb-5"></div>
 
@@ -157,13 +160,12 @@
             $(document).ready(function() {
                 $('.dropify').dropify();
 
-                
                 // Dependancy for batch and subjects
                 $('#batchIdEx').on('change', function() {
                     let batch_id = $(this).val();
                     $("#subjectEx").empty();
                     $.ajax({
-                        url: "{{ route('admin.getState') }}",
+                        url: "{{ route('admin.getSubjects') }}",
                         type: 'post',
                         data: { batchId: batch_id},
                         success: function(response) {

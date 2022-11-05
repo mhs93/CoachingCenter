@@ -16,32 +16,40 @@ class TransactionController extends Controller
     {
         try {
             $data = Transaction::with('account')
-                ->select('id', 'date', 'account_id', 'amount', 'purpose', 'remarks')
+                ->select('id', 'date', 'account_id', 'amount', 'transaction_type', 'payment_type','cheque_number')
                 ->orderBy('id', 'DESC')->get();
             return DataTables::of($data)->addIndexColumn()
-                ->addColumn('accountinfo', function ($data) {
-                    return $data->account->account_no . '-' . $data->account->account_holder;
-                })
-                ->addColumn('purpose', function ($data) {
-                    if ($data->purpose == 1) {
-                        return '<span class="text-danger">Withdrow</span> ';
-                    } elseif ($data->purpose == 2) {
-                        return '<span class="text-green">Deposit</span> ';
-                    } elseif ($data->purpose == 3) {
-                        return '<span class="text-success">Received Payment</span> ';
-                    } elseif ($data->purpose == 4) {
-                        return '<span class="text-danger">Given Payment</span> ';
-                    } elseif ($data->purpose == 5) {
-                        return '<span class="text-green">Initial Balance</span> ';
+                ->addColumn('account_id', function ($data) {
+                    if($data->account_id == 0){
+                        return 'Cash';
+                    }else{
+                        return $data->account->account_no . '-' . $data->account->account_holder;
                     }
                 })
-                ->addColumn('action', function ($data) {
-                    return '<div class = "btn-group">
-                            <a href="' . route('admin.transaction.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class="bx bxs-edit-alt"></i></a>                           
-                            <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>
-                        </div>';
+                ->addColumn('transaction_type', function ($data) {
+                    if ($data->transaction_type == 1) {
+                        return '<span class="text-success">Credit</span>';
+                    } elseif ($data->transaction_type == 2) {
+                        return '<span class="text-danger">Debit</span> ';
+                    } elseif ($data->transaction_type == 3) {
+                        return '<span class="text-info">Initial Balance</span> ';
+                    }
                 })
-                ->rawColumns(['action', 'accountinfo', 'purpose'])
+                ->addColumn('payment_type', function ($data) {
+                    if ($data->payment_type == 1) {
+                        return 'Cheque';
+                    } elseif ($data->payment_type == 2) {
+                        return 'Cash ';
+                    }
+                })
+                ->addColumn('cheque_number', function ($data) {
+                    if ($data->payment_type == 1) {
+                        return '<span class="text-green">'.$data->cheque_number.'</span> ';
+                    } else {
+                        return ' ';
+                    }
+                })
+                ->rawColumns(['transaction_type', 'payment_type','cheque_number'])
                 ->make(true);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());

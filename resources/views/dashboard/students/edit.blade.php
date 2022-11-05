@@ -11,6 +11,9 @@
         .dropify-wrapper .dropify-message p {
             font-size: initial;
         }
+        .ck-editor__editable {
+            min-height: 200px;
+        }
     </style>
 @endpush
 
@@ -43,7 +46,7 @@
                     <div class="card-body">
 
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name"><b>Name</b> </label>
                             <input type="text" name="name" id="name"
                                    class="form-control @error('name') is-invalid @enderror"
                                    value="{{ ($student->name) }}">
@@ -55,10 +58,10 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="reg_no">Registration Number</label>
+                            <label for="reg_no"> <b>Registration Number</b> </label>
                             <input type="text" name="reg_no" id="reg_no"
                                    class="form-control @error('reg_no') is-invalid @enderror"
-                                   value="{{ ($student->reg_no) }}" readonly>
+                                   value="{{ ($student->reg_no) }}">
                             @error('reg_no')
                             <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -67,7 +70,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="email">Email Address</label>
+                            <label for="email"><b>Email Address</b> </label>
                             <input type="email" name="email" id="email"
                                    class="form-control @error('email') is-invalid @enderror"
                                    value="{{ ($student->email) }}">
@@ -79,13 +82,12 @@
                         </div>
 
                         <div class="form-group mt-3 ">
-                            <label for="batch_id">Batch</label>
+                            <label for="batch_id"> <b>Batch</b> </label>
                             <select name="batch_id" id="batch_id" class="form-select @error('batch') is-invalid @enderror">
                                 <option>--Select batch--</option>
 
                                 @foreach($batches as $batch)
-                                    <option
-                                        value="{{ $batch->id }}"
+                                    <option value="{{ $batch->id }}"
                                         @if ($batch->id == $student->batch_id)
                                             {{ 'selected' }}
                                         @endif
@@ -102,7 +104,7 @@
                         </div>
 
                         <div class="form-group mt-3 ">
-                            <label for="gender">Gender</label>
+                            <label for="gender"><b>Gender</b> </label>
                             <select name="gender" id="gender" value="{{ ($student->gender) }}"
                                     class="form-select @error('gender') is-invalid @enderror">
                                 <option>--Select gender--</option>
@@ -117,7 +119,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="contact_number">Contact Number</label>
+                            <label for="contact_number"><b>Contact Number</b> </label>
                             <input type="text" name="contact_number" id="contact_number"
                                    class="form-control @error('contact_number') is-invalid @enderror"
                                    value="{{ ($student->contact_number) }}">
@@ -129,7 +131,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="parent_contact">Parent Contact Number</label>
+                            <label for="parent_contact"><b>Parent Contact Number</b> </label>
                             <input type="text" name="parent_contact" id="parent_contact"
                                    class="form-control @error('parent_contact') is-invalid @enderror"
                                    value="{{ ($student->parent_contact) }}">
@@ -142,7 +144,7 @@
 
 
                         <div class="form-group mt-3">
-                            <label for="current_address">Current Address</label>
+                            <label for="current_address"> <b>Current Address</b> </label>
                             <textarea name="current_address" id="current_address" rows="3"
                                       class="form-control @error('current_address') is-invalid @enderror"
                                       placeholder="Current Address..."> {{ ($student->current_address)}}</textarea>
@@ -154,7 +156,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="permanent_address">Permanent address</label>
+                            <label for="permanent_address"> <b>Permanent address</b> </label>
                             <textarea name="permanent_address" id="permanent_address" rows="3"
                                       class="form-control @error('permanent_address') is-invalid @enderror"
                                       placeholder="Permanent address...">{{ ($student->permanent_address)}}</textarea>
@@ -164,8 +166,9 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="form-group">
-                            <label for="description">Student Note</label>
+
+                        <div class="form-group mt-3">
+                            <label for="description"><b>Student Note</b> </label>
                             <textarea name="note" class="form-control" id="note" cols="30" rows="10">{{ $student->note }}</textarea>
                             @error('description')
                             <span class="text-danger" role="alert">
@@ -179,9 +182,7 @@
             </div>
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-header">
-                        Image upload
-                    </div>
+                    <div class="card-header"><b>Image upload</b></div>
                     <div class="card-body">
                         <div class="form-group mt-3">
                             <input type="file" id="profile"

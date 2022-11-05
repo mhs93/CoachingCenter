@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Announcement;
+use App\Models\User;
 use App\Models\Batch;
+use App\Models\Student;
+use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -19,34 +21,58 @@ class AnnouncementController extends Controller
     public function getList()
     {
         try {
-            $data = Announcement::select('id', 'batch_id', 'title', 'status')
-                ->orderBy('id', 'DESC')->get();
+
+            $user = User::findOrFail(Auth::id());
+            if($user->type == '0'){
+                $data = Announcement::select('id', 'batch_id', 'title', 'status')
+                        ->orderBy('id', 'DESC')
+                        ->get();
+            }
+            else{
+                if($user->type == '1'){
+                    $data = Announcement::select('id', 'batch_id', 'title', 'status')
+                            ->orderBy('id', 'DESC')
+                            ->get();
+                }
+                else{
+                    $student = Student::where('id', $user->student_id)->first();
+                    $data = Announcement::select('id', 'batch_id', 'title', 'status')
+                            ->orderBy('id', 'DESC')
+                            ->get();
+                    $announcement = [];
+                    foreach($data as $item){
+                        $batchIds = json_decode($item->batch_id);
+                        if(in_array($student->batch_id, $batchIds)){
+                            array_push($announcement, $item);
+                        }
+                    }
+                    $data = $announcement;
+                }
+            }
 
             return DataTables::of($data)->addIndexColumn()
                 //Batch
                 ->addColumn('batch_id', function ($data){
-                    $subjectIds='';
+                    $batchIds='';
                     $batchSubs= '';
-                    if($data->batch_id != NULL){
-                        $subjectIds = json_decode($data->batch_id);
-                        if(in_array("0", $subjectIds)){
-                            $subjects = Batch::get(['id','name']);
-                            foreach($subjects as $key=>$item) {
-                                $batchSubs .= $item->name.", ";
-                            }
+                    if($data->batch_id){
+                        $batchIds = json_decode($data->batch_id);
+                        if(in_array("0", $batchIds)){
+                            $batchSubs .= "All Batch".", ";
                         }else{
-                            $subjects = Batch::whereIn('id',$subjectIds)->get(['id','name']);
-                            foreach($subjects as $key=>$item) {
+                            $batches = Batch::whereIn('id', $batchIds)->get(['id','name']);
+                            foreach($batches as $key=>$item) {
                                 $batchSubs .= $item->name.", ";
                             }
                         }
                     }else{
-                        $subjects='';
+                        $batches='';
                     }
                     // Remove last 2 elements from the $batchSubs string
                     $batchSubs = substr($batchSubs, 0, -2);
                     return $batchSubs;
                 })
+
                 //status
                 ->addColumn('status', function ($data) {
                     if (Auth::user()->can('announcement_edit')){
@@ -73,23 +99,23 @@ class AnnouncementController extends Controller
                 ->addColumn('action', function ($data) {
 
                     if (Auth::user()->can('announcement_show')){
-                        $showButton = '<a href="' . route('admin.announcements.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
+                        $showButton = '<a href="' . route('admin.announcements.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showButton = '';
                     }
                     if (Auth::user()->can('announcement_edit')){
-                        $editButton = '<a href="' . route('admin.announcements.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>';
+                        $editButton = '<a href="' . route('admin.announcements.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $editButton = '';
                     }
-                    if (Auth::user()->can('announcement_edit')){
+                    if (Auth::user()->can('announcement_delete')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';
                     }
                     return '<div class = "btn-group">'.$showButton.$editButton.$deleteButton.'</div>';
                 })
-                ->rawColumns(['action', 'status'])
+                ->rawColumns(['action', 'status', 'batch_id'])
                 ->make(true);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -121,7 +147,8 @@ class AnnouncementController extends Controller
     {
         try {
             $batches = Batch::select('id', 'name', 'status')
-                ->where('status', 1)->get();
+                ->where('status', 1)
+                ->get();
 
             return view('dashboard.announcements.create', compact('batches'));
         } catch (\Exception $e) {
@@ -138,6 +165,7 @@ class AnnouncementController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $this->validate($request, [
             'batch_id'    => 'required',
             'title'       => 'required|string',
@@ -155,7 +183,7 @@ class AnnouncementController extends Controller
                 $announcement->batch_id = json_encode($request->batch_id);
             }
             $announcement->title = $request->title;
-            $announcement->description = $request->description;
+            $announcement->note = $request->note;
             $announcement->created_by = Auth::id();
             $announcement->save();
             return redirect()->route('admin.announcements.index')
@@ -235,7 +263,7 @@ class AnnouncementController extends Controller
         try {
             $announcement->batch_id = json_encode($request->batch_id);
             $announcement->title = $request->title;
-            $announcement->description = $request->description;
+            $announcement->note = $request->note;
             $announcement->updated_by = Auth::id();
             $announcement->update();
 

@@ -12,13 +12,13 @@ return new class extends Migration
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->tinyInteger('status')->comment('1 = Active / 0 = Deactivate')->default('1');
-            $table->longText('subject_id');
-            $table->longText('batch_id');
+            $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
+            $table->json('subject_id');
+            $table->json('batch_id');
             $table->string('file');
-            $table->string('note')->nullable();
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->text('note')->nullable();
+            $table->integer('created_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

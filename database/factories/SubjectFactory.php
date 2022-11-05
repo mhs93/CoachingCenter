@@ -19,6 +19,8 @@ class SubjectFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'code' => random_int(100000, 999999),
+            'fee' => 1000,
+            'fee' => 'Very Good Subject',
             'status' => 1,
         ];
     }

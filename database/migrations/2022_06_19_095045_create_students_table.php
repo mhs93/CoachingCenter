@@ -13,20 +13,20 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('reg_no')->comment('This is student registration number (uniq)');
+            $table->string('reg_no');
             $table->string('email');
-            $table->foreignId('batch_id')->constrained('batches');
-            $table->tinyInteger('gender');
+            $table->integer('batch_id');
+            $table->integer('gender');
             $table->string('current_address');
             $table->string('permanent_address');
             $table->string('contact_number');
             $table->string('parent_contact');
-            $table->text('profile');
-            $table->boolean('status')->comment('1 = Active / 0 = Deactivate')->default('1');
-            $table->string('monthly_fee')->nullable();
-            $table->string('note')->nullable();
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->string('profile')->nullable();
+            $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
+            $table->double('monthly_fee')->nullable();
+            $table->text('note')->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

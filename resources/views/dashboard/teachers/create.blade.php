@@ -13,6 +13,9 @@
         .dropify-wrapper .dropify-message p {
             font-size: initial;
         }
+        .ck-editor__editable {
+            min-height: 200px;
+        }
     </style>
 @endpush
 
@@ -30,7 +33,7 @@
                     <div class="card-body">
                         {{-- Name --}}
                         <div class="form-group mt-3">
-                            <label for="name">Name</label>
+                            <label for="name"><b>Name</b> </label>
                             <input type="text" name="name" id="name"
                                 class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"
                                 placeholder="Enter name">
@@ -43,10 +46,10 @@
 
                         {{-- Registration Number --}}
                         <div class="form-group mt-3">
-                            <label for="reg_no">Registration Number</label>
+                            <label for="reg_no"><b>Registration Number</b></label>
                             <input type="text" name="reg_no" id="reg_no"
                                 class="form-control @error('reg_no') is-invalid @enderror" value="{{ $latestReg }}"
-                                placeholder="Enter registration number" readonly>
+                                placeholder="Enter registration number" >
                             @error('reg_no')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -56,7 +59,7 @@
 
                         {{-- Email --}}
                         <div class="form-group mt-3">
-                            <label for="email">Email Address</label>
+                            <label for="email"><b>Email Address</b></label>
                             <input type="email" name="email" id="email"
                                 class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
                                 placeholder="Enter email address">
@@ -67,37 +70,11 @@
                             @enderror
                         </div>
 
-                        {{-- Password --}}
-                        <div class="form-group mt-3">
-                            <label for="password">Password</label>
-                            <input type="password" name="password" id="password"
-                                class="form-control @error('password') is-invalid @enderror" value="{{ old('password') }}"
-                                placeholder="Enter password">
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        {{-- Confirm Password --}}
-                        <div class="form-group mt-3">
-                            <label for="password_confirmation">Confirm Password</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation"
-                                class="form-control @error('password_confirmation') is-invalid @enderror"
-                                value="{{ old('password_confirmation') }}" placeholder="Confirm password">
-                            @error('password_confirmation')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
                         {{-- Subjects --}}
                         <div class="form-group mt-3">
-                            <label for="subject_id">Select subjects</label>
+                            <label for="subject_id"><b>Select subjects</b></label>
                             <select name="subject_id[]"
-                                class="multi-subject form-control @error('subject_id') is-invalid @enderror"
+                                    class="multi-subject form-control @error('subject_id') is-invalid @enderror"
                                 multiple="multiple" id="mySelect2">
                                 <option value="0">All Subject</option>
                                 @forelse ($subjects as $subject)
@@ -117,7 +94,7 @@
 
                         {{-- Gender --}}
                         <div class="form-group mt-3 ">
-                            <label for="gender">Gender</label>
+                            <label for="gender"><b>Gender</b></label>
                             <select name="gender" id="gender" class="form-select @error('gender') is-invalid @enderror">
                                 <option>--Select gender--</option>
                                 <option value="1">Male</option>
@@ -132,7 +109,7 @@
 
                         {{-- Contact Number --}}
                         <div class="form-group mt-3">
-                            <label for="contact_number">Contact Number</label>
+                            <label for="contact_number"><b>Contact Number</b></label>
                             <input type="text" name="contact_number" id="contact_number"
                                 class="form-control @error('contact_number') is-invalid @enderror"
                                 value="{{ old('contact_number') }}" placeholder="Enter contact number">
@@ -145,7 +122,7 @@
 
                         {{-- Present Address --}}
                         <div class="form-group mt-3">
-                            <label for="current_address">Current Address</label>
+                            <label for="current_address"><b>Current Address</b></label>
                             <textarea name="current_address" id="current_address" rows="3"
                                 class="form-control @error('current_address') is-invalid @enderror" placeholder="Current Address...">{{ old('current_address') }}</textarea>
                             @error('current_address')
@@ -157,7 +134,7 @@
 
                         {{-- Permanant Address --}}
                         <div class="form-group mt-3">
-                            <label for="permanent_address">Permanent address</label>
+                            <label for="permanent_address"><b>Permanent Address</b></label>
                             <textarea name="permanent_address" id="permanent_address" rows="3"
                                 class="form-control @error('permanent_address') is-invalid @enderror" placeholder="Permanent address...">{{ old('permanent_address') }}</textarea>
                             @error('permanent_address')
@@ -169,7 +146,7 @@
 
                         {{-- Salary --}}
                         <div class="form-group mt-3">
-                            <label for="monthly_salary">Salary</label>
+                            <label for="monthly_salary"><b>Salary</b></label>
                             <input type="text" name="monthly_salary" id="monthly_salary"
                                 class="form-control @error('monthly_salary') is-invalid @enderror"
                                 placeholder="Enter Monthly Salary">
@@ -182,7 +159,7 @@
 
                         {{-- Note --}}
                         <div class="form-group mt-3">
-                            <label for="note">Note</label>
+                            <label for="note"><b>Note</b></label>
                             <textarea class="form-control @error('note') is-invalid @enderror" name="note" id="note">{{ old('note') }}</textarea>
                             @error('note')
                                 <span class="invalid-feedback" role="alert">
@@ -199,7 +176,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        Image upload
+                        <b>Image upload</b>
                     </div>
                     <div class="card-body">
                         <div class="form-group mt-3">

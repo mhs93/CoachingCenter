@@ -16,16 +16,18 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->foreignId('account_id');
-            $table->tinyInteger('transaction_type')->comment('1= Debit / 2= Credit');
-            $table->string('amount');
-            $table->string('purpose')->comment('1 = withdrow, 2 = deposit, 3 = recived payment, 4 = given payment, 5 = Initial Balance');
-            $table->string('payment_type')->nullable()->comment('1 = Cheque, 2 = Balance Transfer');
+            $table->integer('stdpayment_id')->nullable();
+            $table->integer('tchpayment_id')->nullable();
+            $table->integer('income_id')->nullable();
+            $table->integer('expense_id')->nullable();
+            $table->integer('account_id')->nullable();
+            $table->integer('transaction_type')->comment('1= Credit / 2= Debit / 3= Initail Balance');
+            $table->double('amount');
+            $table->string('payment_type')->comment('1 = Cheque, 2 = Cash');
             $table->string('cheque_number')->nullable();
-            $table->string('cash_details')->nullable();
-            $table->string('remarks');
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->string('note')->nullable();
+            $table->integer('created_by');
+            $table->integer('updated_by');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -18,23 +18,22 @@ class BalanceSheetController extends Controller
 
                 $debit = 0;
                 $credit = 0;
-                $transaction = Transaction::latest()
-                    ->with('account')
-                    ->groupBy('account_id')
-                    ->get();
+                $transaction = Transaction::latest()->with('account')->groupBy('account_id')->get();
 
                 return DataTables::of($transaction)
                     ->addIndexColumn()
                     ->addColumn('bankinfo', function ($transaction) {
-                        return $transaction->account->account_no . ' | ' . $transaction->account->account_holder;
+                        if ($transaction->account_id == 0){
+                            return 'Cash';
+                        }else{
+                            return $transaction->account->account_no . ' | ' . $transaction->account->account_holder;
+                        }
                     })
                     ->addColumn('debit', function ($transaction) use (&$debit) {
-
                         $debit = Accounts::debitBalance($transaction->account_id);
                         return $debit;
                     })
                     ->addColumn('credit', function ($transaction) use (&$credit) {
-
                         $credit = Accounts::creditBalance($transaction->account_id);
                         return $credit;
                     })

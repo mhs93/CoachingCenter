@@ -15,16 +15,16 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
-            <p class="m-0">Subject Information</p>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <p class="m-0">Subject Details</p>
+            <a href="{{ route('admin.subjects.index') }}" class="btn btn-sm btn-dark">Back</a>
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <table id="table" class="table table-bordered data-table" style="width: 100%">
                         <tbody>
                         <tr>
-                            
                             <td>Subject Name</td>
                             <td>{{ $subject->name }}</td>
                         </tr>
@@ -40,9 +40,11 @@
                             <td>Subject Fee</td>
                             <td>{{ $subject->fee }}</td>
                         </tr>
-
                     </table>
                 </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-3">
                     @can('teacher_edit')
                         <div class="form-group mt-3">

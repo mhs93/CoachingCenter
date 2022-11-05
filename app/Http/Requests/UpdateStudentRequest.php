@@ -11,7 +11,7 @@ class UpdateStudentRequest extends FormRequest
     {
         return [
             'name'                  =>  'required|string',
-            'reg_no'                =>  "required|string|unique:students,reg_no,{$this->student->id}",
+            // 'reg_no'                =>  "required|string|unique:students,reg_no,{$this->student->id}",
             'email'                 =>  "required|email|unique:students,email,{$this->student->id}",
             // 'password'              =>  'confirmed',
             'gender'                =>  'required|in:1,2',

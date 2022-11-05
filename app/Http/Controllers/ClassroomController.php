@@ -22,9 +22,6 @@ class ClassRoomController extends Controller
     public function getList()
     {
         try {
-            // $data = ClassRoom::select('id', 'batch_id', 'subject_id', 'class_type', 'class_link', 'access_key', 'duration', 'start_time', 'end_time', 'status')
-            //     ->orderBy('id', 'DESC')->get();
-
             $data = ClassRoom::with(['batch' => function ($query) {
                                                     $query->select('id', 'name');
                                                 },
@@ -97,6 +94,7 @@ class ClassRoomController extends Controller
     public function getSubjects(Request $request)
     {
         $batches = Batch::where('id', $request->batchId)->select('subject_id')->first();
+
         $subject_id = json_decode($batches->subject_id);
         $subjects = Subject::whereIn('id', $subject_id)->get();
         return $subjects;
@@ -157,7 +155,6 @@ class ClassRoomController extends Controller
             'subject_id.required'   => 'Subject is required',
         ]);
 
-
         try {
             $classRoom = new ClassRoom();
             $classRoom->batch_id    =  $request->batch_id;
@@ -166,8 +163,10 @@ class ClassRoomController extends Controller
             $classRoom->class_link  =  $request->class_link;
             $classRoom->access_key  =  $request->access_key;
             $classRoom->duration    =  $request->duration;
+            $classRoom->date        =  $request->date;
             $classRoom->start_time  =  $request->start_time;
             $classRoom->end_time    =  $request->end_time;
+            $classRoom->note = strip_tags($request->note);
             $classRoom->created_by  =  Auth::id();
             $classRoom->save();
 
@@ -246,16 +245,18 @@ class ClassRoomController extends Controller
         // Validation check
         $this->validate($request, [
             'batch_id'    => 'required|integer',
+            'subject_id'    => 'required|integer',
             'class_type'  => 'required|string',
             'class_link'  => 'nullable|string',
             'access_key'  => 'nullable|string',
             'duration'    => 'required|string',
-            'start_time'  => 'nullable',
-            'end_time'    => 'nullable'
+            'start_time'  => 'required|string',
+            'end_time'    => 'required|string'
         ]);
 
         try {
             $classRoom->batch_id = $request->batch_id;
+            $classRoom->subject_id = $request->subject_id;
             $classRoom->class_type = $request->class_type;
             $classRoom->class_link = $request->class_link;
             $classRoom->access_key = $request->access_key;

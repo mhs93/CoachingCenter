@@ -6,15 +6,14 @@ use App\Models\Transaction;
 
 class Accounts
 {
-
-    public static function debitBalance($account_id)
+    public static function creditBalance($account_id)
     {
         return Transaction::where('account_id', $account_id)
             ->where('transaction_type', 1)
             ->sum('amount');
     }
 
-    public static function creditBalance($account_id)
+    public static function debitBalance($account_id)
     {
         return Transaction::where('account_id', $account_id)
             ->where('transaction_type', 2)

@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 150px;
         }
     </style>
 @endpush
@@ -33,17 +33,15 @@
                 @csrf
                 <div class="row">
                     <div class="form-group">
-                        <label for="batch_id">Select Bathces</label>
+                        <label for="batch_id"><b>Select Bathces</b>  <span style="color: red">*</span></label>
                         <select name="batch_id[]" class="multi-subject form-control @error('batch_id') is-invalid @enderror" multiple="multiple" id="mySelect2">
                             <option value="0">
-                                All Batches
+                                All Batch
                             </option>
                             @forelse ($batches as $batch)
-                                <option value="{{ $batch->id }}">
-                                    {{ $batch->name }}
-                                </option>
+                                <option value="{{ $batch->id }}">{{ $batch->name }} </option>
                             @empty
-                                <option>--No subject--</option>
+                                <option>--No batch--</option>
                             @endforelse
                         </select>
                         @error('batch_id')
@@ -54,8 +52,8 @@
                     </div>
 
                     {{-- Title --}}
-                    <div class="form-group col-md-12">
-                        <label for="title">Title</label>
+                    <div class="form-group col-md-12 mt-2">
+                        <label for="title"><b>Title</b> <span style="color: red">*</span></label>
                         <input type="text" name="title" class="form-control" placeholder="Enter Titile" value="{{ old('title') }}">
                         @error('title')
                             <div class="text-danger">{{ $message }}</div>
@@ -65,8 +63,8 @@
 
                 {{-- Description --}}
                 <div class="form-group mt-2">
-                    <label for="description">Description</label>
-                    <textarea class="form-control" name="description" id="description">{{ old('description') }}</textarea>
+                    <label for="description"><b>Description</b></label>
+                    <textarea class="form-control" name="note" id="note">{{ old('description') }}</textarea>
                     @error('description')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -81,11 +79,26 @@
     <div class="mb-5"></div>
 
     @push('js')
-        {{-- Ckeditor CDN --}}
+        {{-- Select2 CDN --}}
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        {{-- Ckeditor5 --}}
         <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
         <script>
-            ClassicEditor
-                .create(document.querySelector('#description'), {
+            var id = '';
+            $.ajax({
+                id = $('#a').val();
+
+            });
+            console.log(id);
+        </script>
+
+        <script>
+            $(document).ready(function() {
+                $('.multi-subject').select2();
+            });
+
+            // CKEditor
+            ClassicEditor.create(document.querySelector('#note'), {
                     removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
                 })
                 .catch(error => {
@@ -93,30 +106,7 @@
                 });
         </script>
 
-        {{-- Select2 CDN --}}
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('.multi-subject').select2();
-            });
-        </script>
-
         {{-- Batch Checkbox --}}
-        <script>
-            var checkboxes = document.querySelectorAll("input[type = 'checkbox']");
-            console.log(checkboxes);
-            function checkAll(myCheckbox){
-                if(myCheckbox.checked == true){
-                    checkboxes.forEach(function(checkbox){
-                        checkbox.checked = true;
-                    });
-                }else{
-                    checkboxes.forEach(function(checkbox){
-                        checkbox.checked = false;
-                    });
-                }
-            }
-        </script>
     @endpush
 
 @endsection

@@ -2,22 +2,11 @@
 
 @section('title', 'Bank')
 
-@section('breadcrumb')
-    <nav aria-label="breadcrumb" class="d-flex  align-items-center justify-content-between" style="width: 100%">
-        <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-            </li>
-        </ol>
-
-        <a href="{{ route('admin.bank.create') }}" class="btn btn-sm btn-info">Create bank</a>
-    </nav>
-@endsection
-
 @section('content')
     <div class="card">
-        <div class="card-header">
-            <p class="m-0">Bank</p>
+        <div class="card-header d-flex justify-content-between">
+            <p class="m-0">Banks</p>
+            <a href="{{ route('admin.bank.create') }}" class="btn btn-sm btn-info">Create bank</a>
         </div>
         <div class="card-body">
             <table class="table table-bordered">

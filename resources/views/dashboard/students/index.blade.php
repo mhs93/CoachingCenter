@@ -7,7 +7,6 @@
         table {
             width: 100%;
         }
-
         .paging_simple_numbers,
         .dataTables_filter {
             float: right;
@@ -21,7 +20,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Student lists</p>
             @can('register_student')
-                <a href="{{ route('admin.students.create') }}" class="btn btn-sm btn-info">Create Student</a>
+                <a href="{{ route('admin.students.create') }}" title="create" class="btn btn-sm btn-info">Create Student</a>
             @endcan
         </div>
         <div class="card-body">
@@ -132,6 +131,7 @@
 
         // Delete Button
         function deleteItem(id)
+
         {
             var url = '{{ route("admin.students.destroy",":id") }}';
             $.ajax({

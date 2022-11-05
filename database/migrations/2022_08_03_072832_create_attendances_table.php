@@ -15,12 +15,13 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id');
-            $table->foreignId('batch_id')->constrained('batches');
-            $table->date('date');
-            $table->boolean('status')->comment('1 = Present / 0 = Absent');
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->integer('student_id');
+            $table->integer('subject_id');
+            $table->integer('batch_id');
+            $table->string('date');
+            $table->integer('status')->comment('1 = Present / 0 = Absent');
+            $table->integer('created_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

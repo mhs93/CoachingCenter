@@ -21,7 +21,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Subject lists</p>
             @can('subject_create')
-                <a class="btn btn-sm btn-info" href="{{route('admin.subjects.create')}}">Create subject</a>
+                <a class="btn btn-sm btn-info" href="{{route('admin.subjects.create')}}" title="Create">Create subject</a>
             @endcan
         </div>
         <div class="card-body">

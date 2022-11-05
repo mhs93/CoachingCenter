@@ -16,8 +16,10 @@ class BatchFactory extends Factory
      */
     public function definition()
     {
+        $array = ['1', '2', '3'];
         return [
             'name' => $this->faker->name(),
+            'subject_id' => json_encode($array),
             'status' => 1,
         ];
     }

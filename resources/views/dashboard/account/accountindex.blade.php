@@ -2,31 +2,22 @@
 
 @section('title', 'Accounts')
 
-@section('breadcrumb')
-    <nav aria-label="breadcrumb" class="d-flex  align-items-center justify-content-between" style="width: 100%">
-        <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-            </li>
-        </ol>
-
-        <a href="{{ route('admin.account.create') }}" class="btn btn-sm btn-info">Create account</a>
-    </nav>
-@endsection
 
 @section('content')
 
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
             <p class="m-0">Account</p>
+            <a href="{{ route('admin.account.create') }}" class="btn btn-sm btn-info">Create account</a>
         </div>
         <div class="card-body">
-            <table class="table table-bordered">
+            <table id="table" class="table table-bordered data-table" style="width: 100%">
                 <thead>
                 <tr>
                     <th scope="col">SL No</th>
                     <th scope="col">Account</th>
-                    <th scope="col">Bank</th>
+                    <th scope="col">Bank Name</th>
+                    <th scope="col">Branch Name</th>
                     <th scope="col">Account Holder</th>
                     <th scope="col">Balance</th>
                     <th scope="col">Status</th>
@@ -34,56 +25,134 @@
                 </tr>
                 </thead>
                 <tbody>
-                @forelse($accounts as $account)
-                    <tr>
-                        <th scope="row">{{ $loop->iteration }}</th>
-                        <td>{{ $account->account_no }}</td>
-                        <td>
-                            @isset($account->bank->bank_name)
-                                {{ $account->bank->bank_name }}
-                            @endisset
-                        </td>
-                        <td>{{ $account->account_holder }}</td>
-                        <td>
-                            @php
-                               $balance = \App\Helper\Accounts::postBalance($account->id);
-                            @endphp
-                            {{ $balance }}
-                        </td>
-                        <td>
-                            @if($account->status)
-                                <span class="btn btn-sm btn-success text-white">Active</span>
-                            @else
-                                <span class="btn btn-sm btn-danger text-whit">Deactivate</span>
-                            @endif
-                        </td>
-                        <td>
-                            <a href="{{route('admin.account.edit',$account->id)}}" class="btn btn-success btn-sm" ><i class='bx bx-edit-alt'></i></a>
-
-                            <form class="col-6 d-inline" action="{{ route('admin.account.destroy', $account->id) }}"  onclick="return confirm('Are you sure Delete this account?')" method="POST" >
-                                @csrf
-                                @method('delete')
-                                <button type="submit" class="btn btn-danger btn-sm"><i class='bx bx-trash' ></i></button>
-                            </form>
-
-                        </td>
-                    </tr>
-                @empty
-                    <div class="alert alert-warning" role="alert">
-                        No data here
-                    </div>
-                @endforelse
 
                 </tbody>
             </table>
         </div>
     </div>
+
+
+    @push('js')
+        <script src="{{ asset('jquery/jQuery.js') }}"></script>
+        <script src="{{ asset('datatable/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('datatable/js/dataTables.bootstrap4.min.js') }}"></script>
+        {{-- Select2 CDN --}}
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <!-- sweetalert -->
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+        <script>
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+
+            // Get all data from database (Server Site)
+            $(document).ready(function() {
+                $('.data-table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    info: true,
+                    ajax: "{{ route('admin.account.list') }}",
+                    'pageLength': 10,
+                    'aLengthMenu': [[10, 25, 50, -1],[10, 25, 50, 'All']],
+                    columns: [
+                        // {data:'id',name:'id'},
+                        {data: 'DT_RowIndex',name: 'DT_RowIndex'},
+                        {data: 'account_no',name: 'account_no',orderable: true,searchable: true},
+                        {data: 'bank_name',name: 'bank_name',orderable: true,searchable: true},
+                        {data: 'branch_name',name: 'branch_name',orderable: true,searchable: true},
+                        {data: 'account_holder',name: 'account_holder',orderable: true,searchable: true},
+                        {data: 'balance',name: 'balance',orderable: true,searchable: true},
+                        {data: 'status',name: 'status',orderable: false,searchable: false},
+                        {data: 'action',name: 'action',orderable: false,searchable: false},
+                    ]
+                });
+
+            });
+
+            // Change status alert
+            function statusConfirm(id) {
+                event.preventDefault();
+                swal({
+                    title: `Are you sure?`,
+                    text: 'You want to change account status ?',
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willChangeStatus) => {
+                    if (willChangeStatus) {
+                        changeStatus(id);
+                    }
+                });
+            }
+
+            // Change status
+            function changeStatus(id) {
+                console.log(id);
+                var url = '{{ route("admin.account.change-status", ":id") }}';
+
+                $.ajax({
+                    url: url.replace(':id', id ),
+                    method: "PUT",
+                    processData: false,
+                    dataType: 'json',
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success === true) {
+                            $('.data-table').DataTable().ajax.reload();
+                            toastr.success(response.message);
+                        }
+                    },
+                    error: function(error) {
+                        alert(error);
+                    }
+                });
+            }
+
+            // delete Confirm
+            function showDeleteConfirm(id)
+            {
+                event.preventDefault();
+                swal({
+                    title: `Are you sure?`,
+                    text: 'You want to delete this account ?',
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        deleteItem(id);
+                    }
+                });
+            }
+
+            // Delete Button
+            function deleteItem(id)
+            {
+                var url = '{{ route("admin.account.destroy",":id") }}';
+                $.ajax({
+                    type: "DELETE",
+                    url: url.replace(':id', id ),
+                    success: function (resp) {
+                        // Reloade DataTable
+                        $('.data-table').DataTable().ajax.reload();
+                        if (resp.success === true) {
+                            // show toast message
+                            toastr.success(resp.message);
+                        }
+                    }, // success end
+                    error: function (error) {
+                        alert(error);
+                    }
+                })
+            }
+        </script>
+    @endpush
+
 @endsection
 
 
-@push('js')
-    <!-- sweetalert -->
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-@endpush
+
 
 

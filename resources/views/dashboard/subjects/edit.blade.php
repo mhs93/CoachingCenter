@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -24,8 +24,9 @@
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
-        <div class="card-header">
-            <p class="m-0">Create a subject</p>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <p class="m-0">Edit Subject</p>
+            <a href="{{ route('admin.subjects.index') }}" class="btn btn-sm btn-dark">Back</a>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.subjects.update', $subject->id) }}" method="POST">
@@ -34,7 +35,7 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <div class="form-group">
-                            <label for="name">Subject name</label>
+                            <label for="name"><b>Subject name</b></label>
                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Enter subject name" value="{{ $subject->name }}">
                         </div>
                         @error('name')
@@ -45,7 +46,7 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label for="code">Subject Code</label>
+                        <label for="code"><b>Subject Code</b></label>
                         <input type="text" name="code" class="form-control @error('code') is-invalid @enderror" placeholder="Enter Subject Code" value="{{ $subject->code }}">
                         @error('code')
                         <span class="text-danger" role="alert">
@@ -56,27 +57,12 @@
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-6">
-                        <label for="fee">Fee</label>
-                        <input class="form-control @error('fee') is-invalid @enderror" name="fee" id="fee" value="{{ $subject->fee }}" >
+                    <div class="form-group col-md-12">
+                        <label for="fee"><b>Fee</b></label>
+                        <input type="number" class="form-control @error('fee') is-invalid @enderror" name="fee" id="fee" value="{{ $subject->fee }}" >
                         @error('fee')
                         <span class="text-danger" role="alert">
                             <p>{{ $message }}</p>
-                        </span>
-                        @enderror
-                    </div>
-
-                    {{-- Status --}}
-
-                    <div class="form-group col-md-6">
-                        <label for="status">Status</label>
-                        <select name="status" id="status" class="form-control">
-                            <option value="1" @if ($subject->status == 1) {{ 'selected' }} @endif>Active</option>
-                            <option value="0" @if ($subject->status == 0) {{ 'selected' }} @endif>Inactive</option>
-                        </select>
-                        @error('status')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
                         </span>
                         @enderror
                     </div>
@@ -84,7 +70,7 @@
 
                 {{-- Note --}}
                 <div class="form-group mt-2">
-                    <label for="note">Note</label>
+                    <label for="note"><b>Subject Note</b> </label>
                     <textarea class="form-control @error('note') is-invalid @enderror" name="note" id="note">{!! $subject->note !!}</textarea>
                     @error('note')
                     <span class="invalid-feedback" role="alert">
@@ -107,7 +93,7 @@
 
         <script>
             ClassicEditor
-                .create(document.querySelector('#description'), {
+                .create(document.querySelector('#note'), {
                     removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
                 })
                 .catch(error => {

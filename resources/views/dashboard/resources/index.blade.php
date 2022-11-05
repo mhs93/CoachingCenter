@@ -40,15 +40,14 @@
         </div>
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Resource lists</p>
-            @can('batches_create')
-            <a href="{{ route('admin.resources.create') }}" class="btn btn-sm btn-info">Create Resource</a>
+            @can('upload_resource')
+            <a href="{{ route('admin.resources.create') }}" class="btn btn-sm btn-info" title="Create">Create Resource</a>
             @endcan
         </div>
         <div class="card-body">
             <table id="table" class="table table-bordered data-table" style="width: 100%">
                 <thead>
                     <tr>
-                        
                         <th>Id</th>
                         <th>Title</th>
                         <th>Batches</th>
@@ -98,6 +97,7 @@
                         {data: 'action',name: 'action',orderable: false,searchable: false},
                     ]
                 });
+
             });
 
             // Change status alert
@@ -154,7 +154,7 @@
                 });
             }
 
-            // Delete Button
+
             function deleteItem(id)
             {
                 var url = '{{ route("admin.resources.destroy",":id") }}';

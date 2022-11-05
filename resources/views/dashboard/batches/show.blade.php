@@ -2,22 +2,12 @@
 
 @section('title', 'Batch Details')
 
-@section('breadcrumb')
-    <nav aria-label="breadcrumb" class="d-flex align-items-center justify-content-between" style="width: 100%">
-        <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-                <a href="{{ route('admin.batches.index') }}">Batch List</a>
-            </li>
-        </ol>
-        <a href="{{ route('admin.batches.index') }}" class="btn btn-sm btn-dark">Back to list</a>
-    </nav>
-@endsection
-
 
 @section('content')
     <div class="card">
-        <div class="card-header">
-            <p class="m-0">Bath Information</p>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <p class="m-0">Batch Information</p>
+            <a href="{{ route('admin.batches.index') }}" class="btn btn-sm btn-dark">Back</a>
         </div>
         <div class="card-body">
             <div class="row">
@@ -35,6 +25,10 @@
                             <tr>
                                 <td>Status</td>
                                 <td>{{ $batch->status ? 'Active' : 'Dead' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Batch Fee</td>
+                                <td>{{ $batch->batch_fee }}</td>
                             </tr>
                             <tr>
                                 <td>Description</td>

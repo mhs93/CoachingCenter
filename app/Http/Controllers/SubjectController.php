@@ -54,7 +54,7 @@ class SubjectController extends Controller
                         $showButton = '';
                     }
                     if(Auth::user()->can('subject_edit')){
-                        $editButton = '<a href="' . route('admin.subjects.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class="bx bxs-edit-alt"></i></a>';
+                        $editButton = '<a href="' . route('admin.subjects.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class="bx bxs-edit-alt"></i></a>';
                     }else{
                         $editButton =  '';
                     }
@@ -90,28 +90,23 @@ class SubjectController extends Controller
     public function store(Request $request)
     {
         $messages = array(
-            'status.integer'    => 'Select the status',
-            'fee.numeric'       => 'Subject fee can not be string, Please give numeric number',
+            'fee.numeric'  => 'Subject fee can not be string, Please give numeric number',
         );
         $this->validate($request, array(
             'name'      =>      'required|string|unique:subjects,name,NULL,id,deleted_at,NULL',
             'code'      =>      'required|unique:subjects,code,NULL,id,deleted_at,NULL',
             'note'      =>      'nullable|max:255',
             'fee'       =>      'required|numeric',
-            'status'    =>      'required|integer'
         ), $messages);
 
         try {
             $subject = new Subject();
             $subject->name = $request->name;
             $subject->code = $request->code;
-            $subject->note = $request->note;
+            $subject->note = strip_tags($request->note);
             $subject->fee = $request->fee;
-            $subject->status = $request->status;
             $subject->created_by = Auth::id();
             $subject->save();
-
-
             return redirect()->route('admin.subjects.index')->with('t-success','Subject created successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
@@ -153,14 +148,12 @@ class SubjectController extends Controller
 
     public function update(Request $request, Subject $subject)
     {
-//        'required|unique:areas,name,' . $area->id . ',id,deleted_at,NULL',
-
         $this->validate($request, [
-            'name' => 'required|string|unique:subjects,name,' . $subject->id . ',id,deleted_at,NULL',
-            'code' => 'required|string|unique:subjects,code,' . $subject->id . ',id,deleted_at,NULL',
-            'note' => 'nullable|max:255',
-            'fee' => 'required',
-            'status' => 'required|integer'
+            'name'      =>      'required|string|unique:subjects,name,' . $subject->id . ',id,deleted_at,NULL',
+            'code'      =>      'required|string|unique:subjects,code,' . $subject->id . ',id,deleted_at,NULL',
+            'note'      =>      'nullable|max:255',
+            'fee'       =>      'required',
+            // 'status'    =>      'required|integer'
         ]);
 
         try {
@@ -168,7 +161,7 @@ class SubjectController extends Controller
             $subject->code = $request->code;
             $subject->note = $request->note;
             $subject->fee = $request->fee;
-            $subject->status = $request->status;
+            // $subject->status = $request->status;
             $subject->updated_by = Auth::id();
             $subject->update();
 

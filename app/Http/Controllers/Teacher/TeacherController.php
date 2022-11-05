@@ -26,7 +26,9 @@ class TeacherController extends Controller
     {
         try {
             $data = Teacher::select('id', 'name', 'email', 'status', 'subject_id')
-            ->orderBy('id', 'DESC')->get();
+                ->orderBy('id', 'DESC')
+                ->get();
+
             return DataTables::of($data)->addIndexColumn()
                 //Subject
                 ->addColumn('subject_id', function ($data){
@@ -35,10 +37,11 @@ class TeacherController extends Controller
                     if($data->subject_id != NULL){
                         $subjectIds = json_decode($data->subject_id);
                         if(in_array("0", $subjectIds)){
-                            $subjects = Subject::get(['id','name']);
-                            foreach($subjects as $key=>$item) {
-                                $batchSubs .= $item->name.", ";
-                            }
+                            // $subjects = Subject::get(['id','name']);
+                            // foreach($subjects as $key=>$item) {
+                            //     $batchSubs .= $item->name.", ";
+                            // }
+                            $batchSubs = "All Subjects".", ";
                         }else{
                             $subjects = Subject::whereIn('id',$subjectIds)->get(['id','name']);
                             foreach($subjects as $key=>$item) {
@@ -48,7 +51,6 @@ class TeacherController extends Controller
                     }else{
                         $subjects='';
                     }
-                    // Remove last 2 elements from the $batchSubs string
                     $batchSubs = substr($batchSubs, 0, -2);
                     return $batchSubs;
                 })
@@ -79,12 +81,12 @@ class TeacherController extends Controller
                 //Action
                 ->addColumn('action', function ($data) {
                     if (Auth::user()->can('teacher_profile')){
-                        $showProfile = '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
+                        $showProfile = '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info" title="show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showProfile = '';
                     }
                     if (Auth::user()->can('teacher_edit')){
-                        $editProfile = '<a href="' . route('admin.teachers.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>';
+                        $editProfile = '<a href="' . route('admin.teachers.edit', $data->id) . '" class="btn btn-sm btn-warning" title="edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $editProfile = '';
                     }
@@ -94,12 +96,17 @@ class TeacherController extends Controller
                         $deleteProfile = '';
                     }
                      // Change Password
-                     if (Auth::user()->can('student_delete')) {
-                        $chnagePassword = '<a href="' . route('admin.adteacher.password', $data->id) . '" class="btn btn-sm btn-info"><i class="cis-key"></i></a>';
+                     if (Auth::user()->can('teacher_password')) {
+                        $changePassword = '<a href="' . route('admin.adteacher.password', $data->id) . '" class="btn btn-sm btn-info" title="change password"><i class="bx bxs-key"></i></a>';
                     } else {
-                        $chnagePassword = '';
+                        $changePassword = '';
                     }
-                    return '<div class = "btn-group">'.$showProfile.$editProfile.$deleteProfile.$chnagePassword.'</div>';
+                    if (Auth::user()->can('teacher_payment')) {
+                        $payment = '<a href="' . route('admin.teacher.payment', $data->id) . '" class="btn btn-sm btn-success" title="payment"><i class="bx bx-dollar-circle"></i></a>';
+                    } else {
+                        $payment = '';
+                    }
+                    return '<div class = "btn-group">'.$showProfile.$editProfile.$deleteProfile.$changePassword.$payment.'</div>';
                 })
                 ->rawColumns(['action', 'status', 'student_id'])
                 ->make(true);
@@ -243,7 +250,6 @@ class TeacherController extends Controller
             $user->teacher_id = $teacher->id;
             $user->name = $request->first_name . ' ' . $request->last_name;
             $user->password = Hash::make('teacher');
-            // $user->password = Hash::make($request->password);
             $user->email = $request->email;
             $user->type = 1;
             $user->save();
@@ -259,6 +265,7 @@ class TeacherController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
 
     /**
      * Show teacher details
@@ -349,9 +356,6 @@ class TeacherController extends Controller
 
             $user->name = $request->name;
             $user->email = $request->email;
-            // if ($request->password) {
-            //     $user->password = Hash::make($request->password);
-            // }
             $user->type = 1;
             $user->update();
             // assign new role to the user

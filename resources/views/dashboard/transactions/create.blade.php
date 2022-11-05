@@ -22,15 +22,16 @@
 
             </li>
         </ol>
-        <a href="{{route('admin.transaction.index')}}" class="btn btn-sm btn-dark">Back</a>
+
     </nav>
 @endsection
 
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Create</p>
+            <a href="{{route('admin.transaction.index')}}" class="btn btn-sm btn-dark">Back</a>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.transaction.store') }}" enctype="multipart/form-data" method="POST">
@@ -174,14 +175,14 @@
 
     <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
 
-    {{--<script>--}}
-        {{--ClassicEditor.create(document.querySelector('#cash_details'), {--}}
-            {{--removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],--}}
-        {{--})--}}
-            {{--.catch(error => {--}}
-                {{--console.error(error);--}}
-            {{--});--}}
-    {{--</script>--}}
+    <script>
+        ClassicEditor.create(document.querySelector('#cash_details'), {
+            removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
+        })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 
 
     <script>
