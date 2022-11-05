@@ -9,7 +9,7 @@ class Accounts
     public static function creditBalance($account_id)
     {
         return Transaction::where('account_id', $account_id)
-            ->where('transaction_type', 1)
+            ->whereIn('transaction_type',[1,3] )
             ->sum('amount');
     }
 

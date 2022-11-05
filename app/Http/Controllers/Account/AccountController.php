@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Account;
 
+use App\Helper\Accounts;
 use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Transaction;
@@ -16,12 +17,12 @@ class AccountController extends Controller
     public function getlist(Request $request){
         try {
             if($request->ajax()){
-                $data = Account::select('account_no','account_holder','bank_name','branch_name','status')->orderBy('id', 'DESC')->get();
+                $data = Account::select('id','account_no','account_holder','bank_name','branch_name','status')->orderBy('id', 'DESC')->get();
 
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('balance',function ($data){
-                            $balance = \App\Helper\Accounts::postBalance($data->id);
+                            $balance = Accounts::postBalance($data->id);
                             return $balance;
                     })
                     ->addColumn('status', function ($data) {
