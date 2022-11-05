@@ -41,7 +41,7 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group mt-3">
-                            <label for="password_confirmation">New Password</label>
+                            <label for="password_confirmation">New Password <span style="color: red">*</span></label>
                             <input type="password" name="password" class="form-control" placeholder="Enter New Password">
                             @error('password_confirmation')
                             <span class="invalid-feedback" role="alert">
@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="password_confirmation">Confirm New Passowrd</label>
+                            <label for="password_confirmation">Confirm New Passowrd <span style="color: red">*</span></label>
                             <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm New Password"><br>
                             @error('password_confirmation')
                             <span class="invalid-feedback" role="alert">

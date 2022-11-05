@@ -15,6 +15,9 @@
         .dropify-wrapper .dropify-message p {
             font-size: initial;
         }
+        .ck-editor__editable {
+            min-height: 200px;
+        }
     </style>
 @endpush
 
@@ -38,24 +41,29 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <p class="m-0">Edit Batch</p>
+                        <a href="{{ route('admin.batches.index') }}" class="btn btn-sm btn-dark">Back</a>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group">
                                 <input type="hidden" name="batch_id" id="batchId" value={{$batch->id}}>
                                 <div class="form-group">
-                                    <label for="batchname">Batch name</label>
+                                    <label for="batchname"><b>Batch name</b> </label>
                                     <input type="text" class="form-control my-1" id="batchName" name="name" placeholder="Enter Batch Name" value="{{ $batch->name }}">
                                     <div id="validName" class="text-danger"></div>
                                 </div>
                             </div>
+
+                        </div>
+
+                        <div class="row">
                             @php
                                 $subjectIds = json_decode($batch->subject_id);
                             @endphp
                             <div class="form-group col-md-6">
-                                <label for="subject_id">Select subjects</label>
+                                <label for="subject_id"><b>Select Subjects</b></label>
 
                                 @php
                                     $subjectIds = json_decode($batch->subject_id);
@@ -70,9 +78,9 @@
                                     </option>
                                     @forelse ($subjects as $subject)
                                         <option value="{{ $subject->id }}"
-                                        @if(in_array($subject->id, $subjectIds))
-                                            {{ "selected" }}
-                                                @endif
+                                            @if(in_array($subject->id, $subjectIds))
+                                                {{ "selected" }}
+                                            @endif
                                         >
                                             {{-- @if ($subject->id == $batch->subject_id) {{ 'selected' }} @endif> --}}
                                             {{ $subject->name }}
@@ -88,34 +96,41 @@
                                 @enderror
                             </div>
 
-                        </div>
-
-                        <div class="form-group">
-                            <label for="description">Batch Description</label>
-                            <textarea name="description" class="form-control" id="description" cols="30" rows="10">{{ $batch->note }}</textarea>
-                            @error('description')
-                                <span class="text-danger" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <div class="form-group col-md-6">
+                                <label for="batch_fee"><b>Batch fee</b> <span style="color: red">*</span></label>
+                                <input type="number" class="form-control my-1" id="batch_fee" value="{{ $batch->batch_fee }}"  name="batch_fee">
+                                @error('batch_fee')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="row mt-2">
                             <div class="form-group col-md-6">
-                                <label for="start_time">Start Time</label>
-                                <input type="datetime-local" name="start_time" class="form-control" placeholder="Start Time" value="{{ $batch->start_time }}">
+                                <label for="start_time"><b>Start Date</b></label>
+                                <input type="date" name="start_time" class="form-control" value="{{ $batch->start_time }}">
                                 @error('start_time')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="end_time">End Time</label>
-                                <input type="datetime-local" name="end_time" class="form-control" placeholder="End Time" value="{{ $batch->end_time }}">
+                                <label for="end_time"><b>End Date</b></label>
+                                <input type="date" name="end_time" class="form-control" value="{{ $batch->end_time }}">
                                 @error('end_time')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label for="note"><b>Batch Note</b></label>
+                            <textarea name="note" class="form-control" id="note" cols="30" rows="10">{{ $batch->note }}</textarea>
+                            @error('note')
+                                <span class="text-danger" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
                         <div class="form-group mt-3">
@@ -137,18 +152,10 @@
             });
         </script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
-            integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script>
-            $(document).ready(function() {
-                $('.dropify').dropify();
-            });
-        </script>
         <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
         <script>
             ClassicEditor
-                .create(document.querySelector('#description'), {
+                .create(document.querySelector('#note'), {
                     removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
                 })
                 .catch(error => {

@@ -13,6 +13,9 @@
         .dropify-wrapper .dropify-message p {
             font-size: initial;
         }
+        .ck-editor__editable {
+            min-height: 200px;
+        }
     </style>
 @endpush
 
@@ -46,7 +49,7 @@
                     <div class="card-body">
 
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name"><b>Name</b> </label>
                             <input type="text" name="name" id="name"
                                 class="form-control @error('name') is-invalid @enderror" value="{{ $teacher->name }}">
                             @error('name')
@@ -57,7 +60,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="email">Email Address</label>
+                            <label for="email"><b>Email Address</b></label>
                             <input type="email" name="email" id="email"
                                 class="form-control @error('email') is-invalid @enderror" value="{{ $teacher->email }}">
                             @error('email')
@@ -73,7 +76,7 @@
                         @endphp
 
                         <div class="form-group mt-3 ">
-                            <label for="subject_id">Select subject</label>
+                            <label for="subject_id"><b>Select subject</b></label>
                             <select name="subject_id[]" class="multi-subject form-control @error('subjects') is-invalid @enderror" multiple="multiple" id="mySelect2">
                                 <option value="0"
                                     @if (in_array("0", $subjectIds))
@@ -103,7 +106,7 @@
                         </div>
 
                         <div class="form-group mt-3 ">
-                            <label for="gender">Gender</label>
+                            <label for="gender"><b>Gender</b></label>
                             <select name="gender" id="gender" value="{{ $teacher->gender }}"
                                 class="form-select @error('gender') is-invalid @enderror">
                                 <option>--Select gender--</option>
@@ -118,7 +121,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="contact_number">Contact Number</label>
+                            <label for="contact_number"><b>Contact Number</b></label>
                             <input type="text" name="contact_number" id="contact_number"
                                 class="form-control @error('contact_number') is-invalid @enderror"
                                 value="{{ $teacher->contact_number }}">
@@ -130,7 +133,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="current_address">Current Address</label>
+                            <label for="current_address"><b>Current Address</b></label>
                             <textarea name="current_address" id="current_address" rows="3"
                                 class="form-control @error('current_address') is-invalid @enderror"> {{ $teacher->current_address }}</textarea>
                             @error('current_address')
@@ -141,7 +144,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="permanent_address">Permanent address</label>
+                            <label for="permanent_address"><b>Permanent Address</b></label>
                             <textarea name="permanent_address" id="permanent_address" rows="3"
                                 class="form-control @error('permanent_address') is-invalid @enderror">{{ $teacher->current_address }}</textarea>
                             @error('permanent_address')
@@ -153,7 +156,7 @@
 
                         {{-- Note --}}
                         <div class="form-group mt-3">
-                            <label for="note">Note</label>
+                            <label for="note"><b>Note</b></label>
                             <textarea class="form-control @error('note') is-invalid @enderror" name="note" id="note">{{ $teacher->note }}</textarea>
                             @error('note')
                             <span class="invalid-feedback" role="alert">
@@ -168,7 +171,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        Image upload
+                        <b>Image upload</b>
                     </div>
                     <div class="card-body">
                         <div class="form-group mt-3">

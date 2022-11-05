@@ -2,13 +2,24 @@
 
 namespace App\Http\Controllers\Attendance;
 
+
+use Carbon\Carbon;
+
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\Tattendance;
 use App\Models\Student;
 use Illuminate\Http\Request;
-use App\Models\Batch;
 
+use App\Models\Batch;
+use App\Models\Student;
+use App\Models\Subject;
+use App\Models\Attendance;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+
 
 class AttendanceController extends Controller
 {
@@ -25,14 +36,23 @@ class AttendanceController extends Controller
     public function studentsByBatch(Request $request)
     {
         try {
-            $attendances = Attendance::where('batch_id', $request->batch_id)->where('date', $request->date)->with('student')->get();
+
             $date = $request->date;
+            $currentDate = date('Y-m-d');
+            if($date > $currentDate) {
+                return back()->with('error', 'Your date must be less than or equal current date');
+            }
+
+            $attendances = Attendance::with('student')->where('batch_id', $request->batch_id)->where('subject_id', $request->subject_id)->where('date', $request->date)->get();
+
+            $batch = Batch::where('id', $request->batch_id)->first();
+            $subject = Subject::where('id', $request->subject_id)->first();
 
             if (empty($attendances->toArray())) {
                 $students = Student::where('batch_id', $request->batch_id)->with('batch')->get();
-                return view('dashboard.attendances.list', compact('students', 'date'));
+                return view('dashboard.attendances.list', compact('students', 'date','batch','subject'));
             } else {
-                return view('dashboard.attendances.list', compact('attendances', 'date'));
+                return view('dashboard.attendances.list', compact('attendances', 'date','batch','subject'));
             }
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -41,32 +61,44 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
-        for ($i = 0; $i < count($request->student_id); $i++) {
+        try {
+            for ($i = 0; $i < count($request->student_id); $i++) {
             $atten = 'attendance_' . $i;
             $student = new Attendance();
             $student->student_id = $request->student_id[$i];
             $student->batch_id = $request->batch_id[$i];
+            $student->subject_id = $request->subject_id[$i];
             $student->date = $request->date[$i];
             $student->status = $request->$atten;
             $student->created_by = Auth::id();
             $student->save();
         }
-        return redirect()->route('admin.attendances.index')->with('attendance successfully done');
+        return redirect()->route('admin.attendances.index')->with('t-success','Attendance successfully taken');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
+    //Update
     protected function update(Request $request)
     {
-        for ($i = 0; $i < count($request->student_id); $i++) {
+        try{
+            for ($i = 0; $i < count($request->student_id); $i++) {
             $atten = 'attendance_' . $i;
             $student = Attendance::where('student_id', $request->student_id[$i])->first();
             $student->student_id = $request->student_id[$i];
             $student->batch_id = $request->batch_id[$i];
+            $student->subject_id = $request->subject_id[$i];
             $student->date = $request->date[$i];
             $student->status = $request->$atten;
             $student->created_by = Auth::id();
             $student->update();
         }
-        return redirect()->route('admin.attendances.index')->with('attendance successfully updated');
+        return redirect()->route('admin.attendances.index')->with('t-success','Attendance successfully updated');
+
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function report()

@@ -12,12 +12,12 @@ return new class extends Migration
             $table->id();
             $table->string('account_no');
             $table->string('account_holder');
-            $table->foreignId('bank_id');
+            $table->string('bank_name');
             $table->string('branch_name');
             $table->text('description')->nullable();
-            $table->tinyInteger('status')->default(1)->comment('1 = Active / 0 = Deactivate');
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->integer('status')->default(1)->comment('1 = Active / 0 = Deactivate');
+            $table->integer('created_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

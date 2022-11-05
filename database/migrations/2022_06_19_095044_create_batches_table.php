@@ -15,15 +15,15 @@ return new class extends Migration
     {
         Schema::create('batches', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment('Batch name');
-            $table->tinyInteger('status')->comment('1 = Active / 0 = Deactivate')->default('1');
-            $table->longText('subject_id');
+            $table->string('name');
+            $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
+            $table->json('subject_id');
             $table->string('note')->nullable();
             $table->double('batch_fee')->nullable();
-            $table->timestamp('start_time')->comment('Batch start date and time');
-            $table->timestamp('end_time')->comment('Batch end time');
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

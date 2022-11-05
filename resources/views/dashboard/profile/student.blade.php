@@ -14,6 +14,7 @@
                     <div class="card-body text-center">
                         <img src="{{ asset('images/users/'.$user->student->profile) }}"
                              class="rounded-circle img-fluid" style="width: 150px;">
+
                         <h5 class="my-3">{{ $user->name }}</h5>
                         <p class="text-muted mb-1">{{$user->student->batch->batch_name}}</p>
                         <p class="text-muted mb-1">Reg No: {{$user->student->reg_no}}</p>
@@ -103,7 +104,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div mt-3>
+                            <div class="mt-3">
                                 <a href="{{route('admin.password')}}" class="btn btn-sm btn-success">Change Password</a>
                             </div>
                         </div>
@@ -181,6 +182,17 @@
         </div>
         </div>
     </section>
+
+    @push('js')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
+                integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            $(document).ready(function () {
+                $('.dropify').dropify();
+            });
+        </script>
+    @endpush
 
 
 @endsection

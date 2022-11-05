@@ -11,11 +11,11 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('reg_no');
-            $table->string('amount');
-            $table->string('paid_amount');
-            $table->string('due_amount');
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->double('amount');
+            $table->double('paid_amount');
+            $table->double('due_amount');
+            $table->integer('created_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

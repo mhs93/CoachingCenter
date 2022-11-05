@@ -23,11 +23,11 @@
                 <a href="{{ route('admin.dashboard') }}">Dashboard</a>
             </li>
         </ol>
-        @can('batches_create')
-        {{-- <button class="btn btn-sm btn-info" id="showModal">Create batch</button> --}}
-        <button class="btn btn-sm btn-info" id="showModal">
-            <a href="{{route('admin.exams.create')}}">Create Exam</a>
-        </button>
+        @can('exam_create')
+            {{-- <button class="btn btn-sm btn-info" id="showModal">Create batch</button> --}}
+            <button class="btn btn-sm btn-info" id="showModal">
+                <a href="{{route('admin.exams.create')}}" title="Create">Create Exam</a>
+            </button>
         @endcan
     </nav>
 @endsection
@@ -40,7 +40,7 @@
         </div>
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Exam lists</p>
-            @can('batches_create')
+            @can('exam_create')
             <a href="{{ route('admin.exams.create') }}" class="btn btn-sm btn-info">Create Exam</a>
             @endcan
         </div>
@@ -50,9 +50,9 @@
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
-                        <th>Batch Name</th>
+                        {{-- <th>Batch Name</th>
                         <th>Start Time</th>
-                        <th>End Time</th>
+                        <th>End Time</th> --}}
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -93,10 +93,7 @@
                         // {data:'id',name:'id'},
                         {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                         {data: 'name',name: 'name',orderable: true,searchable: true},
-                        {data: 'batch_id',name: 'batch_id',orderable: true,searchable: true},
-                        {data: 'start_time',name: 'start_time',orderable: true,searchable: true},
-                        {data: 'end_time',name: 'end_time',orderable: true,searchable: true},
-                        {data: 'status',name: 'status',orderable: false,searchable: false},
+                        {data: 'status',name: 'status',orderable: true,searchable: true},
                         {data: 'action',name: 'action',orderable: false,searchable: false},
                     ]
                 });

@@ -16,4 +16,13 @@ class Transaction extends Model
     public function account(){
         return $this->belongsTo(Account::class,'account_id','id')->select('id', 'account_no','account_holder')->withTrashed();
     }
+    public function stpayment(){
+        return $this->belongsTo(Stdpayment::class,'stdpayment_id','id')->withTrashed();
+    }
+    public function tchpayment(){
+        return $this->belongsTo(Tchpayment::class,'tchpayment_id','id')->withTrashed();
+    }
+    public function income(){
+        return $this->belongsTo(Income::class,'income_id','id')-self::withTrashed();
+    }
 }

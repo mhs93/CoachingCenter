@@ -33,8 +33,9 @@
                         <th>Batch</th>
                         <th>Subjects</th>
                         <th>Class Type</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -134,6 +135,7 @@
                     {data: 'batch.name',name: 'name',orderable: true,searchable: true},
                     {data: 'subject.name',name: 'name',orderable: true,searchable: true},
                     {data: 'class_type',name: 'class_type',orderable: true,searchable: true},
+                    {data: 'date',name: 'date',orderable: true,searchable: true},
                     {data: 'start_time',name: 'start_time',orderable: false,searchable: false},
                     {data: 'end_time',name: 'end_time',orderable: false,searchable: false},
                     {data: 'status',name: 'status',orderable: false,searchable: false},

@@ -20,20 +20,18 @@ class BatchController extends Controller
     {
         try {
             $data = Batch::select('id', 'name', 'subject_id', 'status')
-                ->orderBy('id', 'DESC')->get();
+                ->orderBy('id', 'DESC')
+                ->get();
+
             return DataTables::of($data)->addIndexColumn()
                 //Subject
                 ->addColumn('subject_id', function ($data){
-                    $subjectIds='';
                     $batchSubs= '';
+                    $subjectIds = '';
                     if($data->subject_id){
                         $subjectIds = json_decode($data->subject_id);
                         if(in_array("0", $subjectIds)){
-                            // $subjects = Subject::get(['id','name']);
-                            $subjects = Subject::all();
-                            foreach($subjects as $key=>$item) {
-                                $batchSubs .= $item->name.", ";
-                            }
+                            $batchSubs = "All Subjects".", ";
                         }else{
                             $subjects = Subject::whereIn('id',$subjectIds)->get(['id','name']);
                             foreach($subjects as $key=>$item) {
@@ -43,7 +41,6 @@ class BatchController extends Controller
                     }else{
                         $subjects='';
                     }
-                    // Remove last 2 elements from the $batchSubs string
                     $batchSubs = substr($batchSubs, 0, -2);
                     return $batchSubs;
                 })
@@ -74,13 +71,13 @@ class BatchController extends Controller
 
                 //Action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('batches_edit')){
-                        $showDetails = '<a href="' . route('admin.batches.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
+                    if (Auth::user()->can('batches_show')){
+                        $showDetails = '<a href="' . route('admin.batches.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
                     if (Auth::user()->can('batches_edit')){
-                        $editButton = '<a href="' . route('admin.batches.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>';
+                        $editButton = '<a href="' . route('admin.batches.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $editButton = '';
                     }
@@ -109,8 +106,8 @@ class BatchController extends Controller
     {
         try {
             $subjects = Subject::select('id', 'name')
-            ->where('status', 1)
-            ->get();
+                ->where('status', 1)
+                ->get();
             return view('dashboard.batches.index', compact('subjects'));
         }catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -140,21 +137,12 @@ class BatchController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|unique:batches,name,NULL,id,deleted_at,NULL',
-            //'name' => 'required|unique:batches|max:255',
-            // 'status' => 'nullable|integer',
             "subject_id"    => "required",
-            // "subject_id.*"  => "required|distinct|min:2",
-            // 'start_time' => 'required|after:today',
-            // 'end_time' => 'required|after:start_time',
             'batch_fee' => 'required|numeric'
         ],
-        [
-            // 'status.integer' => 'Select the status',
-            'batch_fee.numeric' => 'Batch fee must be numeric',
-            // 'subject_id.min' => 'Minimum 2 subjects needs for creating a new batch',
-            // 'end_time.after' => 'End Date must be after start date',
-            // 'start_time.after' => 'Start Date must be today or after today',
-        ]);
+            [
+                'batch_fee.numeric' => 'Batch fee must be numeric',
+            ]);
         try {
             $batch = new Batch();
             $batch->name = $request->name;
@@ -163,6 +151,7 @@ class BatchController extends Controller
             $batch->start_time = $request->start_time;
             $batch->end_time = $request->end_time;
             $batch->batch_fee = $request->batch_fee;
+            $batch->created_by = Auth::id();
             if (in_array("0", $request->subject_id)){
                 $batch->subject_id = json_encode($request->subject_id);
             }
@@ -228,21 +217,20 @@ class BatchController extends Controller
      * @return void
      */
 
-
     public function update(Request $request, Batch $batch)
     {
         $this->validate($request, [
             'name' => 'required|string|unique:subjects,name,' . $batch->id . ',id,deleted_at,NULL',
-            //'name' => "max:255",
+
             // 'status' => 'nullable|integer',
-            'start_time' => 'after:today',
-            'end_time' => 'after:start_time',
-        ],
-        [
-            // 'status.integer' => 'Select the status',
-            'end_time.after' => 'End Date must be after start date',
-            'start_time.after' => 'Start Date must be today or after today',
+            'start_time' => 'required',
+            'end_time' => 'required',
         ]);
+//        [
+//            // 'status.integer' => 'Select the status',
+//            'end_time.after' => 'End Date must be after start date',
+//            'start_time.after' => 'Start Date must be today or after today',
+//        ]);
         try {
             $batch = Batch::findOrFail($request->batch_id);
             $batch->name = $request->name;
@@ -251,6 +239,7 @@ class BatchController extends Controller
             $batch->note = $request->note;
             $batch->start_time = $request->start_time;
             $batch->end_time = $request->end_time;
+            $batch->updated_by = Auth::id();
             $batch->update();
 
             return redirect()->route('admin.batches.index')->with('t-success', 'Batch edited successfully');

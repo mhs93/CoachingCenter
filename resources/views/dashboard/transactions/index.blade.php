@@ -42,9 +42,9 @@
                     <th scope="col">Date</th>
                     <th scope="col">Account No</th>
                     <th scope="col">Amount</th>
-                    <th scope="col">Purpose</th>
-                    <th scope="col">Remarks</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col">Transaction Type</th>
+                    <th scope="col">Payment Type</th>
+                    <th scope="col">Cheque Number</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -80,50 +80,12 @@
                 // {data:'id',name:'id'},
                 {data:'DT_RowIndex',name:'DT_RowIndex'},
                 {data: 'date', name: 'date',orderable: true, searchable: true},
-                {data: 'accountinfo', name: 'accountinfo',orderable: true, searchable: true},
+                {data: 'account_id', name: 'account_id',orderable: true, searchable: true},
                 {data: 'amount', name: 'amount',orderable: true, searchable: true},
-                {data: 'purpose', name: 'purpose',orderable: true, searchable: true},
-                {data: 'remarks', name: 'remarks',orderable: true, searchable: true},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
+                {data: 'transaction_type', name: 'transaction_type',orderable: true, searchable: true},
+                {data: 'payment_type', name: 'payment_type',orderable: true, searchable: true},
+                {data: 'cheque_number', name: 'cheque_number',orderable: true, searchable: true},
             ]
         });
-
-        // delete Confirm
-        function showDeleteConfirm(id)
-        {
-            event.preventDefault();
-            swal({
-                title: `Are you sure?`,
-                text: 'You want to delete this transaction ?',
-                buttons: true,
-                dangerMode: true,
-            }).then((willDelete) => {
-                if (willDelete) {
-                    deleteItem(id);
-                }
-            });
-        }
-
-        // Delete Button
-        function deleteItem(id)
-        {
-            var url = '{{ route("admin.transaction.destroy",":id") }}';
-            $.ajax({
-                type: "DELETE",
-                url: url.replace(':id', id ),
-                success: function (resp) {
-                    // Reloade DataTable
-                    $('.data-table').DataTable().ajax.reload();
-                    if (resp.success === true) {
-                        // show toast message
-                        toastr.success(resp.message);
-                    }
-                }, // success end
-                error: function (error) {
-                    location.reload();
-                }
-            })
-        }
-
     </script>
 @endpush

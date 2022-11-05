@@ -22,3 +22,6 @@ use App\Http\Controllers\AttendenceController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
+// Route::get('/admin', [DashboardController::class, 'index2'])->name('dashboard2');

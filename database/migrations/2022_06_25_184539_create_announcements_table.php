@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('announcements', function (Blueprint $table) {
             $table->id();
-            $table->longText('batch_id');
+            $table->json('batch_id');
             $table->string('title');
-            $table->longText('description')->nullable();
-            $table->boolean('status')->comment('1 = Active / 0 = Deactivate')->default('1');
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->text('note')->nullable();
+            $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

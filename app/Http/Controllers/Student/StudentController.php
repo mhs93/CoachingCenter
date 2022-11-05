@@ -29,10 +29,12 @@ class StudentController extends Controller
     {
         try {
             $data = Student::with(['batch' => function ($query) {
-                $query->select('id', 'name');
-            }])
+                    $query->select('id', 'name');
+                }])
                 ->select('id', 'name', 'reg_no', 'email', 'batch_id', 'status')
-                ->orderBy('id', 'DESC')->get();
+                ->orderBy('id', 'DESC')
+                ->get();
+
             return DataTables::of($data)->addIndexColumn()
                 //status
                 ->addColumn('status', function ($data) {
@@ -61,13 +63,13 @@ class StudentController extends Controller
                 //Action
                 ->addColumn('action', function ($data) {
                     if (Auth::user()->can('student_profile')) {
-                        $profileShow = '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
+                        $profileShow = '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class=\'bx bxs-low-vision\'></i></a>';
                     } else {
                         $profileShow = '';
                     }
 
                     if (Auth::user()->can('student_edit')) {
-                        $profileEdit = '<a href="' . route('admin.students.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>';
+                        $profileEdit = '<a href="' . route('admin.students.edit', $data->id) . '" class="btn btn-sm btn-warning" title="edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     } else {
                         $profileEdit = '';
                     }
@@ -77,13 +79,18 @@ class StudentController extends Controller
                         $profileDelete = '';
                     }
                     // Change Password
-                    if (Auth::user()->can('student_delete')) {
-                        // $chnagePassword = '<a class="btn btn-sm btn-success text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
-                        $chnagePassword = '<a href="' . route('admin.students.password', $data->id) . '" class="btn btn-sm btn-info"><i class="cis-key"></i></a>';
+                    if (Auth::user()->can('student_password')) {
+                        $changePassword = '<a href="' . route('admin.students.password', $data->id) . '" class="btn btn-sm btn-info" title="change password"><i class="bx bxs-key"></i></a>';
                     } else {
-                        $chnagePassword = '';
+                        $changePassword = '';
                     }
-                    return '<div class = "btn-group">'. $profileShow . $profileEdit . $profileDelete . $chnagePassword .'</div>';
+
+                    if (Auth::user()->can('student_payment')) {
+                        $payment = '<a href="' . route('admin.student.payment', $data->id) . '" class="btn btn-sm btn-success" title="payment"><i class="bx bx-dollar-circle"></i></a>';
+                    } else {
+                        $payment = '';
+                    }
+                    return '<div class = "btn-group">'. $profileShow . $profileEdit . $profileDelete . $changePassword . $payment .'</div>';
                 })
                 ->rawColumns(['action', 'status'])
                 ->make(true);
@@ -92,7 +99,8 @@ class StudentController extends Controller
         }
     }
 
-    //  // Change Password for Admin
+
+    // Change Password for Admin
     public function password($id){
         $student = Student::findOrFail($id);
         return view('dashboard.students.changepassword', compact('student'));
@@ -117,7 +125,6 @@ class StudentController extends Controller
 
     // Change Password for Student
     public function studentPassword(){
-        // return view('dashboard.students.stuchangepassword', compact('student'));
         return view('dashboard.students.stuchangepassword');
     }
 
@@ -134,8 +141,11 @@ class StudentController extends Controller
                 return redirect()->route('admin.students.index')
                 ->with('t-success', 'Password Updated Successfully');
             } else {
-                return redirect()->route('admin.password')->with('t-success', 'Current password does not match your old password...Please try again...');
+                return redirect()->route('admin.password')->with('t-danger', 'Current password does not match your old password...Please try again...');
+//                return redirect()->route('admin.password')->with('errors', 'Current password does not match your old password...Please try again...');
+
             }
+
         }catch (\Exception $exception){
             return $this->sendError('Password change error', ['error' => $exception->getMessage()]);
         }
@@ -158,15 +168,17 @@ class StudentController extends Controller
             $batches = Batch::where('status', 1)
                 ->select('id', 'name')
                 ->get();
-            $latestReg = Student::latest()->first()->reg_no ?? "STD_1000";
-            $expReg = explode("_", $latestReg);
-            if (!$latestReg) {
-                $latestReg = 'STD_' . 10001;
-            } else {
-                $sum = $expReg[1] + 1;
-                $latestReg = 'STD_' . $sum;
-            }
-            return view('dashboard.students.create', compact('batches', 'latestReg'));
+              $latestReg = Student::latest()->first()->reg_no ?? "STD_1000";
+              $expReg = explode("_", $latestReg);
+              if (!$latestReg) {
+                  $latestReg = 'STD_' . 10001;
+              } else {
+                  $sum = $expReg[1] + 1;
+                  $latestReg = 'STD_' . $sum;
+
+              }
+              return view('dashboard.students.create', compact('batches', 'latestReg'));
+//            return view('dashboard.students.create', compact('batches'));
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', $e->getMessage());
@@ -187,6 +199,7 @@ class StudentController extends Controller
             $student = new Student();
             $student->name = $request->name;
             $student->reg_no = $request->reg_no;
+            // $student->reg_no = '1234';
             $student->email = $request->email;
             $student->batch_id = $request->batch_id;
             $student->gender = $request->gender;
@@ -209,12 +222,11 @@ class StudentController extends Controller
             $student->created_by = Auth::id();
             $student->save();
 
+
             $user = new User();
             $user->student_id = $student->id;
             $user->name = $request->first_name . ' ' . $request->last_name;
-            // $user->password = Hash::make($request->password);
             $user->password = Hash::make("student");
-            // $user->password = "student";
             $user->email = $request->email;
             $user->type = 2;
             $user->save();

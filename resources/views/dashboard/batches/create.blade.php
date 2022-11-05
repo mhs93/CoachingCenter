@@ -15,6 +15,9 @@
         .dropify-wrapper .dropify-message p {
             font-size: initial;
         }
+        .ck-editor__editable {
+            min-height: 200px;
+        }
     </style>
 @endpush
 
@@ -34,7 +37,7 @@
                             <div class="form-group">
                                 <input type="hidden" name="batch_id" id="batchId">
                                 <div class="form-group">
-                                    <label for="batchname">Batch name</label>
+                                    <label for="batchname"><b>Batch Name</b>  <span style="color: red">*</span></label>
                                     <input type="text" value="{{ old('name') }}" class="form-control my-1" id="batchName" name="name" placeholder="Enter Batch Name" >
                                     <div id="validName" class="text-danger"></div>
                                 </div>
@@ -43,7 +46,7 @@
 
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="subject_id">Select subjects</label>
+                                <label for="subject_id"> <b>Select Subjects</b> <span style="color: red">*</span></label>
                                 <select name="subject_id[]" class="multi-subject form-control @error('subject_id') is-invalid @enderror" multiple="multiple" id="mySelect2">
                                     <option value="0">
                                         All Subject
@@ -63,25 +66,25 @@
                                 @enderror
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="batch_fee">Batch fee</label>
-                                <input type="text" class="form-control my-1" id="batch_fee" value="{{ old('batch_fee') }}"  name="batch_fee" placeholder="Enter Batch Fee" >
+                                <label for="batch_fee"><b>Batch fee</b> <span style="color: red">*</span></label>
+                                <input type="number" class="form-control my-1" id="batch_fee" value="{{ old('batch_fee') }}"  name="batch_fee" placeholder="Enter Batch Fee" >
                                 @error('batch_fee')
-                                <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="start_time">Start Time</label>
-                                <input type="datetime-local" name="start_time" class="form-control" placeholder="Start Time" value="{{ old('start_time') }}">
+                                <label for="start_time"><b>Start Date</b> <span style="color: red">*</span></label>
+                                <input type="date" name="start_time" class="form-control" placeholder="Start Time" value="{{ old('start_time') }}">
                                 @error('start_time')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="end_time">End Time</label>
-                                <input type="datetime-local" name="end_time" class="form-control" placeholder="End Time" value="{{ old('end_time') }}">
+                                <label for="end_time"><b>End Date</b> <span style="color: red">*</span></label>
+                                <input type="date" name="end_time" class="form-control" placeholder="End Time" value="{{ old('end_time') }}">
                                 @error('end_time')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -89,8 +92,8 @@
                         </div>
 
                         <div class="form-group mt-2">
-                            <label for="description">Batch Note</label>
-                            <textarea name="note" class="form-control" id="note" cols="40" rows="6"></textarea>
+                            <label for="description"><b>Batch Note</b></label>
+                            <textarea name="note" class="form-control" id="note" rows="10"></textarea>
                             @error('note')
                             <span class="text-danger" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -117,14 +120,6 @@
             });
         </script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
-            integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script>
-            $(document).ready(function() {
-                $('.dropify').dropify();
-            });
-        </script>
 
         {{-- Ckeditor5 --}}
         <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
@@ -132,6 +127,7 @@
             ClassicEditor
                 .create(document.querySelector('#note'), {
                     removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
+
                 })
                 .catch(error => {
                     console.error(error);

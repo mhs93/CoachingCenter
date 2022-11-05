@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Batch;
-use App\Models\Subject;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Batch;
+use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,9 +18,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
-        Batch::factory(15)->create();
         Subject::factory(8)->create();
+        Batch::factory(5)->create();
+        Student::factory(8)->create();
+        //Teacher::factory(8)->create();
+        //Exam::factory(8)->create();
+        //Mark::factory(8)->create();
 
         $this->call([
             PermissionSeeder::class,

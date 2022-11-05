@@ -11,13 +11,12 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment('Exam name');
-            $table->tinyInteger('status')->comment('1 = Active / 0 = Deactivate')->default('1');
-            $table->longText('batch_id');
-            $table->longText('subject_id');
-            $table->longText('start_time')->comment('Exam start date and time');
-            $table->longText('end_time')->comment('Exam end date and time');
-            $table->string('note')->nullable();
+            $table->string('name');
+            $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
+            $table->text('note')->nullable();
+            $table->integer('mark_status')->comment('1 = Mark Given / 0 = No Mark Given')->default('0');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

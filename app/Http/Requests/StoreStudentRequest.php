@@ -13,7 +13,7 @@ class StoreStudentRequest extends FormRequest
     {
         return [
             'name'                  => 'required|string',
-            'reg_no'                => 'required|string|unique:students',
+            // 'reg_no'                => 'required|string|unique:students',
             'email'                 => 'required|email|unique:students',
             'gender'                => 'required|in:1,2',
             'current_address'       => 'required|string',
@@ -30,7 +30,6 @@ class StoreStudentRequest extends FormRequest
     public function messages(){
         return [
             'batch_id.required'             => 'Batch is required',
-            'batch_id.integer'              => 'Batch is required',
             'monthly_fee.numeric'           => 'Monthly fee can not be string, Please give numeric number',
         ];
     }

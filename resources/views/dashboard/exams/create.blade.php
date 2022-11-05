@@ -6,13 +6,9 @@
     {{-- Select2 CDN --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"
-        integrity="sha512-EZSUkJWTjzDlspOoPSpUFR0o0Xy7jdzW//6qhUkoZ9c4StFkVsp9fbbd0O06p9ELS3H486m4wmrCELjza4JEog=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     <style>
-        .dropify-wrapper .dropify-message p {
-            font-size: initial;
+        .ck-editor__editable[role="textbox"] {
+            min-height: 320px;
         }
     </style>
 @endpush
@@ -31,9 +27,8 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <input type="hidden" name="batch_id" id="batchId">
                                 <div class="form-group">
-                                    <label for="batchname">Exam name</label>
+                                    <label for="batchname"><b>Exam name</b> <span style="color: red">*</span></label>
                                     <input type="text" class="form-control my-1" id="batchName" name="name" placeholder="Enter Exam Name" >
                                     <div id="validName" class="text-danger"></div>
                                 </div>
@@ -41,28 +36,23 @@
 
                             <div class="form-group col-md-6">
                                 <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <select name="status" class="form-control" id="batchStatus">
-                                        <option>Select status</option>
-                                        <option value="1">Active</option>
+                                    <label for="status"><b>Status</b> <span style="color: red">*</span></label>
+                                    <select name="status" id="status"  class="form-control @error('status') is-invalid @enderror">
+                                        <option value="1" selected>Active</option>
                                         <option value="0">Deactive</option>
                                     </select>
-                                    <div id="validStatus" class="text-danger"></div>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Dependancy Start --}}
-                        <div class="form-group mt-6">
-                            <label for="batch">Select Batch</label>
+                        <div class="form-group mt-3">
+                            <label for="batch"> <b>Select Batch</b> <span style="color: red">*</span></label>
                             <select name="batch_id[]" id="batchIdEx"
                                 class="multi-batch mySelect2 form-control @error('batch_id') is-invalid @enderror"
                                 multiple="multiple">
-                                {{-- <option value="0">
-                                    All Batch
-                                </option> --}}
                                 @forelse ($batches as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    <option vname="{{$item->name}}" value="{{ $item->id }}">{{ $item->name }}</option>
                                 @empty
                                     <option>No batch</option>
                                 @endforelse
@@ -76,20 +66,11 @@
 
                         {{-- Sub-Form Start --}}
                         <div class="form-group mt-3 col-md-12" id="subForm" >
-                            <table class="table-bordered col-md-12 mt-6">
-                                <thead align="center">
-                                    <th>Subjects</th>
-                                    <th>Exam Date and Time</th>
-                                </thead>
-                                <tbody id="subjectEx">
-
-                                </tbody>
-                            </table>
                         </div>
                         {{-- Sub-Form End --}}
 
                         <div class="form-group mt-3">
-                            <label for="note">Exam Note</label>
+                            <label for="note"><b>Exam Note</b> </label>
                             <textarea name="note" class="form-control" id="note" cols="40" rows="6"></textarea>
                             @error('note')
                             <span class="text-danger" role="alert">
@@ -111,18 +92,8 @@
     @push('js')
         {{-- Select2 CDN --}}
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script>
-            $(document).ready(function() {
-
-                $('.multi-batch').select2();
-                $('.multi-subject').select2();
-            });
-        </script>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
-            integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
-            crossorigin="anonymous" referrerpolicy="no-referrer">
-        </script>
+        {{-- Ckeditor5 --}}
+        <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
 
         <script>
             $.ajaxSetup({
@@ -130,61 +101,36 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
             $('#subForm').hide();
             $(document).ready(function() {
                 // Dependancy for batch and subjects
                 $('#batchIdEx').on('change', function() {
                     $('#subForm').show();
                     let batch_id = $(this).val();
-                    $("#subjectEx").empty();
+                    $("#subForm").empty();
                     $.ajax({
                         url: "{{ route('admin.exams.getSub') }}",
                         type: 'post',
                         data: { batchId: batch_id},
                         success: function(response) {
-                            console.log(response);
-                            $.each(response, function(key, value) {
-                                console.log(value.id)
-                                $("#subjectEx").append('<tr align="center">'+
-                                                            '<td>'+value.name+
-                                                                '<input type="hidden" name="subject_id[]" id="subjectId" value="'+value.id+'">'+
-                                                            '</td>' +
-                                                            '<td>' +
-                                                                '<div class="row">'+
-                                                                    '<div class="form-group col-md-6">'+
-                                                                        '<h6>Exam Start Time</h6>'+
-                                                                        '<input type="datetime-local" name="start_time[]" class="form-control" placeholder="Start Time">'+
-                                                                    '</div>'+
-                                                                    '<div class="form-group col-md-6">'+
-                                                                        '<h6>Exam End Time</h6>'+
-                                                                        '<input type="datetime-local" name="end_time[]" class="form-control" placeholder="End Time">'+
-                                                                        '@error("end_time")'+
-                                                                            '<div class="text-danger">{{ $message }}</div>'+
-                                                                        '@enderror'+
-                                                                    '</div>'+
-                                                                '</div>'+
-                                                            '</td>'+
-                                                        '</tr>');
-                            });
+                            $('#subForm').html(response);
                         }
                     });
                 });
                 // Dependancy End
 
+                $('.multi-batch').select2();
+                $('.multi-subject').select2();
 
-            });
-        </script>
-
-        {{-- Ckeditor5 --}}
-        <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
-        <script>
-            ClassicEditor
-                .create(document.querySelector('#note'), {
+                // CKEditor
+                ClassicEditor.create(document.querySelector('#note'), {
                     removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
                 })
                 .catch(error => {
                     console.error(error);
                 });
+            });
         </script>
     @endpush
 @endsection

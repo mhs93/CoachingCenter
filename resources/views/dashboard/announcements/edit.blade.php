@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .ck-editor__editable[role="textbox"] {
-                min-height: 320px;
+                min-height: 150px;
             }
     </style>
 @endpush
@@ -33,31 +33,24 @@
                 @csrf
                 @method('PUT')
                 <div class="row">
-                    {{-- <div class="form-group col-md-6">
-                        <label for="batch">Select Batch</label>
-                        <select name="batch_id" id="batch" class="form-control">
-                            <option>Select</option>
-                            @forelse ($batches as $batche)
-                                <option value="{{ $batche->id }}" {{ $announcement->batch_id == $batche->id ? 'selected' : '' }}>
-                                    {{ $batche->name }}</option>
-                            @empty
-                                <option>No batch</option>
-                            @endforelse
-                        </select>
-                        @error('batch_id')
+                    {{-- Title --}}
+                    <div class="form-group col-md-6">
+                        <label for="title"><b>Title</b> </label>
+                        <input type="text" name="title" class="form-control" placeholder="Enter Titile" value="{{ $announcement->title }}">
+                        @error('title')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
-                    </div> --}}
+                    </div>
 
-                    {{-- Batch Checkbox --}}
+                    {{-- Batch Select --}}
                     @php
-                        $subjectIds = json_decode($announcement->batch_id);
+                        $batchIds = json_decode($announcement->batch_id);
                     @endphp
-                    <div class="form-group mt-3 ">
-                        <label for="batch_id">Select subject</label>
+                    <div class="form-group col-md-6">
+                        <label for="batch_id"><b>Select Batch</b></label>
                         <select name="batch_id[]" class="multi-subject form-control @error('batch_id') is-invalid @enderror" multiple="multiple" id="mySelect2">
                             <option value="0"
-                                @if (in_array("0", $subjectIds))
+                                @if (in_array("0", $batchIds))
                                     selected
                                 @endif
                             >
@@ -65,7 +58,7 @@
                             </option>
                             @forelse ($batches as $batch)
                                 <option value="{{ $batch->id }}"
-                                    @if(in_array($batch->id, $subjectIds))
+                                    @if(in_array($batch->id, $batchIds))
                                         {{ "selected" }}
                                     @endif
                                 >
@@ -82,22 +75,13 @@
                             </span>
                         @enderror
                     </div>
-
-                    {{-- Title --}}
-                    <div class="form-group col-md-6">
-                        <label for="title">Title</label>
-                        <input type="text" name="title" class="form-control" placeholder="Enter Titile" value="{{ $announcement->title }}">
-                        @error('title')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
                 </div>
 
-                {{-- Description --}}
+                {{-- note --}}
                 <div class="form-group mt-2">
-                    <label for="description">Description</label>
-                    <textarea class="form-control" name="description" id="description">{{ $announcement->description }}</textarea>
-                    @error('description')
+                    <label for="note"><b>Description</b></label>
+                    <textarea class="form-control" name="note" id="note">{{ $announcement->note }}</textarea>
+                    @error('note')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
@@ -111,24 +95,24 @@
     <div class="mb-5"></div>
 
     @push('js')
+
         {{-- Select2 CDN --}}
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        {{-- Ckeditor CDN --}}
+        <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
+
         <script>
             $(document).ready(function() {
                 $('.multi-subject').select2();
-            });
-        </script>
 
-        {{-- Ckeditor CDN --}}
-        <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
-        <script>
-            ClassicEditor
-                .create(document.querySelector('#description'), {
+                ClassicEditor
+                .create(document.querySelector('#note'), {
                     removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
                 })
                 .catch(error => {
                     console.error(error);
                 });
+            });
         </script>
     @endpush
 

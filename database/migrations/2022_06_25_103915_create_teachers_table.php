@@ -15,18 +15,18 @@ return new class extends Migration
             $table->id();
             $table->longText('subject_id');
             $table->string('name');
-            $table->string('reg_no')->comment('This is teacher registration number (uniq)');
+            $table->string('reg_no');
             $table->string('email');
             $table->integer('gender');
             $table->string('current_address');
             $table->string('permanent_address');
             $table->string('contact_number');
-            $table->text('profile');
+            $table->string('profile');
             $table->boolean('status')->comment('1 = Active / 0 = Deactivate')->default('1');
             $table->string('monthly_salary')->nullable();
-            $table->string('note')->nullable();
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->text('note')->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

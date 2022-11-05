@@ -58,15 +58,9 @@
                         </div>
 
                         <div class="form-group mt-3 ">
-                            <label for="bank_id">Bank Name</label>
-                            <select name="bank_id" id="bank_id"
-                                    class="form-select @error('bank_id') is-invalid @enderror">
-                                <option value="">--Select Bank--</option>
-                                @foreach($banks as $bank)
-                                    <option value="{{ $bank->id }}" {{ $bank->id == $account->bank_id ? 'selected' : ''  }}>{{$bank->bank_name}}</option>
-                                @endforeach
-                            </select>
-                            @error('bank_id')
+                            <label for="bank_name">Bank Name</label>
+                            <input type="text" name="bank_name" id="bank_name" class="form-control @error('bank_name') is-invalid @enderror" value="{{ $account->bank_name }}" >
+                            @error('bank_name')
                             <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                             @enderror
                         </div>

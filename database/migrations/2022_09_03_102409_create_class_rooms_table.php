@@ -16,18 +16,19 @@ return new class extends Migration
 
         Schema::create('class_rooms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_id')->constrained('batches');
-            $table->foreignId('subject_id')->constrained('subjects');
+            $table->integer('batch_id');
+            $table->integer('subject_id');
             $table->string('class_type');
-
-            $table->string('class_link')->nullable()->comment('class video link');
-            $table->string('access_key')->nullable()->comment('access key for watch class video');
-            $table->string('duration')->comment('class duration');
-            $table->timestamp('start_time')->nullable()->comment('class start date and time');
-            $table->timestamp('end_time')->nullable()->comment('class end time');
-            $table->boolean('status')->comment('1 = Active / 0 = Deactivate')->default('1');
-            $table->foreignId('created_by')->nullable();
-            $table->foreignId('updated_by')->nullable();
+            $table->string('class_link')->nullable();
+            $table->string('access_key')->nullable();
+            $table->string('duration');
+            $table->string('date');
+            $table->string('start_time');
+            $table->string('end_time');
+            $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
+            $table->integer('created_by');
+            $table->integer('updated_by');
+            $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

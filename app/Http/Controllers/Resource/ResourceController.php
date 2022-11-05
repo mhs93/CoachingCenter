@@ -4,11 +4,13 @@
 namespace App\Http\Controllers\Resource;
 
 use App\Models\Batch;
+use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -17,30 +19,51 @@ class ResourceController extends Controller
     public function getList()
     {
         try {
-            $data = Resource::select('id', 'title', 'batch_id', 'status')
-                ->orderBy('id', 'DESC')->get();
+            $user = User::findOrFail(Auth::id());
+            if($user->type == '0'){
+                $data = Resource::select('id', 'title', 'batch_id', 'status')
+                        ->orderBy('id', 'DESC')
+                        ->get();
+            }
+            else{
+                if($user->type == '1'){
+                    $data = Resource::select('id', 'title', 'batch_id', 'status')
+                            ->orderBy('id', 'DESC')
+                            ->get();
+                }
+                else{
+                    $student = Student::where('id', $user->student_id)->first();
+                    $data = Resource::select('id', 'title', 'batch_id', 'status')
+                            ->orderBy('id', 'DESC')
+                            ->get();
+                    $resources = [];
+                    foreach($data as $item){
+                        $batchIds = json_decode($item->batch_id);
+                        if(in_array($student->batch_id, $batchIds)){
+                            array_push($resources, $item);
+                        }
+                    }
+                    $data = $resources;
+                }
+            }
 
             return DataTables::of($data)->addIndexColumn()
                 //batch
                 ->addColumn('batch_id', function ($data){
-                    $subjectIds='';
+                    $batchIds='';
                     $batchSubs= '';
                     if($data->batch_id){
-                        $subjectIds = json_decode($data->batch_id);
-                        if(in_array("0", $subjectIds)){
-                            // $subjects = Subject::get(['id','name']);
-                            $subjects = Batch::all();
-                            foreach($subjects as $key=>$item) {
-                                $batchSubs .= $item->name.", ";
-                            }
+                        $batchIds = json_decode($data->batch_id);
+                        if(in_array("0", $batchIds)){
+                            $batchSubs .= "All Batch".", ";
                         }else{
-                            $subjects = Batch::whereIn('id',$subjectIds)->get(['id','name']);
-                            foreach($subjects as $key=>$item) {
+                            $batches = Batch::whereIn('id',$batchIds)->get(['id','name']);
+                            foreach($batches as $key=>$item) {
                                 $batchSubs .= $item->name.", ";
                             }
                         }
                     }else{
-                        $subjects='';
+                        $batches='';
                     }
                     // Remove last 2 elements from the $batchSubs string
                     $batchSubs = substr($batchSubs, 0, -2);
@@ -50,7 +73,7 @@ class ResourceController extends Controller
 
                 //Status
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('batches_edit')){
+                    if(Auth::user()->can('resources_list')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -74,12 +97,13 @@ class ResourceController extends Controller
 
                 //action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('batches_delete')){
-                        $showDetails = '<a href="' . route('admin.resources.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
+                    if (Auth::user()->can('upload_show')){
+
+                        $showDetails = '<a href="' . route('admin.resources.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
-                    if (Auth::user()->can('batches_delete')){
+                    if (Auth::user()->can('upload_delete')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';
@@ -93,16 +117,22 @@ class ResourceController extends Controller
         }
     }
 
-    public function getState(Request $request)
-    {
-        $array = [];
-        $batchs = Batch::whereIn('id', $request->batchId)->select('subject_id')->get();
-        foreach($batchs as $batch) {
-            $array[] = json_decode($batch->subject_id);
-        }
-        $batchIds = array_unique(call_user_func_array('array_merge', $array));
 
-        $subjects = Subject::whereIn('id', $batchIds)->get();
+    // Get Subject Batch Wise
+    public function getSubjects(Request $request)
+    {
+        $subjectIds = [];
+        if(in_array("0", $request->batchId)){
+            $batches = Batch::all();
+        }else{
+            $batches = Batch::whereIn('id', $request->batchId)->select('subject_id')->get();
+        }
+        foreach($batches as $batch) {
+            $subjectIds[] = json_decode($batch->subject_id);
+        }
+        $uniqueSubjectIds = array_unique(call_user_func_array('array_merge', $subjectIds));
+
+        $subjects = Subject::whereIn('id', $uniqueSubjectIds)->get();
         return $subjects;
     }
 
@@ -126,6 +156,7 @@ class ResourceController extends Controller
                 'subject_id' => 'required',
                 'title' => 'required',
                 'batch_id' => 'required',
+                'subject_id' => 'required',
                 'file' => 'required|mimes:png,jpg,jpeg,csv,txt,xlx,xls,pdf,docx|max:4096'
             ],
             [
@@ -135,12 +166,23 @@ class ResourceController extends Controller
                 'file.mimes' => 'File must be png, jpg, jpeg, csv, txt, xlx, xls, pdf, docx',
             ]
         );
+
         DB::beginTransaction();
         try {
             $resource = new Resource();
             $resource->title = $request->title;
             $resource->subject_id = json_encode($request->subject_id);
-            $resource->batch_id = json_encode($request->batch_id);
+
+            if (in_array("0", $request->batch_id)){
+                $resource->batch_id = json_encode($request->batch_id);
+            }
+            else{
+                $resource->batch_id = json_encode($request->batch_id);
+
+            }
+
+
+            // $resource->batch_id = json_encode($request->batch_id);
             $resource->note = $request->note;
             $resource->file = $request->file;
 
@@ -228,7 +270,7 @@ class ResourceController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+//
     }
 
     public function destroy($id)

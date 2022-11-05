@@ -9,6 +9,9 @@
         .dropify-wrapper .dropify-message p {
             font-size: initial;
         }
+        .ck-editor__editable[role="textbox"] {
+            min-height: 150px;
+        }
     </style>
 
 @endpush
@@ -30,12 +33,12 @@
         <div class="col-md-3">
             <div class="list-group">
                 <a href="{{route('admin.setting.general')}}" class="list-group-item list-group-item-action {{ Route::is('admin.setting.general') ? 'active' : '' }}">
-                    General
+                    General Setting
                 </a>
-                <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
-                <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
-                <a href="#" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
-                <a href="#" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>
+                <a href="#" class="list-group-item list-group-item-action">Other Setting</a>
+                <a href="#" class="list-group-item list-group-item-action">Other Setting</a>
+                <a href="#" class="list-group-item list-group-item-action">Other Setting</a>
+                <a href="#" class="list-group-item list-group-item-action disabled">Other Setting</a>
             </div>
         </div>
 
@@ -49,10 +52,8 @@
                         @csrf
                         @method('PUT')
                         <div class="form-group my-3">
-                            <label for="site_title">Site Title</label>
+                            <label for="site_title"><b>Site Title</b></label>
                             <input type="text" name="site_title" id="site_title" class="form-control" value="@isset($setting->site_title) {{ $setting->site_title }} @endisset">
-
-
                             @error('site_title')
                                 <span class="text-danger" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -61,7 +62,7 @@
                         </div>
 
                         <div class="form-group my-3">
-                            <label for="logo">Logo (Only image are allowed)</label>
+                            <label for="logo"> <b>Logo (Only image are allowed)</b> </label>
                             @if (isset($setting->logo))
                                 <input type="file" class="form-control dropify" data-default-file="{{ asset('images/setting/logo/'.$setting->logo) }}" name="logo" id="logo">
                             @else
@@ -76,7 +77,7 @@
                         </div>
 
                         <div class="form-group my-3">
-                            <label for="favicon">Favicon (Only image are allowed, size: 33 x 33)</label>
+                            <label for="favicon"><b>Favicon (Only image are allowed, size: 33 x 33)</b> </label>
                             @if (isset($setting->favicon))
                                 <input type="file" class="form-control dropify" data-default-file="{{ asset('images/setting/favicon/'.$setting->favicon) }}" name="favicon" id="favicon">
                             @else
@@ -91,7 +92,7 @@
                         </div>
 
                         <div class="form-group my-3">
-                            <label for="site_address">Site Address</label>
+                            <label for="site_address"> <b>Site Address</b> </label>
                             <input type="text" name="site_address" id="site_address" class="form-control" value="@isset($setting->site_address) {{ $setting->site_address }} @endisset">
 
 
@@ -103,10 +104,8 @@
                         </div>
 
                         <div class="form-group my-3">
-                            <label for="site_description">Site Description</label>
+                            <label for="site_description"> <b>Site Description</b> </label>
                             <textarea name="site_description" class="form-control" id="site_description" cols="30" rows="10">@isset($setting->site_description) {{ $setting->site_description }} @endisset</textarea>
-
-
                             @error('site_description')
                                 <span class="text-danger" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -127,10 +126,22 @@
 @push('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
         integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
+
     <script>
         $(document).ready(function() {
             $('.dropify').dropify();
         });
+
+        ClassicEditor
+            .create(document.querySelector('#site_description'), {
+                removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed'],
+            })
+            .catch(error => {
+                console.error(error);
+            });
     </script>
 @endpush

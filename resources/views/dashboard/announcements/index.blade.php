@@ -30,7 +30,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Announcements lists</p>
             @can('announcement_create')
-                <a href="{{ route('admin.announcements.create') }}" class="btn btn-sm btn-info">
+                <a href="{{ route('admin.announcements.create') }}" class="btn btn-sm btn-info" title="Create">
                     Create Announcements
                 </a>
             @endcan

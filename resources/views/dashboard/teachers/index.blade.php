@@ -9,7 +9,6 @@
         table {
             width: 100%;
         }
-
         .paging_simple_numbers,
         .dataTables_filter {
             float: right;

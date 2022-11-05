@@ -26,7 +26,11 @@ class BalanceSheetController extends Controller
                 return DataTables::of($transaction)
                     ->addIndexColumn()
                     ->addColumn('bankinfo', function ($transaction) {
-                        return $transaction->account->account_no . ' | ' . $transaction->account->account_holder;
+                        if ($transaction->account_id == 0){
+                            return 'Cash';
+                        }else{
+                            return $transaction->account->account_no . ' | ' . $transaction->account->account_holder;
+                        }
                     })
                     ->addColumn('debit', function ($transaction) use (&$debit) {
 
