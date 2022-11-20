@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'student payment edit')
+@section('title', 'Teacher Payment Edit')
 
 @push('css')
     <style>
@@ -24,7 +24,7 @@
                     <input type="hidden" name="std_id" value="{{ $tchpayment->tch_id }}">
                     <div class="row">
                         <div class="col-md-3 form-group">
-                            <label for="month">Month and Year<span class="text-red-600 @error('month') is-invalid @enderror">*</span></label>
+                            <label for="month">Month and Year<span class="text-danger @error('month') is-invalid @enderror">*</span></label>
                             <input type="month" class="form-control" name="month" required value="{{$tchpayment->month}}">
                             @error('month')
                             <span class="invalid-feedback" role="alert">
@@ -46,7 +46,7 @@
                             @enderror
                         </div>
                         <div class="col-md-3 form-group">
-                            <label for="discount_amount">Discount</label>
+                            <label for="discount_amount">Deduction Amount</label>
                             <input name="discount_amount" oninput="discountAmount()" id="discount_amount" type="number" value="{{$tchpayment->discount_amount}}" class="form-control @error('discount_amount') is-invalid @enderror">
                             @error('discount_amount')
                             <span class="invalid-feedback" role="alert">

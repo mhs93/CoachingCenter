@@ -18,9 +18,10 @@ return new class extends Migration
             $table->integer('exam_id');
             $table->json('batch_id');
             $table->json('subject_id');
-            $table->string('start_date');
+            $table->string('date');
+            // $table->string('start_date');
             $table->string('start_time');
-            $table->string('end_date');
+            // $table->string('end_date');
             $table->string('end_time');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

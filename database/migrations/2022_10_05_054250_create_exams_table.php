@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('name');
             $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
             $table->text('note')->nullable();
+            $table->string('start_date');
+            $table->string('end_date');
             $table->integer('mark_status')->comment('1 = Mark Given / 0 = No Mark Given')->default('0');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

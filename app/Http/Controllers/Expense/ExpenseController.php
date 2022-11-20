@@ -36,6 +36,13 @@ class ExpenseController extends Controller
                         return 'Cash';
                     }
                 })
+                ->addColumn('cheque_number',function ($data){
+                    if ($data->cheque_number == NULL){
+                        return "--";
+                    }else{
+                        return $data->cheque_number;
+                    }
+                })
                 ->addColumn('action', function ($data) {
                     if (Auth::user()->can('expense_show')){
                         $showDetails = '<a href="' . route('admin.expense.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
@@ -43,7 +50,7 @@ class ExpenseController extends Controller
                         $showDetails = '';
                     }
                     if (Auth::user()->can('expense_edit')){
-                        $expenseEdit = '<a href="' . route('admin.expense.edit', $data->id) . '" class="btn btn-sm btn-info" title="Edit"><i class=\'bx bx-edit\'></i></a>';
+                        $expenseEdit = '<a href="' . route('admin.expense.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bx-edit\'></i></a>';
                     }else{
                         $expenseEdit = '';
                     }
@@ -88,22 +95,26 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'expense_purpose' => 'required|string',
-            'amount' => 'required|integer',
-            'payment_type' => 'required',
-            'account_id' => 'nullable|integer',
-            'note' => 'nullable|string',
-            'cheque_number' => 'nullable|string'
+            'expense_purpose' =>   'required|string',
+            'amount'          =>   'required|integer',
+            'payment_type'    =>   'required',
+            'account_id'      =>   'nullable',
+            'note'            =>   'nullable|string',
+            'cheque_number'   =>   'nullable|string'
         ]);
+
+        if($request->amount > $request->current_balance){
+            return redirect()->back()->with('error', "Your expense amount is more than available amount");
+        }
 
         try{
             DB::beginTransaction();
             $expense = new Expense();
-            $expense->expense_purpose = $request->expense_purpose;
-            $expense->amount = $request->amount;
-            $expense->payment_type = $request->payment_type;
+            $expense->expense_purpose   = $request->expense_purpose;
+            $expense->amount            = $request->amount;
+            $expense->payment_type      = $request->payment_type;
             if ($expense->payment_type == 1){
-                $expense->account_id = $request->account_id;
+                $expense->account_id    = $request->account_id;
                 $expense->cheque_number = $request->cheque_number;
             }else{
                 $expense->account_id = 0;
@@ -114,13 +125,13 @@ class ExpenseController extends Controller
             $expense->save();
 
             $transaction = new Transaction();
-            $transaction->date = Carbon::now();
-            $transaction->transaction_type = 2;
-            $transaction->expense_id = $expense->id;
-            $transaction->amount = $request->amount;
-            $transaction->payment_type = $request->payment_type;
+            $transaction->date              = Carbon::now();
+            $transaction->transaction_type  = 2;
+            $transaction->expense_id        = $expense->id;
+            $transaction->amount            = $request->amount;
+            $transaction->payment_type      = $request->payment_type;
             if ($transaction->payment_type == 1){
-                $transaction->account_id = $request->account_id;
+                $transaction->account_id    = $request->account_id;
                 $transaction->cheque_number = $request->cheque_number;
             }else{
                 $transaction->account_id = 0;
@@ -172,13 +183,17 @@ class ExpenseController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'expense_purpose' => 'required|string',
-            'amount' => 'required|integer',
-            'payment_type' => 'required',
-            'account_id' => 'nullable|integer',
-            'note' => 'nullable|string',
-            'cheque_number' => 'nullable|string'
+            'expense_purpose'   => 'required|string',
+            'amount'            => 'required|integer',
+            'payment_type'      => 'required',
+            'account_id'        => 'nullable',
+            'note'              => 'nullable|string',
+            'cheque_number'     => 'nullable|string'
         ]);
+
+        if($request->amount > $request->current_balance){
+            return redirect()->back()->with('error', "Your expense amount is more than available amount");
+        }
 
         try{
             DB::beginTransaction();
@@ -186,10 +201,10 @@ class ExpenseController extends Controller
             $transaction = Transaction::where('expense_id',$request->id)->first();
 
             $expense->expense_purpose = $request->expense_purpose;
-            $expense->amount = $request->amount;
-            $expense->payment_type = $request->payment_type;
+            $expense->amount          = $request->amount;
+            $expense->payment_type    = $request->payment_type;
             if ($request->payment_type == 1){
-                $expense->account_id = $request->account_id;
+                $expense->account_id    = $request->account_id;
                 $expense->cheque_number = $request->cheque_number;
             }else{
                 $expense->account_id = 0;
@@ -201,9 +216,10 @@ class ExpenseController extends Controller
 
             $transaction->date = Carbon::now();
             $transaction->transaction_type = 2;
-            $transaction->expense_id = $expense->id;
-            $transaction->amount = $request->amount;
-            $transaction->payment_type = $request->payment_type;
+            $transaction->expense_id       = $expense->id;
+            $transaction->amount           = $request->amount;
+            $transaction->payment_type     = $request->payment_type;
+
             if ($transaction->payment_type == 1){
                 $transaction->account_id = $request->account_id;
                 $transaction->cheque_number = $request->cheque_number;
@@ -211,6 +227,7 @@ class ExpenseController extends Controller
                 $transaction->account_id = 0;
                 $transaction->cheque_number = NULL;
             }
+
             $transaction->note = $request->note;
             $transaction->created_by = Auth::id();
             $transaction->update();

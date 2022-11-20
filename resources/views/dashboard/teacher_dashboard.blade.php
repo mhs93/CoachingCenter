@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Teacher Dashboard')
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb">
@@ -23,19 +23,9 @@
                         <svg class="icon">
                           <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-arrow-bottom"></use>
                         </svg></span></div>
-                        <div>Students</div>
-                        {{-- <div class="fs-4 fw-semibold"> {{ $totalStudent }} <span class="fs-6 fw-normal">(
-                        <svg class="icon">
-                          <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-arrow-bottom"></use>
-                        </svg>)</span></div>
-                        <div>Students</div> --}}
+                        <div style="font-size:30px;">Students</div>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-transparent text-white p-0" type="button" data-coreui-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-options"></use>
-                            </svg>
-                        </button>
                         <div class="dropdown-menu dropdown-menu-end"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
                     </div>
                 </div>
@@ -55,14 +45,9 @@
                         <svg class="icon">
                           <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-arrow-top"></use>
                         </svg></span></div>
-                        <div>Teacher</div>
+                        <div style="font-size:30px;">Teacher</div>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-transparent text-white p-0" type="button" data-coreui-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-options"></use>
-                            </svg>
-                        </button>
                         <div class="dropdown-menu dropdown-menu-end"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
                     </div>
                 </div>
@@ -82,14 +67,9 @@
                         <svg class="icon">
                           <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-arrow-top"></use>
                         </svg></span></div>
-                        <div>Batch</div>
+                        <div style="font-size:30px;">Batch</div>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-transparent text-white p-0" type="button" data-coreui-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-options"></use>
-                            </svg>
-                        </button>
                         <div class="dropdown-menu dropdown-menu-end"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
                     </div>
                 </div>
@@ -109,14 +89,9 @@
                         <svg class="icon">
                           <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-arrow-bottom"></use>
                         </svg></span></div>
-                        <div>Subject</div>
+                        <div style="font-size:30px;">Subject</div>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-transparent text-white p-0" type="button" data-coreui-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-options"></use>
-                            </svg>
-                        </button>
                         <div class="dropdown-menu dropdown-menu-end"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a></div>
                     </div>
                 </div>
@@ -127,7 +102,7 @@
         </div>
         <!-- /.col-->
 
-        
+
     </div>
     <!-- /.row-->
 @endsection

@@ -67,10 +67,10 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label for="batch_id"> Select Batch<span class="text-danger">*</span>
+                        <label for="batch_id"> <b>Select Batch</b><span class="text-danger">*</span>
                         </label>
                         <select name="batch_id" id="batch_id" class=" form-select form-control mt-1">
-                            <option value=""> Select Batch </option>
+                            <option value="">--Select Batch-- </option>
                             @foreach ($batches as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                             @endforeach
@@ -87,11 +87,11 @@
 
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label for="status"> Select Status<span class="text-danger">*</span>
+                        <label for="status"><b>Select Status</b> <span class="text-danger">*</span>
                         </label>
 
                         <select name="status" id="status" class="form-control mt-1">
-                            <option value=""> Select Status </option>
+                            <option value=""> --Select Status-- </option>
                             <option value="1">Active</option>
                             <option value="0" >Inactive</option>
                         </select>

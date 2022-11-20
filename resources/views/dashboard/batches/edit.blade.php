@@ -21,6 +21,7 @@
     </style>
 @endpush
 
+
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="d-flex align-items-center justify-content-between" style="width: 100%">
         <ol class="breadcrumb my-0 ms-2">
@@ -97,7 +98,7 @@
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="batch_fee"><b>Batch fee</b> <span style="color: red">*</span></label>
+                                <label for="batch_fee"><b>Batch fee</b></label>
                                 <input type="number" class="form-control my-1" id="batch_fee" value="{{ $batch->batch_fee }}"  name="batch_fee">
                                 @error('batch_fee')
                                     <div class="text-danger">{{ $message }}</div>
@@ -108,7 +109,7 @@
                         <div class="row mt-2">
                             <div class="form-group col-md-6">
                                 <label for="start_time"><b>Start Date</b></label>
-                                <input type="date" name="start_time" class="form-control" value="{{ $batch->start_time }}">
+                                <input type="date" name="start_date" class="form-control" value="{{ $batch->start_date }}">
                                 @error('start_time')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -116,7 +117,7 @@
 
                             <div class="form-group col-md-6">
                                 <label for="end_time"><b>End Date</b></label>
-                                <input type="date" name="end_time" class="form-control" value="{{ $batch->end_time }}">
+                                <input type="date" name="end_date" class="form-control" value="{{ $batch->end_date }}">
                                 @error('end_time')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror

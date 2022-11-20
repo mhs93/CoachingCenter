@@ -4,28 +4,37 @@
     </div>
     <ul class="sidebar-nav icon-m-r" data-coreui="navigation" data-simplebar="">
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{{route('admin.dashboard')}}">
                 <i class='bx bx-color'></i>
                 Dashboard
             </a>
         </li>
-        @canany(['student_list','register_student'])
+        @can('subject_list')
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.subjects.index') }}">
+                <i class='bx bx-book'></i> Subjects
+            </a>
+        </li>
+        @endcan
+        @can('batches_manage')
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('admin.batches.index')}}">
+                <i class='bx bx-list-check'></i> Batches
+            </a>
+        </li>
+        @endcan
+        @can('student_list')
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" >
                 <i class='bx bxs-user-account'></i>
                 Student
             </a>
             <ul class="nav-group-items">
-
-                @can('student_list')
-
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.students.index')}}">
                         <span class="nav-icon"></span> Students List
                     </a>
                 </li>
-                @endcan
-
-                @can('register_student')
+                @can('student_modify')
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.students.create')}}">
                         <span class="nav-icon"></span> Register Student
                     </a>
@@ -35,20 +44,18 @@
         </li>
         @endcan
 
-        @canany(['teacher_list','teacher_register'])
+        @can('teacher_list')
         <li class="nav-group">
-            <a class="nav-link nav-group-toggle" href="colors.html">
+            <a class="nav-link nav-group-toggle" href="">
                 <i class='bx bxs-user-rectangle'></i>
                 Teacher
             </a>
             <ul class="nav-group-items">
-                @can('teacher_list')
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.teachers.index')}}">
                         <span class="nav-icon"></span> Teacher List
                     </a>
                 </li>
-                @endcan
-                @can('teacher_register')
+                @can('teacher_modify')
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.teachers.create')}}">
                         <span class="nav-icon"></span> Register Teacher
                     </a>
@@ -59,24 +66,6 @@
         @endcan
 
 
-        @can('batches_manage','batches_create','batches_edit','batches_delete')
-        <li class="nav-item">
-            <a class="nav-link" href="{{route('admin.batches.index')}}">
-                <i class='bx bx-list-check'></i> Batches
-            </a>
-        </li>
-        @endcan
-
-        @can('subject_manage')
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.subjects.index') }}">
-                <i class='bx bx-book'></i> Subjects
-            </a>
-        </li>
-        @endcan
-
-        {{-- Class Routine Module Start --}}
-        {{-- @canany(['student_list','register_student']) --}}
         @can('routine_list')
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" >
@@ -84,14 +73,12 @@
                 Class Routine
             </a>
             <ul class="nav-group-items">
-                @can('routine_list')
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.routine.index')}}">
                         <span class="nav-icon"></span> Routine List
                     </a>
                 </li>
-                @endcan
 
-                @can('routine_create')
+                @can('routine_modify')
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.routine.create')}}">
                         <span class="nav-icon"></span> Add Routine
                     </a>
@@ -102,51 +89,85 @@
         @endcan
         {{-- Class Routine Module End --}}
 
+        @can('attendance_manage')
+            <li class="nav-group">
+                <a class="nav-link nav-group-toggle">
+                    <i class='bx bx-male-female'></i>
+                    Attendance
+                </a>
+
+                <ul class="nav-group-items">
+                    @can('student_attendance')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('admin.attendances.index')}}">
+                                <span class="nav-icon"></span>Student Attendance
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('teacher_attendance')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('admin.tattendances.index')}}">
+                                <span class="nav-icon"></span>Teacher Attendance
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('attendance_report')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('admin.attendances.report')}}">
+                                <span class="nav-icon"></span>Attendance Report
+                            </a>
+                        </li>
+                    @endcan
+
+                </ul>
+            </li>
+        @endcan
+
 
         {{-- Exam Module Start --}}
         {{-- @canany(['student_list','register_student']) --}}
-        @canany(['exam_list'])
+        @can('exam_list')
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" >
                 <i class='bx bxs-user-account'></i>
-                Exams
+                Exam
             </a>
             <ul class="nav-group-items">
-
                 @can('exam_list')
-                    <li class="nav-item"><a class="nav-link" href="{{route('admin.exams.index')}}">
-                            <span class="nav-icon"></span> Exam List
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.exams.index')}}">
+                        <span class="nav-icon"></span> Exam Routine List
+                    </a>
+                </li>
                 @endcan
 
-                @can('exam_create')
-                    <li class="nav-item"><a class="nav-link" href="{{route('admin.exams.create')}}">
-                            <span class="nav-icon"></span> Create Exam
-                        </a>
-                    </li>
-                @endcan
+                {{--@can('exam_modify')--}}
+                    {{--<li class="nav-item"><a class="nav-link" href="{{route('admin.exams.create')}}">--}}
+                            {{--<span class="nav-icon"></span> Create Exam Routine--}}
+                        {{--</a>--}}
+                    {{--</li>--}}
+                {{--@endcan--}}
 
-                @can('exam_result')
-                    <li class="nav-item"><a class="nav-link" href="{{route('admin.result.show')}}">
-                            <span class="nav-icon"></span>See Exam Result
-                        </a>
-                    </li>
-                @endcan
-
-                @can('result_list')
+                @can('exam_modify')
                     <li class="nav-item"><a class="nav-link" href="{{route('admin.marks.index')}}">
                             <span class="nav-icon"></span>Exam Result List
                         </a>
                     </li>
                 @endcan
-
-                @can('mark_create')
-                <li class="nav-item"><a class="nav-link" href="{{route('admin.marks.create')}}">
-                        <span class="nav-icon"></span>Give Exam Mark
-                    </a>
-                </li>
-            @endcan
+                {{--@can('exam_modify')--}}
+                    {{--<li class="nav-item"><a class="nav-link" href="{{route('admin.marks.create')}}">--}}
+                            {{--<span class="nav-icon"></span>Assign Exam Result--}}
+                        {{--</a>--}}
+                    {{--</li>--}}
+                {{--@endcan--}}
+                @can('exam_list')
+                    <li class="nav-item"><a class="nav-link" href="{{route('admin.result.show')}}">
+                            <span class="nav-icon"></span>Exam Result Report
+                        </a>
+                    </li>
+                @endcan
             </ul>
         </li>
         @endcan
@@ -154,60 +175,45 @@
 
 
 
-        @can('announcement_manage')
+        @can('announcement_list')
         <li class="nav-item">
             <a class="nav-link" href="{{route('admin.announcements.index')}}">
-                <i class='bx bx-user-voice'></i> Announcements
+                <i class='bx bx-user-voice'></i> Announcement
             </a>
         </li>
         @endcan
 
-        @can('classRooms_manage')
+        @can('specialClass_list')
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.class-rooms.index') }}">
-                <i class='bx bx-group'></i> Class rooms
+                <i class='bx bx-group'></i> Special Class
             </a>
         </li>
         @endcan
 
-        @canany(['attendance_manage'])
-        <li class="nav-group">
-            <a class="nav-link nav-group-toggle">
-                <i class='bx bx-male-female'></i>
-               Attendance
-            </a>
-
-            <ul class="nav-group-items">
-                @can('attendance_manage')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('admin.attendances.index')}}">
-                        <span class="nav-icon"></span>Student Attendances
-                    </a>
-                </li>
-                @endcan
-                @can('attendance_report')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('admin.attendances.report')}}">
-                        <span class="nav-icon"></span>Attendance Report
-                    </a>
-                </li>
-                @endcan
-
-                @can('attendance_manage')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('admin.tattendances.index')}}">
-                        <span class="nav-icon"></span>Teacher Attendances
-                    </a>
-                </li>
-                @endcan
-            </ul>
-        </li>
+        @canany(['resources_list','resource_upload'])
+            <li class="nav-group">
+                <a class="nav-link nav-group-toggle" href="">
+                    <i class='bx bxs-file-archive'></i>
+                    Resources
+                </a>
+                <ul class="nav-group-items">
+                    <li class="nav-item"><a class="nav-link" href="{{route('admin.resources.index')}}">
+                            <span class="nav-icon"></span> Resource List
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{route('admin.resources.create')}}">
+                            <span class="nav-icon"></span> Upload Resource
+                        </a>
+                    </li>
+                </ul>
+            </li>
         @endcan
-
 
         @can('payment_manage')
         <li class="nav-group">
-            <a class="nav-link nav-group-toggle" href="">
+            <a class="nav-link nav-group-toggle" href="#">
                 <i class='bx bxs-bank'></i>
                 Payment
             </a>
@@ -223,11 +229,16 @@
                 </li>
 
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.transaction.index')}}">
-                        <span class="nav-icon"></span> Transaction
+                        <span class="nav-icon"></span> Transactions
                     </a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{route('admin.balance-sheet')}}">
                         <span class="nav-icon"></span> Balance Sheet
+                    </a>
+                </li>
+
+                <li class="nav-item"><a class="nav-link" href="{{route('admin.accounts-statement')}}">
+                        <span class="nav-icon"></span> Accounts Statement
                     </a>
                 </li>
             </ul>
@@ -235,7 +246,7 @@
         @endcan
 
 
-        @can('income_manage')
+        @can('payment_manage')
             <li class="nav-item">
                 <a class="nav-link " href="{{route('admin.income.index')}}">
                     <i class='bx bx-dollar-circle'></i>
@@ -244,7 +255,7 @@
             </li>
         @endcan
 
-        @can('enpense_manage')
+        @can('payment_manage')
             <li class="nav-item">
                 <a class="nav-link " href="{{route('admin.expense.index')}}">
                     <i class='bx bxs-wallet-alt'></i>
@@ -254,31 +265,6 @@
         @endcan
 
 
-        @can(['resources_list','upload_resource'])
-        <li class="nav-group">
-            <a class="nav-link nav-group-toggle" href="">
-                <i class='bx bxs-file-archive'></i>
-                Resources
-            </a>
-
-            <ul class="nav-group-items">
-                @can('resources_list')
-                <li class="nav-item"><a class="nav-link" href="{{route('admin.resources.index')}}">
-                        <span class="nav-icon"></span> Resource List
-                    </a>
-                </li>
-                @endcan
-
-                @can('upload_resource')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('admin.resources.create')}}">
-                        <span class="nav-icon"></span> Upload Resource
-                    </a>
-                </li>
-                @endcan
-            </ul>
-        </li>
-        @endcan
 
         @role('Super Admin')
         <li class="nav-group">
@@ -297,28 +283,52 @@
         </li>
         @endrole
 
+        @can('report_manage')
         <li class="nav-group">
             <a class="nav-link nav-group-toggle" href="#">
                 <i class='bx bx-file'></i>
                 Reports
             </a>
 
+            @can('student_report')
             <ul class="nav-group-items">
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.active-inactive-students')}}">
-                        <span class="nav-icon"></span> Students List
+                        <span class="nav-icon"></span> Students Report
                     </a>
                 </li>
             </ul>
+            @endcan
+            @can('teacher_report')
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.active-inactive-teachers')}}">
+                        <span class="nav-icon"></span> Teachers Report
+                    </a>
+                </li>
+            </ul>
+            @endcan
 
+            @can('student_report')
             <ul class="nav-group-items">
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.students-attendance')}}">
-                        <span class="nav-icon"></span> Students Attendance
+                        <span class="nav-icon"></span> Students Attendance Report
                     </a>
                 </li>
             </ul>
+            @endcan
+            @can('teacher_report')
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.teachers-attendance')}}">
+                        <span class="nav-icon"></span> Teachers Attendance Report
+                    </a>
+                </li>
+            </ul>
+            @endcan
 
+            @can('student_report')
             <ul class="nav-group-items">
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.subject-wise-attendance')}}">
@@ -326,40 +336,59 @@
                     </a>
                 </li>
             </ul>
+            @endcan
 
+            @can('student_report')
             <ul class="nav-group-items">
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.batch-wise-students')}}">
-                        <span class="nav-icon"></span> Batche Wise Students
+                        <span class="nav-icon"></span> Batch Wise Students
                     </a>
                 </li>
             </ul>
+            @endcan
 
+            @can('student_report')
             <ul class="nav-group-items">
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.batch-wise-attendance')}}">
-                        <span class="nav-icon"></span> Batche Wise Attendance
+                        <span class="nav-icon"></span> Batch Wise Attendance
                     </a>
                 </li>
             </ul>
-
+            @endcan
+            @can('student_transaction_report')
             <ul class="nav-group-items">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('admin.active-inactive-teachers')}}">
-                        <span class="nav-icon"></span> Teachers List
+                    <a class="nav-link" href="{{route('admin.students-transaction')}}">
+                        <span class="nav-icon"></span>Student Transactions Report
                     </a>
                 </li>
             </ul>
-
+            @endcan
+            @can('teacher_transaction_report')
             <ul class="nav-group-items">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('admin.teachers-attendance')}}">
-                        <span class="nav-icon"></span> Teachers Attendance
+                    <a class="nav-link" href="{{route('admin.teachers-transaction')}}">
+                    <span class="nav-icon"></span>Teacher Transactions Report
                     </a>
                 </li>
             </ul>
+            @endcan
+
+            @can('teacher_transaction_report')
+            <ul class="nav-group-items">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('admin.students-mark')}}">
+                    <span class="nav-icon"></span>Students Mark
+                    </a>
+                </li>
+            </ul>
+            @endcan
 
         </li>
+        @endcan
+
 
         @role('Super Admin')
             <li class="nav-item">

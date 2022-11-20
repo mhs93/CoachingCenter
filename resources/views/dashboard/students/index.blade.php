@@ -19,7 +19,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Student lists</p>
-            @can('register_student')
+            @can('student_modify')
                 <a href="{{ route('admin.students.create') }}" title="create" class="btn btn-sm btn-info">Create Student</a>
             @endcan
         </div>
@@ -130,9 +130,7 @@
         }
 
         // Delete Button
-        function deleteItem(id)
-
-        {
+        function deleteItem(id){
             var url = '{{ route("admin.students.destroy",":id") }}';
             $.ajax({
                 type: "DELETE",

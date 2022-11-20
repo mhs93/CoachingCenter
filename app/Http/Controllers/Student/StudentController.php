@@ -28,17 +28,48 @@ class StudentController extends Controller
     public function getList()
     {
         try {
-            $data = Student::with(['batch' => function ($query) {
+            // $data = Student::with(['batch' => function ($query) {
+            //         $query->select('id', 'name');
+            //     }])
+            //     ->select('id', 'name', 'reg_no', 'email', 'batch_id', 'status')
+            //     ->orderBy('id', 'DESC')
+            //     ->get();
+
+            $user = User::findOrFail(Auth::id());
+            if($user->type == '0' || $user->type == '3'){
+                $data = Student::with(['batch' => function ($query) {
                     $query->select('id', 'name');
                 }])
                 ->select('id', 'name', 'reg_no', 'email', 'batch_id', 'status')
                 ->orderBy('id', 'DESC')
                 ->get();
+            }
+
+            else{
+                if($user->type == '1'){
+                    $data = Student::with(['batch' => function ($query) {
+                        $query->select('id', 'name');
+                    }])
+                    ->select('id', 'name', 'reg_no', 'email', 'batch_id', 'status')
+                    ->orderBy('id', 'DESC')
+                    ->get();
+                }
+                else{
+                    $student = Student::where('id', $user->student_id)->first();
+                    $data = Student::with(['batch' => function ($query) {
+                        $query->select('id', 'name');
+                    }])
+                    ->select('id', 'name', 'reg_no', 'email', 'batch_id', 'status')
+                    ->orderBy('id', 'DESC')
+                    ->where('batch_id', $student->batch_id)
+                    ->get();
+                }
+            }
 
             return DataTables::of($data)->addIndexColumn()
                 //status
                 ->addColumn('status', function ($data) {
-                    if (Auth::user()->can('student_edit')) {
+                    if (Auth::user()->can('student_modify')) {
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -62,24 +93,24 @@ class StudentController extends Controller
                 })
                 //Action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('student_profile')) {
+                    if (Auth::user()->can('student_modify')) {
                         $profileShow = '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class=\'bx bxs-low-vision\'></i></a>';
                     } else {
                         $profileShow = '';
                     }
 
-                    if (Auth::user()->can('student_edit')) {
+                    if (Auth::user()->can('student_modify')) {
                         $profileEdit = '<a href="' . route('admin.students.edit', $data->id) . '" class="btn btn-sm btn-warning" title="edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     } else {
                         $profileEdit = '';
                     }
-                    if (Auth::user()->can('student_delete')) {
+                    if (Auth::user()->can('student_modify')) {
                         $profileDelete = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     } else {
                         $profileDelete = '';
                     }
                     // Change Password
-                    if (Auth::user()->can('student_password')) {
+                    if (Auth::user()->can('student_modify')) {
                         $changePassword = '<a href="' . route('admin.students.password', $data->id) . '" class="btn btn-sm btn-info" title="change password"><i class="bx bxs-key"></i></a>';
                     } else {
                         $changePassword = '';
@@ -135,17 +166,17 @@ class StudentController extends Controller
             'password' => 'required|confirmed'
         ]);
         try {
+            $user = User::find(Auth::user()->id);
             $hashedPassword = Auth::user()->password;
             if (Hash::check($request->currentPassword, $hashedPassword)) {
                 $password = Hash::make($request->password);
+                $user->password = $password;
+                $user->update();
                 return redirect()->route('admin.students.index')
                 ->with('t-success', 'Password Updated Successfully');
             } else {
-                return redirect()->route('admin.password')->with('t-danger', 'Current password does not match your old password...Please try again...');
-//                return redirect()->route('admin.password')->with('errors', 'Current password does not match your old password...Please try again...');
-
+                return redirect()->route('admin.password')->with('t-error', 'Current password does not match your old password...Please try again...');
             }
-
         }catch (\Exception $exception){
             return $this->sendError('Password change error', ['error' => $exception->getMessage()]);
         }
@@ -178,7 +209,6 @@ class StudentController extends Controller
 
               }
               return view('dashboard.students.create', compact('batches', 'latestReg'));
-//            return view('dashboard.students.create', compact('batches'));
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', $e->getMessage());
@@ -199,7 +229,6 @@ class StudentController extends Controller
             $student = new Student();
             $student->name = $request->name;
             $student->reg_no = $request->reg_no;
-            // $student->reg_no = '1234';
             $student->email = $request->email;
             $student->batch_id = $request->batch_id;
             $student->gender = $request->gender;

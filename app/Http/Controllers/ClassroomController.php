@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Batch;
+use App\Models\Student;
 use App\Models\Subject;
 use App\Models\ClassRoom;
 use function Termwind\div;
@@ -22,13 +24,50 @@ class ClassRoomController extends Controller
     public function getList()
     {
         try {
-            $data = ClassRoom::with(['batch' => function ($query) {
-                                                    $query->select('id', 'name');
-                                                },
-                                      'subject' => function ($query) {
-                                                    $query->select('id', 'name');
-                                                }
-                                    ]) ->orderBy('id', 'DESC')->get();
+            // $data = ClassRoom::with(['batch' => function ($query) {
+            //                             $query->select('id', 'name');
+            //                         },
+            //                         'subject' => function ($query) {
+            //                             $query->select('id', 'name');
+            //                         }
+            //                         ])->orderBy('id', 'DESC')
+            //                         ->get();
+
+            $user = User::findOrFail(Auth::id());
+            if($user->type == '0'){
+                $data = ClassRoom::with(['batch' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'subject' => function ($query) {
+                            $query->select('id', 'name');
+                        }
+                        ])->orderBy('id', 'DESC')
+                        ->get();
+            }
+            else{
+                if($user->type == '1'){
+                    $data = ClassRoom::with(['batch' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'subject' => function ($query) {
+                            $query->select('id', 'name');
+                        }
+                        ])->orderBy('id', 'DESC')
+                        ->get();
+                }
+                else{
+                    $student = Student::where('id', $user->student_id)->first();
+                    $data = ClassRoom::with(['batch' => function ($query) {
+                            $query->select('id', 'name');
+                        },
+                        'subject' => function ($query) {
+                            $query->select('id', 'name');
+                        } ])
+                        ->where('batch_id', $student->batch_id)
+                        ->orderBy('id', 'DESC')
+                        ->get();
+                    }
+                }
 
             return DataTables::of($data)->addIndexColumn()
                 ->addColumn('class_type', function($data){
@@ -37,6 +76,20 @@ class ClassRoomController extends Controller
                     }if ($data->class_type == 2){
                         return 'Online';
 
+                    }
+                })
+                ->addColumn('class_link',function ($data){
+                    if($data->class_link == NULL){
+                        return '--';
+                    }else{
+                        return $data->class_link;
+                    }
+                })
+                ->addColumn('access_key',function ($data){
+                    if($data->access_key == NULL){
+                        return '--';
+                    }else{
+                        return $data->access_key;
                     }
                 })
                 ->addColumn('status', function ($data) {
@@ -195,17 +248,6 @@ class ClassRoomController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
-
-        // try {
-        //     return response()->json([
-        //         'success'  => true,
-        //         'data'     => $classRoom,
-        //         'batch'    => $classRoom->batch,
-        //         'message'  => 'Class Room Get Data Successfully.',
-        //     ]);
-        // } catch (\Exception $e) {
-        //     return back()->with('error', $e->getMessage());
-        // }
     }
 
     /**
@@ -223,6 +265,7 @@ class ClassRoomController extends Controller
             // $subjects = Subject::whereIn('id', $subjectId)->get();
 
             $data = new Batch();
+//            dd($data);
             $batches = $data->select('id', 'name', 'status')->get();
             $subjectId = json_decode($data->where('id', $classRoom->batch_id)->first()->subject_id);
             $subjects = Subject::whereIn('id', $subjectId)->get();
@@ -258,8 +301,13 @@ class ClassRoomController extends Controller
             $classRoom->batch_id = $request->batch_id;
             $classRoom->subject_id = $request->subject_id;
             $classRoom->class_type = $request->class_type;
-            $classRoom->class_link = $request->class_link;
-            $classRoom->access_key = $request->access_key;
+            if ($request->class_type == 1){
+                $classRoom->class_link = NUll;
+                $classRoom->access_key = NUll;
+            }else{
+                $classRoom->class_link = $request->class_link;
+                $classRoom->access_key = $request->access_key;
+            }
             $classRoom->duration = $request->duration;
             $classRoom->start_time = $request->start_time;
             $classRoom->end_time = $request->end_time;

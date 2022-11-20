@@ -42,6 +42,9 @@ class ResourceController extends Controller
                         if(in_array($student->batch_id, $batchIds)){
                             array_push($resources, $item);
                         }
+                        if(in_array("0", $batchIds)){
+                            array_push($resources, $item);
+                        }
                     }
                     $data = $resources;
                 }
@@ -73,7 +76,7 @@ class ResourceController extends Controller
 
                 //Status
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('resources_list')){
+                    if(Auth::user()->can('resource_manage')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -97,13 +100,13 @@ class ResourceController extends Controller
 
                 //action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('upload_show')){
+                    if (Auth::user()->can('resources_list')){
 
                         $showDetails = '<a href="' . route('admin.resources.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
-                    if (Auth::user()->can('upload_delete')){
+                    if (Auth::user()->can('resource_manage')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';
@@ -180,8 +183,7 @@ class ResourceController extends Controller
                 $resource->batch_id = json_encode($request->batch_id);
 
             }
-
-
+            
             // $resource->batch_id = json_encode($request->batch_id);
             $resource->note = $request->note;
             $resource->file = $request->file;

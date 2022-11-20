@@ -18,10 +18,10 @@
     @include('layouts.dashboard.partials.alert')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <p class="m-0">Class room lists</p>
-            @can('classRooms_create')
+            <p class="m-0">Special class lists</p>
+            @can('specialClass_manage')
                 <a type="button" href="{{route('admin.class-rooms.create')}}" class="btn btn-sm btn-info">
-                    Create class room
+                    Create special class
                 </a>
             @endcan
         </div>
@@ -33,6 +33,8 @@
                         <th>Batch</th>
                         <th>Subjects</th>
                         <th>Class Type</th>
+                        <th>Class Link</th>
+                        <th>Access Key</th>
                         <th>Date</th>
                         <th>Start Time</th>
                         <th>End Time</th>
@@ -40,7 +42,7 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
         </div>
@@ -48,63 +50,63 @@
     <div class="mb-5"></div>
 
     {{-- Show class room details modal --}}
-    <div class="modal fade" id="modalCollapse" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalTitle">Class Room Details</h5>
-              <button class="btn-close" type="button" data-coreui-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="getDataFrom">
-                <div class="modal-body">
-                    <table id="table" class="table table-bordered" style="width: 100%">
-                        <thead>
-                            <tr>
-                                <th>Batch</th>
-                                <th id="batchName"></th>
-                            </tr>
-                            <tr>
-                                <th>Subject</th>
-                                <th id="subjectName"></th>
-                            </tr>
-                            <tr>
-                                <th>Class Type</th>
-                                <th id="classType"></th>
-                            </tr>
-                            <tr>
-                                <th>Class Link</th>
-                                <th id="classLink"></th>
-                            </tr>
-                            <tr>
-                                <th>Access Key</th>
-                                <th id="accessKey"></th>
-                            </tr>
-                            <tr>
-                                <th>Duration</th>
-                                <th id="duration"></th>
-                            </tr>
-                            <tr>
-                                <th>Start Time</th>
-                                <th id="startTime"></th>
-                            </tr>
-                            <tr>
-                                <th>End Time</th>
-                                <th id="endTime"></th>
-                            </tr>
-                        </thead>
+    {{--<div class="modal fade" id="modalCollapse" aria-hidden="true">--}}
+        {{--<div class="modal-dialog modal-lg">--}}
+          {{--<div class="modal-content">--}}
+            {{--<div class="modal-header">--}}
+              {{--<h5 class="modal-title" id="modalTitle">Class Room Details</h5>--}}
+              {{--<button class="btn-close" type="button" data-coreui-dismiss="modal" aria-label="Close"></button>--}}
+            {{--</div>--}}
+            {{--<form id="getDataFrom">--}}
+                {{--<div class="modal-body">--}}
+                    {{--<table id="table" class="table table-bordered" style="width: 100%">--}}
+                        {{--<thead>--}}
+                            {{--<tr>--}}
+                                {{--<th>Batch</th>--}}
+                                {{--<th id="batchName"></th>--}}
+                            {{--</tr>--}}
+                            {{--<tr>--}}
+                                {{--<th>Subject</th>--}}
+                                {{--<th id="subjectName"></th>--}}
+                            {{--</tr>--}}
+                            {{--<tr>--}}
+                                {{--<th>Class Type</th>--}}
+                                {{--<th id="classType"></th>--}}
+                            {{--</tr>--}}
+                            {{--<tr>--}}
+                                {{--<th>Class Link</th>--}}
+                                {{--<th id="classLink"></th>--}}
+                            {{--</tr>--}}
+                            {{--<tr>--}}
+                                {{--<th>Access Key</th>--}}
+                                {{--<th id="accessKey"></th>--}}
+                            {{--</tr>--}}
+                            {{--<tr>--}}
+                                {{--<th>Duration</th>--}}
+                                {{--<th id="duration"></th>--}}
+                            {{--</tr>--}}
+                            {{--<tr>--}}
+                                {{--<th>Start Time</th>--}}
+                                {{--<th id="startTime"></th>--}}
+                            {{--</tr>--}}
+                            {{--<tr>--}}
+                                {{--<th>End Time</th>--}}
+                                {{--<th id="endTime"></th>--}}
+                            {{--</tr>--}}
+                        {{--</thead>--}}
 
-                        <tbody>
+                        {{--<tbody>--}}
 
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-sm btn-secondary" type="button" data-coreui-dismiss="modal">Close</button>
-                </div>
-            </form>
-          </div>
-        </div>
-    </div>
+                        {{--</tbody>--}}
+                    {{--</table>--}}
+                {{--</div>--}}
+                {{--<div class="modal-footer">--}}
+                    {{--<button class="btn btn-sm btn-secondary" type="button" data-coreui-dismiss="modal">Close</button>--}}
+                {{--</div>--}}
+            {{--</form>--}}
+          {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
 
 @push('js')
     <script src="{{ asset('jquery/jQuery.js') }}"></script>
@@ -135,6 +137,8 @@
                     {data: 'batch.name',name: 'name',orderable: true,searchable: true},
                     {data: 'subject.name',name: 'name',orderable: true,searchable: true},
                     {data: 'class_type',name: 'class_type',orderable: true,searchable: true},
+                    {data: 'class_link',name: 'class_link',orderable: true,searchable: true},
+                    {data: 'access_key',name: 'access_key',orderable: true,searchable: true},
                     {data: 'date',name: 'date',orderable: true,searchable: true},
                     {data: 'start_time',name: 'start_time',orderable: false,searchable: false},
                     {data: 'end_time',name: 'end_time',orderable: false,searchable: false},
@@ -238,7 +242,7 @@
                 type: "DELETE",
                 url: url.replace(':id', id ),
                 success: function (resp) {
-                    // Reloade DataTable
+                    // Reload DataTable
                     $('.data-table').DataTable().ajax.reload();
                     if (resp.success === true) {
                         // show toast message

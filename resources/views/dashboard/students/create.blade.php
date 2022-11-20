@@ -3,10 +3,12 @@
 @section('title', 'Create Student')
 
 @push('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"
-        integrity="sha512-EZSUkJWTjzDlspOoPSpUFR0o0Xy7jdzW//6qhUkoZ9c4StFkVsp9fbbd0O06p9ELS3H486m4wmrCELjza4JEog=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {{-- Dropify CDN --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"
+          integrity="sha512-EZSUkJWTjzDlspOoPSpUFR0o0Xy7jdzW//6qhUkoZ9c4StFkVsp9fbbd0O06p9ELS3H486m4wmrCELjza4JEog=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .dropify-wrapper .dropify-message p {
             font-size: initial;
@@ -25,7 +27,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Create</p>
-            <a href="#" class="btn btn-sm btn-dark">Back</a>
+            <a href="{{ route('admin.students.index') }}" class="btn btn-sm btn-info">Back</a>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.students.store') }}" enctype="multipart/form-data" method="POST">
@@ -35,18 +37,6 @@
                         <div class="card">
                             <div class="card-header">
                                 <p class="m-0">Create Student</p>
-                            </div>
-
-                            <div>
-                                @if ($errors->any())
-                                    <div class="alert alert-danger">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
                             </div>
 
                             <div class="card-body">
@@ -64,7 +54,7 @@
 
                                 <div class="form-group mt-3">
                                     <label for="reg_no"><b>Registration Number</b> <span style="color: red">*</span></label>
-                                     <input type="text" name="reg_no" id="reg_no"
+                                     <input type="text" name="reg_no" id="reg_no" readonly
                                         class="form-control @error('reg_no') is-invalid @enderror"
                                         value="{{$latestReg}}" placeholder="Enter registration number">
                                     @error('reg_no')
@@ -220,9 +210,11 @@
 @endsection
 
 @push('js')
+    {{-- Dropify CDN --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
         integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {{-- Ck Editor CDN --}}
     <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
     <script>
         $(document).ready(function() {

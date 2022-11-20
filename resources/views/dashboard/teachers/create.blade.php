@@ -47,7 +47,7 @@
                         {{-- Registration Number --}}
                         <div class="form-group mt-3">
                             <label for="reg_no"><b>Registration Number</b></label>
-                            <input type="text" name="reg_no" id="reg_no"
+                            <input type="text" name="reg_no" id="reg_no" readonly
                                 class="form-control @error('reg_no') is-invalid @enderror" value="{{ $latestReg }}"
                                 placeholder="Enter registration number" >
                             @error('reg_no')

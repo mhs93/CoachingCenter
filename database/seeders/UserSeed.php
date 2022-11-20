@@ -23,7 +23,16 @@ class UserSeed extends Seeder
             'email_verified_at' => now(),
             'remember_token' => null,
         ]);
-
         $user->assignRole('Super Admin');
+
+        $accountant = User::create([
+            'name' => 'Accountant',
+            'email' => 'accountant@test.com',
+            'password' => bcrypt('password'),
+            'type' => '3',
+            'email_verified_at' => now(),
+            'remember_token' => null,
+        ]);
+        $accountant->assignRole('Accountant');
     }
 }

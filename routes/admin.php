@@ -33,6 +33,8 @@ use App\Http\Controllers\TeacherAttendance\TattendanceContoller;
 use App\Http\Controllers\Income\IncomeController;
 use App\Http\Controllers\Expense\ExpenseController;
 
+Auth::routes();
+
 
 Route::get('/', DashboardController::class)->name('dashboard');
 
@@ -66,6 +68,7 @@ Route::get('students/change/password/{id}', [StudentController::class, 'password
 Route::post('students/change/password', [StudentController::class, 'passwordSubmit'])->name('students.password.submit');
 // Chnage Password for Studnet
 Route::get('students/password', [StudentController::class, 'studentPassword'])->name('password');
+//Route::get('students/password/{id}', [StudentController::class, 'studentPassword'])->name('password');
 Route::post('students/password', [StudentController::class, 'studentPasswordSubmit'])->name('password.submit');
 Route::get('get-students', [StudentController::class, 'getList'])->name('students.list');
 Route::put('students/change-status/{student}', [StudentController::class, 'changeStatus'])->name('students.change-status');
@@ -135,7 +138,7 @@ Route::put('routines/change-status/{routine}', [RoutineController::class, 'chang
 Route::resource('routine',RoutineController::class)->except('update');
 
 
-// Exam Controller Start
+// Exam Route Start
 Route::get('exams/show/{id}', [ExamController::class, 'show'])->name('exams.show');
 Route::get('exams/edit/{id}', [ExamController::class, 'edit'])->name('exams.edit');
 Route::post('exams/update', [ExamController::class, 'update'])->name('exams.update');
@@ -143,13 +146,22 @@ Route::post('/getSub', [ExamController::class, 'getSubject'])->name('exams.getSu
 Route::put('exams/change-status/{exam}', [ExamController::class, 'changeStatus'])->name('exams.change-status');
 Route::get('exams/lists', [ExamController::class, 'getList'])->name('exams.lists');
 Route::resource('exams', ExamController::class);
-// Exam Controller End
+// Exam Route End
 
 
-// MarkContrller Start
+
+
+
+// Mark Route Start
 //edit
 Route::post('marks/getMarkedBatches', [MarkController::class, 'getMarkedBatches'])->name('marks.getMarkedBatches');
+Route::get('mark/edit/{id1}/{id2}', [MarkController::class, 'edit'])->name('mark.edit');
+Route::post('mark/edit/submit', [MarkController::class, 'update'])->name('mark.update');
 //end edit
+
+//Delete
+Route::get('mark/delete/{id1}/{id2}', [MarkController::class, 'delete'])->name('mark.delete');
+//end Delete
 
 
 Route::post('marks/getBatches', [MarkController::class, 'getBatches'])->name('marks.getBatches');
@@ -158,29 +170,25 @@ Route::post('marks/getSubjects', [MarkController::class, 'getSubjects'])->name('
 Route::post('marks/getResults', [MarkController::class, 'getResults'])->name('result.getResults');
 Route::get('result/resultShow', [MarkController::class, 'resultShow'])->name('result.show');
 
-Route::post('marks/getResultsEdit', [MarkController::class, 'getResultsEdit'])->name('result.getResultsEdit');
 
 // Result show without the exam id
 Route::get('marks/result_batch/show/{id}', [MarkController::class, 'resultBatchShow'])->name('result_batch.show');
 Route::post('marks/resultBatchShowRender', [MarkController::class, 'resultBatchShowRender'])->name('result.resultBatchShowRender');
 
-Route::post('marks/deleteted', [MarkController::class, 'markDelete'])->name('marks.deleteted');
-
-// Route::get('marks/marked/show/{id}', [MarkController::class, 'markedShow'])->name('marked.show');
-Route::post('marks/marked/updatee/{id1}/{id2}', [MarkController::class, 'updatee'])->name('marks.updatee');
-Route::get('marks/marked/show/{id1}/{id2}', [MarkController::class, 'markedShow'])->name('marked.show');
-Route::post('marks/marked/show/submit', [MarkController::class, 'markShowSubmit'])->name('marked.show.submit');
-
-Route::get('marks/marked/delete/{id1}/{id2}', [MarkController::class, 'markedDelete'])->name('marked.delete');
+// PDF Route
+Route::post('marks/resultPDF', [MarkController::class, 'resultPDF'])->name('result.resultPDF');
+Route::post('marks/exportPDF', [MarkController::class, 'exportPDF'])->name('result.exportPDF');
 
 Route::put('marks/change-status/{mark}', [MarkController::class, 'changeStatus'])->name('marks.change-status');
 Route::get('marks/lists', [MarkController::class, 'getList'])->name('marks.lists');
-// Route::put('marks/updatee', [MarkController::class, ''])->name('marks.updatee');
-Route::resource('marks', MarkController::class);
-// MarkContrller End
+Route::resource('marks', MarkController::class)->except('edit', 'update');
+// Mark Route End
 
 
-// Attendance Controller Start
+
+
+
+// Attendance Route Start
 Route::post('/students-by-batch', [AttendanceController::class, 'studentsByBatch'])
         ->name('students.by.batch');
 //Route::post('/get-attendance',[AttendanceController::class,'getAttendance'])->name('');
@@ -189,14 +197,14 @@ Route::post('get-student-by-batch', [AttendanceController::class, 'getStudentByB
 Route::post('attendance-report-list', [AttendanceController::class, 'reportList'])->name('attendance.report.list');
 Route::resource('attendances', AttendanceController::class)->except('create');
 Route::post('attendances-update', [AttendanceController::class, 'update'])->name('attendances.update');
-// Attendance Controller End
+// Attendance Route End
 
-// Teaccher Attendance Controller Start
+// Teaccher Attendance Route Start
 Route::post('tattendances-update', [TattendanceContoller::class, 'update'])->name('tattendances.update');
 Route::post('/teachers-by-name', [TattendanceContoller::class, 'teachersByName'])
         ->name('teachers.by.name');
 Route::resource('tattendances', TattendanceContoller::class)->except('update');
-// Teaccher Attendance Controller End
+// Teaccher Attendance Route End
 
 // Start
 Route::get('setting/general', [SettingController::class, 'general'])->name('setting.general');
@@ -210,6 +218,7 @@ Route::get('student-payment-index/{id}',[StdpaymentController::class,'index'])->
 Route::get('student-payment/create/{id}',[StdpaymentController::class,'create'])->name('student.payment.create');
 Route::get('student-payment/edit/{id}',[StdpaymentController::class,'edit'])->name('student.payment.edit');
 Route::post('payment.student.update/{id}',[StdpaymentController::class,'update'])->name('student.payment.update');
+Route::get('payment.student.stdprint/{id}',[StdpaymentController::class,'stdprint'])->name('student.payment.stdprint');
 Route::get('payment.student.delete/{id}',[StdpaymentController::class,'delete'])->name('student.payment.delete');
 Route::get('payment.student.show/{id}',[StdpaymentController::class,'show'])->name('student.payment.show');
 Route::resource('std-payment',StdpaymentController::class);
@@ -219,6 +228,7 @@ Route::get('teacher-payment-index/{id}',[TchpaymentController::class,'index'])->
 Route::get('teacher-payment/create/{id}',[TchpaymentController::class,'create'])->name('teacher.payment.create');
 Route::get('teacher-payment/edit/{id}',[TchpaymentController::class,'edit'])->name('teacher.payment.edit');
 Route::post('payment.teacher.update/{id}',[TchpaymentController::class,'update'])->name('teacher.payment.update');
+Route::get('payment.teacher.tchprint/{id}',[TchpaymentController::class,'tchprint'])->name('teacher.payment.tchprint');
 Route::get('payment.teacher.delete/{id}',[TchpaymentController::class,'delete'])->name('teacher.payment.delete');
 Route::get('payment.teacher.show/{id}',[TchpaymentController::class,'show'])->name('teacher.payment.show');
 Route::resource('tch-payment',TchpaymentController::class);
@@ -265,3 +275,18 @@ Route::get('expense-edit/{id}',[ExpenseController::class,'edit'])->name('expense
 Route::post('expense-update/{id}',[ExpenseController::class,'update'])->name('expense.update');
 Route::resource('expense',ExpenseController::class);
 
+//accounts statement
+Route::get('accounts-statement', [TransactionController::class, 'AccountStatement'])->name('accounts-statement');
+Route::get('accounts-statement-list', [TransactionController::class, 'AccountStatementList'])->name('accounts-statement-list');
+
+//students transaction
+Route::get('students-transaction', [TransactionController::class, 'StudentsTransaction'])->name('students-transaction');
+Route::get('students-transaction-list', [TransactionController::class, 'StudentsTransactionList'])->name('students-transaction-list');
+
+//teachers transactions
+Route::get('teachers-transaction', [TransactionController::class, 'TeachersTransaction'])->name('teachers-transaction');
+Route::get('teachers-transaction-list', [TransactionController::class, 'TeachersTransactionList'])->name('teachers-transaction-list');
+
+//students mark report
+Route::get('students-mark', [MarkController::class, 'StudentMark'])->name('students-mark');
+Route::get('students-mark-list', [MarkController::class, 'StudentMarkList'])->name('students-mark-list');

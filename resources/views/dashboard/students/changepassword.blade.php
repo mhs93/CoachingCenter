@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'Edit Student')
+@section('title', 'Change Password')
 
 @push('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"
@@ -36,12 +36,12 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <p class="m-0">Edit Student Password</p>
+                        <p class="m-0">Change Password</p>
                         <a href="{{ route('admin.students.index') }}" class="btn btn-sm btn-dark">Back</a>
                     </div>
                     <div class="card-body">
                         <div class="form-group mt-3">
-                            <label for="password_confirmation">New Password <span style="color: red">*</span></label>
+                            <label for="password_confirmation"><b>New Password</b><span style="color: red">*</span></label>
                             <input type="password" name="password" class="form-control" placeholder="Enter New Password">
                             @error('password_confirmation')
                             <span class="invalid-feedback" role="alert">
@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="password_confirmation">Confirm New Passowrd <span style="color: red">*</span></label>
+                            <label for="password_confirmation"><b>Confirm New Passowrd</b> <span style="color: red">*</span></label>
                             <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm New Password"><br>
                             @error('password_confirmation')
                             <span class="invalid-feedback" role="alert">

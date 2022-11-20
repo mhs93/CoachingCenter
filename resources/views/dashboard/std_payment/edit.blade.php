@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'student payment edit')
+@section('title', 'Student Payment Edit')
 
 @push('css')
     <style>

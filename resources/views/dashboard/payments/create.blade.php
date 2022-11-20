@@ -49,7 +49,7 @@
 
                         <div class="form-group mt-3">
                             <label for="amount">Amount</label>
-                            <input type="text" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" value="{{ old('amount') }}" placeholder="Enter Amount">
+                            <input type="number" name="amount" id="amount" class="form-control @error('amount') is-invalid @enderror" value="{{ old('amount') }}" placeholder="Enter Amount">
                             @error('amount')
                             <span class="invalid-feedback" role="alert">
                              <strong>{{ $message }}</strong>
@@ -59,7 +59,7 @@
 
                         <div class="form-group mt-3">
                             <label for="paid_amount">Paid Amount</label>
-                            <input type="text" name="paid_amount" id="paid_amount" class="form-control @error('paid_amount') is-invalid @enderror" value="{{ old('paid_amount') }}" placeholder="Enter Paid Amount">
+                            <input type="number" name="paid_amount" id="paid_amount" class="form-control @error('paid_amount') is-invalid @enderror" value="{{ old('paid_amount') }}" placeholder="Enter Paid Amount">
                             @error('paid_amount')
                             <span class="invalid-feedback" role="alert">
                              <strong>{{ $message }}</strong>
@@ -69,7 +69,7 @@
 
                         <div class="form-group mt-3">
                             <label for="due_amount">Due Amount</label>
-                            <input type="text" name="due_amount" id="due_amount" class="form-control @error('due_amount') is-invalid @enderror"" value="{{ old('due_amount') }}" placeholder="Due Amount">
+                            <input type="number" name="due_amount" id="due_amount" class="form-control @error('due_amount') is-invalid @enderror"" value="{{ old('due_amount') }}" placeholder="Due Amount">
                             @error('due_amount')
                             <span class="invalid-feedback" role="alert">
                              <strong>{{ $message }}</strong>

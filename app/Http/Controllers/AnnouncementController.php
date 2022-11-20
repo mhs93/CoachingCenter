@@ -38,11 +38,15 @@ class AnnouncementController extends Controller
                     $student = Student::where('id', $user->student_id)->first();
                     $data = Announcement::select('id', 'batch_id', 'title', 'status')
                             ->orderBy('id', 'DESC')
+                            // ->orWhere('batch_id', 0)
                             ->get();
                     $announcement = [];
                     foreach($data as $item){
                         $batchIds = json_decode($item->batch_id);
                         if(in_array($student->batch_id, $batchIds)){
+                            array_push($announcement, $item);
+                        }
+                        if(in_array("0", $batchIds)){
                             array_push($announcement, $item);
                         }
                     }
@@ -75,7 +79,7 @@ class AnnouncementController extends Controller
 
                 //status
                 ->addColumn('status', function ($data) {
-                    if (Auth::user()->can('announcement_edit')){
+                    if (Auth::user()->can('announcement_manage')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
                         if ($data->status == 1) {
@@ -98,17 +102,17 @@ class AnnouncementController extends Controller
                 //action
                 ->addColumn('action', function ($data) {
 
-                    if (Auth::user()->can('announcement_show')){
+                    if (Auth::user()->can('announcement_manage')){
                         $showButton = '<a href="' . route('admin.announcements.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showButton = '';
                     }
-                    if (Auth::user()->can('announcement_edit')){
+                    if (Auth::user()->can('announcement_manage')){
                         $editButton = '<a href="' . route('admin.announcements.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $editButton = '';
                     }
-                    if (Auth::user()->can('announcement_delete')){
+                    if (Auth::user()->can('announcement_manage')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';

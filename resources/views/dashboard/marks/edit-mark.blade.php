@@ -3,9 +3,10 @@
 @section('title', 'Edit Exam Marks')
 
 @section('content')
+
     @include('layouts.dashboard.partials.alert')
 
-    <form action="{{ route('admin.marked.show.submit') }}" method="POST">
+    <form action="{{ route('admin.mark.update') }}" method="POST">
         @csrf
         <input type="hidden" name="batch_id" value="{{ $batch_id }}">
         <input type="hidden" name="exam_id"  value="{{ $exam_id }}">
@@ -27,6 +28,9 @@
                     </thead>
 
                     <tbody align="center">
+                        @foreach ($subjectIds as $subjectId)
+                            <input type="hidden" name="subject_id[]" value="{{$subjectId}}">
+                        @endforeach
                         @foreach ($marks as $key => $mark)
                         <tr>
                             <td style="vertical-align: middle;">{{$key + 1}}</td>
@@ -38,12 +42,25 @@
 
                             <td>
                                 @php
-                                    $subject_id = json_decode($mark->subject_id);
                                     $subMark = json_decode($mark->mark);
-                                    $subjects = App\Models\Subject::whereIn('id', $subject_id)->get();
+                                    $subjects = App\Models\Subject::whereIn('id', $subjectIds)->get();
                                 @endphp
 
                                 @foreach ($subjects as $k => $subject)
+                                    <div class="row" style="width: 500px;">
+                                        <div class="col-md-8" style="text-align: right;">
+                                            {{$subject->name}} :
+
+                                        </div>
+                                        <div class="col-md-4" style="text-align: left; width: 100px;">
+                                            <input type="number" name="mark[]" value="{{$subMark[$k]}}"
+                                                class="form-control mark{{$mark->student->id}}"
+                                                oninput="calTotal('mark{{ $mark->student->id }}')">
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                                {{-- @foreach ($subjects as $k => $subject)
                                     <div class="row" style="width: 500px;">
                                         <div class="col-md-8" style="text-align: right;">
                                             {{$subject->name}} :
@@ -55,7 +72,7 @@
                                                 oninput="calTotal('mark{{ $mark->student->id }}')">
                                         </div>
                                     </div>
-                                @endforeach
+                                @endforeach --}}
 
                             </td>
                             <td style="vertical-align: middle;">

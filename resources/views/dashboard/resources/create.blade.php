@@ -36,13 +36,13 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <p class="m-0">Upload Resource <span style="color: red">*</span></p>
+                        <p class="m-0">Upload Resource</p>
                         <a href="{{ route('admin.resources.index') }}" class="btn btn-sm btn-dark">Back</a>
                     </div>
                     <div class="card-body">
                         {{-- Title --}}
                         <div class="form-group mt-3">
-                            <label for="last_name">Title <span style="color: red">*</span></label>
+                            <label for="last_name"><B>Title</B> <b><span style="color: red">*</span></b> </label>
                             <input type="text" name="title" id="title"
                                 class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}"
                                 placeholder="Enter Title">
@@ -56,7 +56,7 @@
 
                         {{-- Dependancy Start --}}
                         <div class="form-group mt-3">
-                            <label for="batch">Select Batch <span style="color: red">*</span></label>
+                            <label for="batch"><B>Select Batch</B> <b><span style="color: red">*</span></b> </label>
                             <select name="batch_id[]" id="batchIdEx"
                                 class="multi-batch mySelect2 form-control @error('batch_id') is-invalid @enderror"
                                 multiple="multiple">
@@ -79,7 +79,7 @@
 
                         {{-- Subjects --}}
                         <div class="form-group mt-3">
-                            <label for="batch">Select Subjects <span style="color: red">*</span></label>
+                            <label for="batch"><B>Select Subjects</B>  <b><span style="color: red">*</span></b> </label>
                             {{-- <select name="subject_id[]" id="subjectEx" class="form-control"> --}}
                             <select name="subject_id[]" id="subjectEx"
                                 class="multi-subject mySelect2 form-control @error('subject_id') is-invalid @enderror"
@@ -96,8 +96,8 @@
                         </div>
 
                         {{-- Dependancy End --}}
-                        <div class="form-group">
-                            <label for="description">Resource Note</label>
+                        <div class="form-group mt-3">
+                            <label for="description"><B>Resource Note</B> </label>
                             <textarea name="note" class="form-control" id="note" cols="40" rows="6"></textarea>
                             @error('note')
                                 <span class="text-danger" role="alert">
@@ -112,7 +112,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        Upload file <span style="color: red">*</span>
+                        <b>Upload file</b>  <b><span style="color: red">*</span></b>
                     </div>
                     <div class="card-body">
                         <div class="form-group mt-3">
@@ -132,7 +132,7 @@
                 </div>
             </div>
         </div>
-        
+
     </form>
     <div class="mb-5"></div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'teacher payment create')
+@section('title', 'Teacher Payment Create')
 
 @push('css')
     <style>
@@ -24,7 +24,7 @@
                     <input type="hidden" name="tch_id" value="{{ $teacher->id }}">
                     <div class="row">
                         <div class="col-md-3 form-group">
-                            <label for="month">Month and Year<span class="text-red-600 @error('month') is-invalid @enderror">*</span></label>
+                            <label for="month">Month and Year<span class="text-danger @error('month') is-invalid @enderror">*</span></label>
                             <input type="month" class="form-control" name="month" required value="{{ old('month') }}">
                             @error('month')
                             <span class="invalid-feedback" role="alert">
@@ -46,7 +46,7 @@
                             @enderror
                         </div>
                         <div class="col-md-3 form-group">
-                            <label for="discount_amount">Discount</label>
+                            <label for="discount_amount">Deduction Amount</label>
                             <input name="discount_amount" oninput="discountAmount()" id="discount_amount" type="number" value="{{ old('discount_amount') }}" class="form-control @error('discount_amount') is-invalid @enderror">
                             @error('discount_amount')
                             <span class="invalid-feedback" role="alert">
@@ -58,7 +58,7 @@
 
                     <div class="row mt-2">
                         <div class="col-md-4 form-group" id="paymentType">
-                            <label for="paymentTypeSelect">Payment Type</label>
+                            <label for="paymentTypeSelect">Payment Type<span class="text-danger">*</span></label>
                             <select name="payment_type" id="paymentTypeSelect"
                                     class="form-select @error('payment_type') is-invalid @enderror">
                                 <option value="">--Select type--</option>
@@ -73,12 +73,13 @@
                         </div>
 
                         <div class="col-md-4 form-group" id="accountId">
-                            <label for="account">Account</label>
+                            <label for="account">Account <span id="showHide">( Available : <b id="balance"> </b> )</span> <span class="text-danger"><b>*</b></span></label>
+                            <input type="hidden" id="current_balance" name="current_balance">
                             <select name="account_id" id="account"
                                     class="form-select @error('account_id') is-invalid @enderror" onchange="getAccountBalance()">
-                                <option value="">--Select account--</option>
+                                <option value="null">--Select account--</option>
                                 @forelse ($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->account_no }}</option>
+                                    <option value="{{ $account->id }}">{{ $account->account_no }} || {{ $account->account_holder }}</option>
                                 @empty
                                     <option>--No account--</option>
                                 @endforelse
@@ -102,10 +103,9 @@
                             @enderror
                         </div>
 
-
                         <div class="col-md-4 form-group">
                             <lavel for="amount">Total Amount</lavel>
-                            <input type="text" id="total_amount" class="t_amount form-control @error('total_amount') is-invalid @enderror" name="total_amount" value="{{old('total_amount')}}">
+                            <input type="text" id="total_amount" class="t_amount form-control @error('total_amount') is-invalid @enderror" name="total_amount" value="{{old('total_amount')}}" readonly>
                             @error('total_amount')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -133,16 +133,12 @@
         </div>
     </div>
 
-    @push('js')
-        <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
-    @endpush
-@endsection
-
 @push('js')
     <script src="{{ asset('jquery/jQuery.js') }}"></script>
     <script src="{{ asset('datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('datatable/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         $(document).ready(function () {
@@ -157,9 +153,32 @@
                 if(this.value == 2) {
                     $('#chequeNumber').hide();
                     $('#accountId').hide();
+                    $('#showHide').hide();
+                    $('#balance').empty();
+                    $('#current_balance').empty();
                 }
             });
         })
+
+        $('#showHide').hide();
+        function getAccountBalance() {
+            var accountId = $('#account').val();
+            if(accountId !== null){
+                    var url = '{{ route("admin.account-balance",":id") }}';
+                    $.ajax({
+                        type: "GET",
+                        url: url.replace(':id', accountId ),
+                        dataType: 'Json',
+                        success: function(data) {
+                            $('#showHide').show();
+                            $("#balance").empty();
+                            $("#balance").append(data);
+                            $("#current_balance").val(data);
+                        }
+                    })
+                 }
+            }
+
     </script>
 
     <script>
@@ -207,9 +226,10 @@
 
     <!-- sweetalert -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script>
+    {{-- <script>
         document.querySelector("input[type=number]")
             .oninput = e => console.log(new Date(e.target.valueAsNumber, 0, 1))
-    </script>
+    </script> --}}
 
 @endpush
+@endsection

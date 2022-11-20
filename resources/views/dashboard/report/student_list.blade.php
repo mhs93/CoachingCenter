@@ -60,10 +60,10 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label for="student_id"> Select Student Status<span class="text-danger">*</span>
+                        <label for="student_id"><b>Select Student Status</b> <span class="text-danger">*</span>
                         </label>
                         <select name="student_id" id="student_id" class=" form-select form-control mt-1">
-                            <option value=""> Select Status </option>
+                            <option value=""> --Select Status-- </option>
                             <option value="1"> Active  </option>
                             <option value="0"> In-Active  </option>
                         </select>

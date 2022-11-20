@@ -67,10 +67,10 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label for="teacher_id"> Select Teacher<span class="text-danger">*</span>
+                        <label for="teacher_id"><b>Select Teacher</b> <span class="text-danger">*</span>
                         </label>
                         <select name="teacher_id" id="teacher_id" class=" form-select form-control mt-1">
-                            <option value=""> Select Teacher </option>
+                            <option value=""> --Select Teacher-- </option>
                             @foreach ($teachers as $item)
                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                             @endforeach
@@ -86,7 +86,7 @@
 
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label for="start_date"> Start Date <span class="text-danger">*</span></label>
+                        <label for="start_date"><b>Start Date</b>  <span class="text-danger">*</span></label>
                         <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}"
                             class="form-control mt-1 @error('start_date') is-invalid @enderror"
                             placeholder="Enter start date" required>
@@ -102,7 +102,7 @@
 
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label for="end_date"> End Date <span class="text-danger">*</span></label>
+                        <label for="end_date"><b>End Date</b>  <span class="text-danger">*</span></label>
                         <input type="date" name="end_date" id="end_date" value="{{ old('end_date') }}"
                             class="form-control mt-1 @error('end_date') is-invalid @enderror"
                             placeholder="Enter end date" required>

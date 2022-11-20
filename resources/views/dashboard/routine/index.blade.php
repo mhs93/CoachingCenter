@@ -16,22 +16,6 @@
     </style>
 @endpush
 
-@section('breadcrumb')
-    <nav aria-label="breadcrumb" class="d-flex align-items-center justify-content-between" style="width: 100%">
-        <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-            </li>
-        </ol>
-        @can('batches_create')
-            {{-- <button class="btn btn-sm btn-info" id="showModal">Create batch</button> --}}
-            <button class="btn btn-sm btn-info" id="showModal">
-                <a href="{{route('admin.routine.create')}}">Create Exam</a>
-            </button>
-        @endcan
-    </nav>
-@endsection
-
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
@@ -40,7 +24,7 @@
         </div>
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Routine lists</p>
-            @can('routine_create')
+            @can('routine_modify')
                 <a href="{{ route('admin.routine.create') }}" class="btn btn-sm btn-info" title="Create">Create Routine</a>
             @endcan
         </div>

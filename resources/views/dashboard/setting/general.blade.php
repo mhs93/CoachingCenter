@@ -35,10 +35,10 @@
                 <a href="{{route('admin.setting.general')}}" class="list-group-item list-group-item-action {{ Route::is('admin.setting.general') ? 'active' : '' }}">
                     General Setting
                 </a>
-                <a href="#" class="list-group-item list-group-item-action">Other Setting</a>
-                <a href="#" class="list-group-item list-group-item-action">Other Setting</a>
-                <a href="#" class="list-group-item list-group-item-action">Other Setting</a>
-                <a href="#" class="list-group-item list-group-item-action disabled">Other Setting</a>
+                {{--<a href="#" class="list-group-item list-group-item-action">Other Setting</a>--}}
+                {{--<a href="#" class="list-group-item list-group-item-action">Other Setting</a>--}}
+                {{--<a href="#" class="list-group-item list-group-item-action">Other Setting</a>--}}
+                {{--<a href="#" class="list-group-item list-group-item-action disabled">Other Setting</a>--}}
             </div>
         </div>
 
@@ -47,12 +47,23 @@
                 <div class="card-header">
                     <p class="m-0">General Information</p>
                 </div>
+
+                {{-- @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif --}}
+
                 <div class="card-body">
                     <form action="{{route('admin.setting.general')}}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="form-group my-3">
-                            <label for="site_title"><b>Site Title</b></label>
+                            <label for="site_title"><b>Site Title</b> <b><span style="color: red">*</span></b> </label>
                             <input type="text" name="site_title" id="site_title" class="form-control" value="@isset($setting->site_title) {{ $setting->site_title }} @endisset">
                             @error('site_title')
                                 <span class="text-danger" role="alert">
@@ -62,7 +73,7 @@
                         </div>
 
                         <div class="form-group my-3">
-                            <label for="logo"> <b>Logo (Only image are allowed)</b> </label>
+                            <label for="logo"> <b>Logo (Only image are allowed)</b> <b><span style="color: red">*</span></b> </label>
                             @if (isset($setting->logo))
                                 <input type="file" class="form-control dropify" data-default-file="{{ asset('images/setting/logo/'.$setting->logo) }}" name="logo" id="logo">
                             @else
@@ -77,7 +88,7 @@
                         </div>
 
                         <div class="form-group my-3">
-                            <label for="favicon"><b>Favicon (Only image are allowed, size: 33 x 33)</b> </label>
+                            <label for="favicon"><b>Favicon (Only image are allowed, size: 33 x 33)</b> <b><span style="color: red">*</span></b> </label>
                             @if (isset($setting->favicon))
                                 <input type="file" class="form-control dropify" data-default-file="{{ asset('images/setting/favicon/'.$setting->favicon) }}" name="favicon" id="favicon">
                             @else
@@ -92,7 +103,7 @@
                         </div>
 
                         <div class="form-group my-3">
-                            <label for="site_address"> <b>Site Address</b> </label>
+                            <label for="site_address"> <b>Site Address <b><span style="color: red">*</span></b></b> </label>
                             <input type="text" name="site_address" id="site_address" class="form-control" value="@isset($setting->site_address) {{ $setting->site_address }} @endisset">
 
 

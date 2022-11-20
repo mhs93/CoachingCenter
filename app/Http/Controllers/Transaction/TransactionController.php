@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers\Transaction;
 
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use App\Models\Batch;
 use App\Models\Account;
+use App\Models\Student;
+use App\Models\Teacher;
+use App\Helper\Accounts;
+use App\Models\Stdpayment;
+use App\Models\Tchpayment;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Helper\Accounts;
 
 class TransactionController extends Controller
 {
@@ -46,7 +53,7 @@ class TransactionController extends Controller
                     if ($data->payment_type == 1) {
                         return '<span class="text-green">'.$data->cheque_number.'</span> ';
                     } else {
-                        return ' ';
+                        return "--";
                     }
                 })
                 ->rawColumns(['transaction_type', 'payment_type','cheque_number'])
@@ -90,14 +97,14 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'date' => 'required|date',
-            'account_id' => 'required|string',
-            'amount' => 'required|string',
-            'payment_type' => 'nullable',
-            'cheque_number' => 'nullable',
-            'cash_details' => 'nullable',
-            'purpose' => 'required',
-            'remarks' => 'required|string',
+            'date'          =>    'required|date',
+            'account_id'    =>    'required|string',
+            'amount'        =>    'required|string',
+            'payment_type'  =>    'nullable',
+            'cheque_number' =>    'nullable',
+            'cash_details'  =>    'nullable',
+            'purpose'       =>    'required',
+            'remarks'       =>    'required|string',
         ]);
         try {
             $transaction = new Transaction();
@@ -109,13 +116,13 @@ class TransactionController extends Controller
             } else {
                 $transaction->transaction_type = 2;
             }
-            $transaction->amount = $request->amount;
-            $transaction->payment_type = $request->payment_type;
-            $transaction->cheque_number = $request->cheque_number;
-            $transaction->purpose = $request->purpose;
-            $transaction->remarks = $request->remarks;
-            $transaction->cash_details = $request->cash_details;
-            $transaction->created_by = Auth::user()->id;
+            $transaction->amount        =   $request->amount;
+            $transaction->payment_type  =   $request->payment_type;
+            $transaction->cheque_number =   $request->cheque_number;
+            $transaction->purpose       =   $request->purpose;
+            $transaction->remarks       =   $request->remarks;
+            $transaction->cash_details  =   $request->cash_details;
+            $transaction->created_by    =   Auth::user()->id;
             $transaction->save();
             return redirect()->route('admin.transaction.index')->with('t-success', 'transaction created successfully');
         } catch (\Exception $e) {
@@ -167,14 +174,14 @@ class TransactionController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'date' => 'required|date',
-            'account_id' => 'required|string',
-            'amount' => 'required|string',
-            'payment_type' => 'nullable',
-            'cheque_number' => 'nullable',
-            'cash_details' => 'nullable',
-            'purpose' => 'required|string',
-            'remarks' => 'required|string',
+            'date'          =>    'required|date',
+            'account_id'    =>    'required|string',
+            'amount'        =>    'required|string',
+            'payment_type'  =>    'nullable',
+            'cheque_number' =>    'nullable',
+            'cash_details'  =>    'nullable',
+            'purpose'       =>    'required|string',
+            'remarks'       =>    'required|string',
         ]);
 
         try {
@@ -221,6 +228,204 @@ class TransactionController extends Controller
         if ($request->ajax()) {
             $balance = Accounts::postBalance($id);
             return response()->json($balance);
+        }
+    }
+
+    //account statement page
+    public function AccountStatement()
+    {
+        try {
+            $accounts = Account::orderBy('id', 'desc')->get();
+            return view('dashboard.transactions.account_statement', compact('accounts'));
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function AccountStatementList(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $credit = Transaction::where('account_id', $request->account_id)
+                    ->where('transaction_type', 3)
+                    ->orWhere('transaction_type', 1)
+                    ->where('date', '<=', $request->start_date)
+                    ->sum('amount');
+
+                $debit = Transaction::where('account_id', $request->account_id)
+                    ->where('transaction_type', 2)
+                    ->where('date', '<=', $request->start_date)
+                    ->sum('amount');
+
+                $previous_balance = $credit - $debit;
+
+                $data = Transaction::with('account')
+                    ->where('account_id', $request->account_id)
+                    ->where('date', '>', $request->start_date)
+                    ->where('date', '<=', $request->end_date)
+                    ->orderBy('date', 'asc');
+
+                return Datatables::of($data)
+
+                    ->addColumn('credit', function (Transaction $data) {
+                        if ($data->transaction_type == 1) {
+                            $amount = $data->amount;
+                        } elseif($data->transaction_type == 3) {
+                            $amount = $data->amount;
+                        }else {
+                            return  '<p> 00.00 </p>';
+                        }
+                        return $amount;
+                    })
+
+                    ->addColumn('debit', function (Transaction $data) {
+                        if ($data->transaction_type == 2) {
+                            return  $data->amount;
+                        } else {
+                            return  '<p> 00.00 </p>';
+                        }
+                    })
+                    ->addColumn('transaction_type', function (Transaction $data) {
+                        if ($data->transaction_type == 1) {
+                            return  'Credit';
+                        } elseif($data->transaction_type == 2) {
+                            return  'Debit';
+                        }else{
+                            return 'Initial Balance';
+                        }
+                    })
+
+                    ->addColumn('current_balance', function ($data) use (&$previous_balance) {
+                        if ($data->transaction_type == 3) {
+                            return $previous_balance;
+                        } elseif ($data->transaction_type == 1) {
+                            $previous_balance = $previous_balance + $data->amount;
+                            return $previous_balance;
+                        } elseif ($data->transaction_type == 2) {
+                            $previous_balance = $previous_balance - $data->amount;
+                            return $previous_balance;
+                        }
+                    })
+
+                    ->with('prevBalance', $previous_balance)
+                    ->addIndexColumn()
+                    ->rawColumns(['credit', 'debit', 'current_balance','transaction_type'])
+                    ->toJson();
+            }
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
+    //account statement page
+    public function StudentsTransaction()
+    {
+        try {
+            $batches = Batch::orderBy('id', 'desc')->get();
+            return view('dashboard.transactions.students_transaction', compact('batches'));
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function StudentsTransactionList(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $data = Stdpayment::with('student')
+                    ->where('std_id', $request->student_id)
+                    ->whereDate('created_at', '>',$request->start_date)
+                    ->whereDate('created_at', '<=',$request->end_date)
+                    ->get();
+
+                return Datatables::of($data)
+
+                ->addColumn('date', function ($data) {
+                    $value = Carbon::parse($data->created_at)->format('Y-m-d');
+                    return $value;
+                })
+
+                ->addColumn('reg_no', function ($data) {
+                    $value = isset($data->student->reg_no) ? $data->student->reg_no : null;
+                    return $value;
+                })
+
+                ->addColumn('payment_month', function ($data) {
+                    $value = Carbon::parse($data->month)->format('F Y');;
+                    return $value;
+                })
+
+                ->addColumn('contact_number', function ($data) {
+                    $contact = isset($data->student->contact_number) ? $data->student->contact_number : null;
+                    return $contact;
+                })
+
+                ->addColumn('action', function ($data) {
+                    return '<a href="' . route('admin.student.payment.show', $data->id) . '" class="btn btn-sm btn-info" title="details"><i class="bx bxs-show"></i></a>';
+                })
+
+                ->addIndexColumn()
+                ->rawColumns(['date','payment_month','reg_no','contact_number', 'action'])
+                ->toJson();
+        }
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
+    //account statement page
+    public function TeachersTransaction()
+    {
+        try {
+            $teachers = Teacher::orderBy('id', 'desc')->get();
+            return view('dashboard.transactions.teachers_transaction', compact('teachers'));
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function TeachersTransactionList(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $data = Tchpayment::with('teacher')
+                    ->where('tch_id', $request->teacher_id)
+                    ->whereDate('created_at', '>',$request->start_date)
+                    ->whereDate('created_at', '<=',$request->end_date)
+                    ->get();
+
+                return Datatables::of($data)
+
+                ->addColumn('date', function ($data) {
+                    $value = Carbon::parse($data->created_at)->format('Y-m-d');
+                    return $value;
+                })
+
+                ->addColumn('reg_no', function ($data) {
+                    $value = isset($data->teacher->reg_no) ? $data->teacher->reg_no : null;
+                    return $value;
+                })
+
+                ->addColumn('payment_month', function ($data) {
+                    $value = Carbon::parse($data->month)->format('F Y');;
+                    return $value;
+                })
+
+                ->addColumn('contact_number', function ($data) {
+                    $contact = isset($data->teacher->contact_number) ? $data->teacher->contact_number : null;
+                    return $contact;
+                })
+
+                ->addColumn('action', function ($data) {
+                    return '<a href="' . route('admin.teacher.payment.show', $data->id) . '" class="btn btn-sm btn-info" title="details"><i class="bx bxs-show"></i></a>';
+                })
+
+                ->addIndexColumn()
+                ->rawColumns(['date','payment_month','reg_no','contact_number', 'action'])
+                ->toJson();
+        }
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
         }
     }
 }

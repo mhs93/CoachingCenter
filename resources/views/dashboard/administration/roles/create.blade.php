@@ -15,8 +15,9 @@
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
             <p class="m-0">Create Role With Permissions</p>
+            <a class="btn btn-sm btn-info" href="{{ route('admin.roles.index') }}">Back</a>
         </div>
         <div class="card-body">
             <form action="{{ route('admin.roles.store') }}" method="POST">

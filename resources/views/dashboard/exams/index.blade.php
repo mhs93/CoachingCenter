@@ -23,7 +23,7 @@
                 <a href="{{ route('admin.dashboard') }}">Dashboard</a>
             </li>
         </ol>
-        @can('exam_create')
+        @can('exam_modify')
             {{-- <button class="btn btn-sm btn-info" id="showModal">Create batch</button> --}}
             <button class="btn btn-sm btn-info" id="showModal">
                 <a href="{{route('admin.exams.create')}}" title="Create">Create Exam</a>
@@ -50,9 +50,10 @@
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
-                        {{-- <th>Batch Name</th>
-                        <th>Start Time</th>
-                        <th>End Time</th> --}}
+                        {{-- <th>Batch</th>
+                        <th>Batch Name</th> --}}
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -92,9 +93,13 @@
                     columns: [
                         // {data:'id',name:'id'},
                         {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                        {data: 'name',name: 'name',orderable: true,searchable: true},
-                        {data: 'status',name: 'status',orderable: true,searchable: true},
-                        {data: 'action',name: 'action',orderable: false,searchable: false},
+                        {data: 'name', name: 'name', orderable: true,searchable: true},
+                        // {data: 'examDetails.batch.name', name: 'batch', orderable: true,searchable: true},
+                        // {data: 'batch_id', name: 'name', orderable: true,searchable: true},
+                        {data: 'start_date', name: 'start_date', orderable: true, searchable: true},
+                        {data: 'end_date', name: 'end_date', orderable: true, searchable: true},
+                        {data: 'status', name: 'status', orderable: true, searchable: true},
+                        {data: 'action', name: 'action', orderable: false, searchable: false},
                     ]
                 });
             });

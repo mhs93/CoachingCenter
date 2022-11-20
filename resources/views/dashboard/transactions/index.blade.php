@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'transaction')
+@section('title', 'Transaction')
 
 @push('css')
     <style>
@@ -15,18 +15,6 @@
     </style>
 @endpush
 
-@section('breadcrumb')
-    <nav aria-label="breadcrumb" class="d-flex  align-items-center justify-content-between" style="width: 100%">
-        <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-
-            </li>
-        </ol>
-
-        <a href="{{ route('admin.transaction.create') }}" class="btn btn-sm btn-info">Create Transaction</a>
-    </nav>
-@endsection
 
 @section('content')
     @include('layouts.dashboard.partials.alert')
@@ -47,7 +35,7 @@
                     <th scope="col">Cheque Number</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
         </div>

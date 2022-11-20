@@ -32,21 +32,24 @@
                             <td>Subject Code</td>
                             <td>{{ $subject->code }}</td>
                         </tr>
-                        <tr>
-                            <td>Subject Note</td>
-                            <td>{!! $subject->note !!}</td>
-                        </tr>
+
                         <tr>
                             <td>Subject Fee</td>
                             <td>{{ $subject->fee }}</td>
                         </tr>
+
+                        <tr>
+                            <td>Subject Note</td>
+                            <td>{!! $subject->note !!}</td>
+                        </tr>
+
                     </table>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-3">
-                    @can('teacher_edit')
+                    @can('subject_modify')
                         <div class="form-group mt-3">
                             <a href="{{ route('admin.subjects.edit',$subject->id) }}" class="btn btn-sm btn-primary" onclick="">Edit</a>
                         </div>

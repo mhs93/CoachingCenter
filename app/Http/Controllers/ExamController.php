@@ -24,28 +24,30 @@ class ExamController extends Controller
 
             $user = User::findOrFail(Auth::id());
             if($user->type == '0'){
-                $data = Exam::select('id', 'name', 'status')
+                $data = Exam::with('examDetails.batch')
+                    ->select('id', 'name', 'start_date', 'end_date', 'status')
                     ->orderBy('id', 'DESC')
                     ->get();
+                // dd($data);
             }
             else{
                 if($user->type == '1'){
                     $data = Exam::select('id', 'name', 'status')
-                        ->orderBy('id', 'DESC')->get();
+                        ->orderBy('id', 'DESC')
+                        ->where('status', '1')
+                        ->get();
                 }
                 else{
                     $student = Student::where('id', $user->student_id)->first();
-                    // return $student;
                     $examDetails = ExamDetails::where('batch_id', $student->batch_id)
-                                // ->with('exam')
                                 ->groupBy('exam_id')
                                 ->get();
-                    // return $examDetails;
                     $data = [];
                     foreach($examDetails as $examDetail){
-                        $data[] = Exam::select('id', 'name', 'status')
+                        $data[] = Exam::select('id', 'name', 'start_date', 'end_date', 'status')
                             ->orderBy('id', 'DESC')
                             ->where('id',  $examDetail->exam_id)
+                            ->where('status', '1')
                             ->first();
                     }
                 }
@@ -53,9 +55,24 @@ class ExamController extends Controller
 
 
             return DataTables::of($data)->addIndexColumn()
+                //Batch
+                ->addColumn('batch_id', function ($data) {
+                    // $batch = Exam::with('examDetails.batch')
+                    //     ->get();
+                    // foreach($data as $exam){
+                    //     $da .= '<div>'. $exam.examDetails.batch.name .'</div>';
+                    // }
+
+                    // foreach($data as $exam){
+                    //     $batch = $exam.examDetails.batch.name;
+                    // }
+                    // return $batch.examDetails.batch.name;
+
+                })
+
                 //Status
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('batches_edit')){
+                    if(Auth::user()->can('exam_modify')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -76,34 +93,34 @@ class ExamController extends Controller
                         }
                     }
                 })
+
                 //Action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('exam_show')){
+                    if (Auth::user()->can('exam_list')){
                         $showDetails = '<a href="' . route('admin.exams.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
-                    if (Auth::user()->can('exam_edit')){
+                    if (Auth::user()->can('exam_modify')){
                         $editButton = '<a href="' . route('admin.exams.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $editButton = '';
                     }
-                    if (Auth::user()->can('exam_delete')){
+                    if (Auth::user()->can('exam_modify')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';
                     }
-                    if (Auth::user()->can('exam_result')){
+                    if (Auth::user()->can('exam_list')){
                         $resultButton = '<a href=" '. route('admin.result_batch.show', $data->id) . '" class="btn btn-sm btn-success">See Result</a>';
                     }
                     else{
                         $resultButton = '';
                     }
                     return '<div class = "btn-group">'.$showDetails.$editButton.$deleteButton.$resultButton.'</div>';
-                    // return '<div class = "btn-group">'.$showDetails.$editButton.$deleteButton.'</div>';
                 })
 
-                ->rawColumns(['action', 'status'])
+                ->rawColumns(['action', 'batch_id', 'status'])
                 ->make(true);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -176,7 +193,6 @@ class ExamController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $this->validate($request, [
             'name'         => 'required|string',
         ]);
@@ -186,6 +202,8 @@ class ExamController extends Controller
             $exam = new Exam();
             $exam->name         =       $request->name;
             $exam->status       =       $request->status;
+            $exam->start_date     =       $request->start_date;
+            $exam->end_date       =       $request->end_date;
             $exam->note         =       strip_tags($request->note);
             $exam->save();
             $x = 0;
@@ -213,10 +231,10 @@ class ExamController extends Controller
                     $examDetail->exam_id        =       $exam->id;
                     $examDetail->batch_id       =       $batchId;
                     $examDetail->subject_id     =       $subId;
-                    $examDetail->start_date     =       $request->start_date[$x];
+                    $examDetail->date           =       $request->date[$x];
                     $examDetail->start_time     =       $request->start_time[$x];
-                    $examDetail->end_date       =       $request->end_date[$x];
-                    $examDetail->start_time     =       $request->start_time[$x];
+                    // $examDetail->end_date       =       $request->end_date[$x];
+                    // $examDetail->start_time     =       $request->start_time[$x];
                     $examDetail->end_time       =       $request->end_time[$x];
                     $examDetail->save();
                     $x++;
@@ -247,13 +265,6 @@ class ExamController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-
-
-    // $batches = Batch::select('id', 'name')
-    //         ->where('status', 1)
-    //         ->get();
-    // return view('dashboard.exams.edit', compact('exam', 'examDetails', 'batches'));
-
 
     /**
      * Show the form for editing the specified resource.
@@ -293,6 +304,8 @@ class ExamController extends Controller
         try {
             $exam = Exam::findOrFail($request->id);
             $exam->name         =       $request->name;
+            $exam->start_date   =       $request->start_date;
+            $exam->end_date     =       $request->end_date;
             $exam->status       =       $request->status;
             $exam->note         =       $request->note;
             $exam->update();
@@ -300,9 +313,10 @@ class ExamController extends Controller
             $x = 0;
             $examDetails = ExamDetails::where('exam_id', $request->id)->get();
             foreach($examDetails as $key => $exam){
-                $exam->start_date     =       $request->start_date[$x];
+                // $exam->start_date     =       $request->start_date[$x];
+                $exam->date     =       $request->date[$x];
                 $exam->start_time     =       $request->start_time[$x];
-                $exam->end_date       =       $request->end_date[$x];
+                // $exam->end_date       =       $request->end_date[$x];
                 $exam->end_time       =       $request->end_time[$x];
                 $exam->update();
                 $x++;
@@ -328,10 +342,7 @@ class ExamController extends Controller
                 $exams->delete();
             }
             $exam->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Exam Deleted Successfully.',
-            ]);
+            return redirect()->route('admin.exams.index')->with('t-success', 'Exam Deleted Successfully');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

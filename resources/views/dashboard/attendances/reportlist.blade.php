@@ -1,21 +1,12 @@
 @extends('layouts.dashboard.app')
 @section('title', 'attendance report')
 
-@section('breadcrumb')
-    <nav aria-label="breadcrumb" class="d-flex  align-items-center justify-content-between" style="width: 100%">
-        <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-                <a href="{{ route('admin.attendances.report') }}">Back to report</a>
-            </li>
-        </ol>
-    </nav>
-@endsection
-
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
             <p class="m-0">Attendance Report</p>
+            <a href="{{ route('admin.attendances.report') }}" class="btn btn-sm btn-info">Back</a>
         </div>
         <div class="card-body">
                     <table id="table" class="table table-bordered data-table" style="width: 100%">
@@ -47,7 +38,7 @@
                         </tbody>
                     </table>
             <div >
-                <button type="submit" class="btn btn-sm btn-primary" style="float:right" >Print</button>
+                <a href="javascript:window.print()" class="btn btn-sm btn-primary" style="float:right" >Print</a>
             </div>
         </div>
     </div>

@@ -20,27 +20,27 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Teacher Attendance</p>
+            <a href="{{ route('admin.tattendances.index') }}" class="btn btn-sm btn-info">Back</a>
         </div>
         <div class="card-body">
             <div class="container">
                 <form action="{{ route('admin.teachers.by.name') }}" method="post">
                     @csrf
                     <div class="row">
-                        <div class="col-md-4 form-group">
-                            <label for="orderDate">Date<span class="text-red-600">*</span></label>
-                            <input type="date" id="date" class="form-control" placeholder="" required="required" name="date">
+                        <div class="col-md-5 form-group">
+                            <label for="orderDate"><b>Date</b> <span class="text-danger"><b>*</b></span></label>
+                            <input type="date" id="date" class="form-control" placeholder="" required="required" name="date" required>
                         </div>
-                        <div class="col-md-4 form-group">
-                            <label for="teacher_id">Teacher<span class="text-red-600">*</span></label>
+                        <div class="col-md-5 form-group">
+                            <label for="teacher_id"><b>Select Teacher</b> <span class="text-danger"><b>*</b> </span></label>
 
                             <select name="teacher_id[]" id="teacher_id"
                             class="multi-teacher mySelect2 form-control @error('teacher_id') is-invalid @enderror"
-                            multiple="multiple">
+                            multiple="multiple" required>
 
                             {{-- <select class="form-control" name="teacher_id" id="teacher_id" required=""> --}}
-                                <option value="">--select teacher--</option>
                                 @forelse ($teahcers as $teahcer)
                                 <option value="{{ $teahcer->id }}">{{ $teahcer->name }}</option>
                                 @empty
@@ -48,8 +48,8 @@
                                 @endforelse
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-info" style="margin-top: 24px">
+                        <div class="col-md-2 form-group">
+                            <button type="submit" class="btn btn-primary" style="margin-top: 24px">
                                 Get Teacher
                             </button>
                         </div>

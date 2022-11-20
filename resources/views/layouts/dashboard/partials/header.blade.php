@@ -13,11 +13,14 @@
             {{--<li class="nav-item"><a class="nav-link" href="#">Users</a></li>--}}
             {{--<li class="nav-item"><a class="nav-link" href="#">Settings</a></li>--}}
         {{--</ul>--}}
+
         <ul class="header-nav ms-auto">
+
             <li class="nav-item"><a class="nav-link" href="#">
                     <svg class="icon icon-lg">
                         <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
-                    </svg></a></li>
+                    </svg></a>
+            </li>
             <li class="nav-item"><a class="nav-link" href="#">
                     <svg class="icon icon-lg">
                         <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-list-rich"></use>
@@ -25,7 +28,13 @@
             <li class="nav-item"><a class="nav-link" href="#">
                     <svg class="icon icon-lg">
                         <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
-                    </svg></a></li>
+                    </svg></a>
+            </li>
+
+            {{-- Notification --}}
+            {{-- <li class="nav-item"><a class="nav-link" href="#">
+                <a href="" title="notice icons"><i class='bx bxs-bell'></i></a>
+            </li> --}}
         </ul>
         <ul class="header-nav ms-3">
             <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -58,11 +67,11 @@
                         </svg>
                         Profile
                     </a>
-                    <a class="dropdown-item" href="#">
+                    {{-- <a class="dropdown-item" href="#">
                         <svg class="icon me-2">
                             <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-settings"></use>
                         </svg> Settings
-                    </a>
+                    </a> --}}
                     <div class="dropdown-divider"></div>
                     <form action="{{ route('logout') }}" method="post">
                         @csrf

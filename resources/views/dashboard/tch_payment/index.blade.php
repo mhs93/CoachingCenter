@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'teacher payment')
+@section('title', 'Teacher Payment List')
 
 
 @section('content')
@@ -59,7 +59,8 @@
                         <th>{{$tchpayment->created_at}}</th>
                         <th>
                             <a href="{{ route('admin.teacher.payment.show',$tchpayment->id) }}" class="btn btn-sm btn-info" title="details"><i class='bx bxs-show'></i></a>
-                            <a href="{{route('admin.teacher.payment.edit', $tchpayment->id)}}" title="edit" class="btn btn-sm btn-warning" title="edit"><i class='bx bxs-edit-alt'></i></a>
+                            <a href="{{route('admin.teacher.payment.edit', $tchpayment->id)}}" title="edit" class="btn btn-sm btn-warning"><i class='bx bxs-edit-alt'></i></a>
+                            <a href="{{route('admin.teacher.payment.tchprint', $tchpayment->id)}}" title="print" class="btn btn-sm btn-warning"><i class='bx bxs-printer'></i></a>
                             <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm( {{ $tchpayment->id }})" title="Delete"><i class="bx bxs-trash"></i></a>
                         </th>
                     </tr>

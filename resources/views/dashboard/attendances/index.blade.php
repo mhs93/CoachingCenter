@@ -80,7 +80,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <button id="getStudentList" type="submit" class="btn btn-info" style="margin-top: 24px">
+                            <button id="getStudentList" type="submit" class="btn btn-primary" style="margin-top: 24px">
                                 Get Student List
                             </button>
                         </div>

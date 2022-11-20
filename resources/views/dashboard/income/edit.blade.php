@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'income edit')
+@section('title', 'Edit Income')
 
 @push('css')
     <style>
@@ -24,7 +24,7 @@
                     @method('PUT')
                     <div class="row">
                         <div class="col-md-4 form-group">
-                            <lavel for="income_source">Income Source</lavel>
+                            <label for="income_source"><b>Income Source</b> </label>
                             <input type="text" class="form-control @error('income_source') is-invalid @enderror" name="income_source" value="{{$income->income_source}}">
                             @error('income_source')
                             <span class="invalid-feedback" role="alert">
@@ -33,8 +33,8 @@
                             @enderror
                         </div>
                         <div class="col-md-4 form-group">
-                            <lavel for="amount">Amount</lavel>
-                            <input type="text" id="amount" class="t_amount form-control @error('amount') is-invalid @enderror" name="amount" value="{{$income->amount}}">
+                            <label for="amount"><b>Amount</b> </label>
+                            <input type="number" id="amount" class="t_amount form-control @error('amount') is-invalid @enderror" name="amount" value="{{$income->amount}}">
                             @error('amount')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -42,7 +42,7 @@
                             @enderror
                         </div>
                         <div class="col-md-4 form-group" id="paymentType">
-                            <label for="paymentTypeSelect">Payment Type</label>
+                            <label for="paymentTypeSelect"><b>Payment Type</b> </label>
                             <select name="payment_type" id="paymentTypeSelect"
                                     class="form-select @error('payment_type') is-invalid @enderror">
                                 <option value="">--Select type--</option>
@@ -59,7 +59,7 @@
 
                     <div class="row mt-2">
                         <div class="col-md-4 form-group" id="accountId">
-                            <label for="account">Account</label>
+                            <label for="account"><b>Select Account</b> </label>
                             <select name="account_id" id="account"
                                     class="form-select @error('account_id') is-invalid @enderror" onchange="getAccountBalance()">
                                 <option value="">--Select account--</option>
@@ -77,7 +77,7 @@
                         </div>
 
                         <div class="col-md-4 form-group" id="chequeNumber">
-                            <label for="cheque_number">Cheque Number</label>
+                            <label for="cheque_number"><b>Cheque Number</b> </label>
                             <input type="text" name="cheque_number" id="cheque_number"
                                    class="form-control @error('cheque_number') is-invalid @enderror"
                                    value="{{ $income->cheque_number }}" placeholder="Enter cheque number">
@@ -90,7 +90,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="note"> Note</label>
+                        <label for="note"><b>Note</b> </label>
                         <textarea name="note" class="form-control" id="note"  cols="40" rows="6">{{$income->note}}</textarea>
                         @error('note')
                         <span class="text-danger" role="alert">

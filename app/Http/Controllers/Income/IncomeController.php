@@ -37,6 +37,13 @@ class IncomeController extends Controller
                         return 'Cash';
                     }
                 })
+                ->addColumn('cheque_number',function ($data){
+                    if ($data->cheque_number == NULL){
+                        return '--';
+                    }else{
+                        return $data->cheque_number;
+                    }
+                })
                 ->addColumn('action', function ($data) {
                     if (Auth::user()->can('income_show')){
                         $showDetails = '<a href="' . route('admin.income.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
@@ -44,7 +51,7 @@ class IncomeController extends Controller
                         $showDetails = '';
                     }
                     if (Auth::user()->can('income_edit')){
-                        $incomeEdit = '<a href="' . route('admin.income.edit', $data->id) . '" class="btn btn-sm btn-info" title="Edit"><i class=\'bx bx-edit\'></i></a>';
+                        $incomeEdit = '<a href="' . route('admin.income.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bx-edit\'></i></a>';
                     }else{
                         $incomeEdit = '';
                     }
@@ -92,12 +99,12 @@ class IncomeController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'income_source' => 'required|string',
-            'amount' => 'required|integer',
-            'payment_type' => 'required',
-            'account_id' => 'nullable|integer',
-            'note' => 'nullable|string',
-            'cheque_number' => 'nullable|string'
+            'income_source'     =>      'required|string',
+            'amount'            =>      'required|integer',
+            'payment_type'      =>      'required',
+            'account_id'        =>      'nullable',
+            'note'              =>      'nullable|string',
+            'cheque_number'     =>      'nullable|string'
         ]);
 
         try{
@@ -134,7 +141,7 @@ class IncomeController extends Controller
             $transaction->created_by = Auth::id();
             $transaction->save();
             DB::commit();
-            return redirect()->route('admin.income.index')->with('t-success','income created successfully');
+            return redirect()->route('admin.income.index')->with('t-success','Income Created successfully');
         }catch (\Exception $e){
             DB::rollBack();
             return back()->with('error', $e->getMessage());
@@ -176,12 +183,12 @@ class IncomeController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'income_source' => 'required|string',
-            'amount' => 'required|integer',
-            'payment_type' => 'required',
-            'account_id' => 'nullable|integer',
-            'note' => 'nullable|string',
-            'cheque_number' => 'nullable|string'
+            'income_source'     =>      'required|string',
+            'amount'            =>      'required|integer',
+            'payment_type'      =>      'required',
+            'account_id'        =>      'nullable',
+            'note'              =>      'nullable|string',
+            'cheque_number'     =>      'nullable|string'
         ]);
 
         try{
@@ -219,7 +226,7 @@ class IncomeController extends Controller
             $transaction->created_by = Auth::id();
             $transaction->update();
             DB::commit();
-            return redirect()->route('admin.income.index')->with('t-success','income updated successfully');
+            return redirect()->route('admin.income.index')->with('t-success','Income Updated Successfully');
         }catch (\Exception $e){
             DB::rollBack();
             return back()->with('error', $e->getMessage());
@@ -240,7 +247,7 @@ class IncomeController extends Controller
             $income->deleted_by = Auth::id();
             return response()->json([
                 'success' => true,
-                'message' => 'Income deleted successfully',
+                'message' => 'Income Deleted Successfully',
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');

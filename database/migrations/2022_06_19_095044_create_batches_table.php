@@ -20,8 +20,8 @@ return new class extends Migration
             $table->json('subject_id');
             $table->string('note')->nullable();
             $table->double('batch_fee')->nullable();
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->string('start_date');
+            $table->string('end_date');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();

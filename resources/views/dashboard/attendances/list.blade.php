@@ -8,6 +8,7 @@
     <div class="card-header">
         <p class="m-0"> @if(!empty($attendances)) Update Attendance @else Take Attendance @endif </p>
     </div>
+    
     <div class="card-body">
         <div class="row mt-1">
             <div class="col-sm-4">
@@ -20,7 +21,7 @@
                 <p> Subject : <b> {{ $subject->name }}</b>
             </div>
         </div>
-        
+
         @if(!empty($students))
         <form action="{{route('admin.attendances.store')}}" method="POST">
             @csrf
@@ -62,7 +63,7 @@
             </div>
         </form>
         @endif
-        
+
 
         @if(!empty($attendances))
         <form action="{{route('admin.attendances.update')}}" method="POST">

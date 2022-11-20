@@ -40,11 +40,14 @@ class RoleController extends Controller
                     if ($data->name == 'Super Admin' || $data->name == 'Students' || $data->name == 'Teachers') {
                         return '';
                     }
+//                    return '<div class = "btn-group">
+//                                <a href="' . route('admin.roles.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>
+//                                <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>
+//
+//                            </div>';
                     return '<div class = "btn-group">
-                            <a href="' . route('admin.roles.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>
-                            
-                            <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>
-                        </div>';
+                                <a href="' . route('admin.roles.edit', $data->id) . '" class="btn btn-sm btn-warning" title="edit"><i class=\'bx bxs-edit-alt\'></i></a>                                       
+                            </div>';
                 })
                 ->rawColumns(['action', 'permissions'])
                 ->make(true);

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'income list')
+@section('title', 'Income List')
 
 @push('css')
     <style>
@@ -37,7 +37,7 @@
                     <th scope="col">Action</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
         </div>

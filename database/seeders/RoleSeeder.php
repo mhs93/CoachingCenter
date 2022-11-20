@@ -26,18 +26,26 @@ class RoleSeeder extends Seeder
             'id' => 2,
             'name' => 'Teacher',
             'guard_name' => 'web',
-        ])->givePermissionTo(['attendance_manage','make_attendance','attendance_report','student_list',
-            'student_profile','batches_manage','subject_manage','announcement_manage','announcement_show',
-            'announcement_create','announcement_edit','announcement_delete','classRooms_manage',
-            'classRooms_create','classRooms_show','classRooms_edit','classRooms_delete','attendance_manage',
-            'resources_list','upload_resource','upload_delete','teacher_list','teacher_profile']);
+        ])->givePermissionTo(['attendance_manage','student_attendance','attendance_report','subject_list',
+            'batches_manage','student_list','teacher_list','routine_list','routine_modify','attendance_manage',
+            'student_attendance','attendance_report','exam_list','exam_modify','announcement_manage',
+            'announcement_list','specialClass_list','specialClass_manage','resources_list','resource_upload',
+            'resource_manage']);
         Role::updateOrCreate([
             'id' => 3,
             'name' => 'Student',
             'guard_name' => 'web',
-        ])->givePermissionTO(['attendance_manage','make_attendance','attendance_report','student_list','student_profile',
-            'student_edit','batches_manage','subject_manage','announcement_manage','announcement_show',
-            'announcement_create','announcement_edit','announcement_delete','classRooms_manage','classRooms_create',
-            'classRooms_show','classRooms_edit','classRooms_delete','teacher_list','teacher_profile','']);
+        ])->givePermissionTO(['attendance_manage','attendance_report','subject_list','batches_manage',
+            'student_list','teacher_list','routine_list','attendance_manage','attendance_report',
+            'exam_list','announcement_list','specialClass_list','resources_list','resource_upload',
+            ]);
+
+        Role::updateOrCreate([
+            'id' => 4,
+            'name' => 'Accountant',
+            'guard_name' => 'web',
+        ])->givePermissionTO(['account_manage','account_list','student_payment','student_list',
+            'teacher_list','teacher_payment','payment_manage','report_manage','student_transaction_report',
+            'teacher_transaction_report']);
     }
 }

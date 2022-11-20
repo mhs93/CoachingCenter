@@ -36,7 +36,7 @@ class ReportController extends Controller
                     })
 
                     ->addColumn('action', function (Student $data) {
-                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-low-vision"></i></a>';
+                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-show"></i></a>';
                     })
 
                     ->addIndexColumn()
@@ -76,7 +76,7 @@ class ReportController extends Controller
                 return Datatables::of($data)
 
                     ->addColumn('action', function (Student $data) {
-                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-low-vision"></i></a>';
+                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-show"></i></a>';
                     })
 
                     ->addIndexColumn()
@@ -146,7 +146,7 @@ class ReportController extends Controller
                     })
 
                     ->addColumn('action', function (Attendance $data) {
-                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-low-vision"></i></a>';
+                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-show"></i></a>';
                     })
 
                     ->addIndexColumn()
@@ -204,7 +204,7 @@ class ReportController extends Controller
                     })
 
                     ->addColumn('action', function (Attendance $data) {
-                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-low-vision"></i></a>';
+                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-show"></i></a>';
                     })
 
                     ->addIndexColumn()
@@ -263,7 +263,7 @@ class ReportController extends Controller
                     })
 
                     ->addColumn('action', function ($data) {
-                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-low-vision"></i></a>';
+                        return '<a href="' . route('admin.students.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-show"></i></a>';
                     })
 
                     ->addIndexColumn()
@@ -293,9 +293,8 @@ class ReportController extends Controller
                 $data = Teacher::where('status', $request->teacher_id)->get();
 
                 return Datatables::of($data)
-
                     ->addColumn('action', function (Teacher $data) {
-                        return '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-low-vision"></i></a>';
+                        return '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-show"></i></a>';
                     })
 
                     ->addIndexColumn()
@@ -327,7 +326,6 @@ class ReportController extends Controller
                     ->where('date', '>', $request->start_date)
                     ->where('date', '<', $request->end_date)
                     ->get();
-
                 return Datatables::of($data)
 
                     ->addColumn('teacher_name', function ($data) {
@@ -355,7 +353,7 @@ class ReportController extends Controller
                     })
 
                     ->addColumn('action', function ($data) {
-                        return '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-low-vision"></i></a>';
+                        return '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info" title="view"><i class="bx bxs-show"></i></a>';
                     })
 
                     ->addIndexColumn()

@@ -47,7 +47,7 @@ class BatchController extends Controller
 
                 //Status
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('batches_edit')){
+                    if(Auth::user()->can('batches_modify')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -71,17 +71,17 @@ class BatchController extends Controller
 
                 //Action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('batches_show')){
+                    if (Auth::user()->can('batches_modify')){
                         $showDetails = '<a href="' . route('admin.batches.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
-                    if (Auth::user()->can('batches_edit')){
+                    if (Auth::user()->can('batches_modify')){
                         $editButton = '<a href="' . route('admin.batches.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $editButton = '';
                     }
-                    if (Auth::user()->can('batches_delete')){
+                    if (Auth::user()->can('batches_modify')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';
@@ -143,13 +143,14 @@ class BatchController extends Controller
             [
                 'batch_fee.numeric' => 'Batch fee must be numeric',
             ]);
+
         try {
             $batch = new Batch();
             $batch->name = $request->name;
             // $batch->status = $request->status;
             $batch->note = $request->note;
-            $batch->start_time = $request->start_time;
-            $batch->end_time = $request->end_time;
+            $batch->start_date = $request->start_date;
+            $batch->end_date = $request->end_date;
             $batch->batch_fee = $request->batch_fee;
             $batch->created_by = Auth::id();
             if (in_array("0", $request->subject_id)){
@@ -221,28 +222,19 @@ class BatchController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|unique:subjects,name,' . $batch->id . ',id,deleted_at,NULL',
-
-            // 'status' => 'nullable|integer',
-            'start_time' => 'required',
-            'end_time' => 'required',
         ]);
-//        [
-//            // 'status.integer' => 'Select the status',
-//            'end_time.after' => 'End Date must be after start date',
-//            'start_time.after' => 'Start Date must be today or after today',
-//        ]);
+
         try {
             $batch = Batch::findOrFail($request->batch_id);
             $batch->name = $request->name;
-            $batch->status = $request->status;
             $batch->subject_id = json_encode($request->subject_id);
             $batch->note = $request->note;
-            $batch->start_time = $request->start_time;
-            $batch->end_time = $request->end_time;
+            $batch->start_date = $request->start_date;
+            $batch->end_date = $request->end_date;
             $batch->updated_by = Auth::id();
             $batch->update();
 
-            return redirect()->route('admin.batches.index')->with('t-success', 'Batch edited successfully');
+            return redirect()->route('admin.batches.index')->with('t-success', 'Batch updated successfully');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

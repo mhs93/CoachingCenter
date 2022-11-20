@@ -25,8 +25,9 @@
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="id" value="{{$exam->id}}">
+
                 <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="batchname"><b>Exam name</b> </label>
                             <input type="text" class="form-control my-1" id="batchName" name="name" value="{{$exam->name}}" >
@@ -34,7 +35,8 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6">
+
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="status"><b>Status</b> </label>
                             <select name="status" id="status"  class="form-control @error('status') is-invalid @enderror">
@@ -44,33 +46,31 @@
                         </div>
                     </div>
 
-                    {{-- @php
-                        $batchIds = [];
-                        foreach($examDetails as $exams){
-                            $batchIds[] = $exams->batch_id;
-                        }
-                    @endphp --}}
-
-                    {{-- <div class="form-group col-md-12">
-                        <div class="form-group">
-                            <label for="batch_id">Select Batch</label>
-                            <select name="batch_id[]" id="batchIdEx" class="multi-subject form-control @error('batch_id') is-invalid @enderror" multiple="multiple">
-                                @forelse ($batches as $batch)
-                                    <option value="{{ $batch->id }}"
-                                        @if(in_array($batch->id, $batchIds))
-                                            {{ "selected" }}
-                                        @endif
-                                    >
-                                    {{ $batch->name }}
-                                    </option>
-                                @empty
-                                    <option>--No Batch--</option>
-                                @endforelse
-                            </select>
-                        </div>
-                    </div> --}}
-
                 </div>
+
+
+                <div class="row mt-3">
+                        {{-- Start Date --}}
+                        <div class="form-group col-md-6">
+                            <h6>Start Date</h6>
+                            <input type="date" name="start_date" value={{$exam->start_date}} class="form-control">
+                            @error("start_date")
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- End Date --}}
+                        <div class="form-group col-md-6">
+                            <h6>End Date</h6>
+                            <input type="date" name="end_date" value={{$exam->end_date}} class="form-control">
+                            @error("end_date")
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+
 
                 <div class="form-group mt-3">
                     <table class="main table-bordered col-md-12 mt-6">
@@ -84,12 +84,12 @@
                             </tr>
                         </thead>
 
-                        @foreach ($examDetails as $item)
+                        @foreach ($examDetails as $key => $item)
                             <tbody>
                                 <tr>
+
                                     <td>
                                         <div>
-                                            {{-- Batch--}}
                                             {{$item->batch->name}}
                                             <input type="hidden" name="batch_id[]" value={{$item->batch->id}}>
                                         </div>
@@ -104,18 +104,16 @@
                                     </td>
 
                                     <td>
-                                        {{-- Date --}}
                                         <div>
-                                            <h6>Start Date</h6>
-                                            <input type="date" name="start_date[]" class="form-control" value="{{$item->start_date}}">
-                                            @error("start_time")
+                                            <h6>Date</h6>
+                                            <input type="date" name="date[]" class="form-control" value="{{$item->date}}">
+                                            @error("date")
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </td>
 
                                     <td>
-                                        {{-- Start Time --}}
                                         <div>
                                             <h6>Start Time</h6>
                                             <input type="time" name="start_time[]" class="form-control" value="{{$item->start_time}}">
@@ -126,18 +124,6 @@
                                     </td>
 
                                     <td>
-                                        {{-- Date --}}
-                                        <div>
-                                            <h6>End Date</h6>
-                                            <input type="date" name="end_date[]" class="form-control" value="{{$item->end_date}}">
-                                            @error("start_time")
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        {{-- End Time --}}
                                         <div>
                                             <h6>End Time</h6>
                                             <input type="time" name="end_time[]" class="form-control" value="{{$item->end_time}}">
@@ -151,11 +137,6 @@
                         @endforeach
                     </table>
                 </div>
-
-                {{-- Sub-Form Start --}}
-                {{-- <div class="form-group mt-3 col-md-12" id="subForm" >
-                </div> --}}
-                {{-- Sub-Form End --}}
 
                 {{-- Exam Note --}}
                 <div class="form-group mt-3">
@@ -211,22 +192,6 @@
 
                 // Select2 for multi subject
                 $('.multi-subject').select2();
-
-                // For adding new batch and subject
-                // $('#subForm').hide();
-                // $('#batchIdEx').on('change', function() {
-                //     $('#subForm').show();
-                //     let batch_id = $(this).val();
-                //     $("#subForm").empty();
-                //     $.ajax({
-                //         url: "{{ route('admin.exams.getSub') }}",
-                //         type: 'post',
-                //         data: { batchId: batch_id},
-                //         success: function(response) {
-                //             $('#subForm').html(response);
-                //         }
-                //     });
-                // });
 
                 // Ckeditor
                 ClassicEditor.create(document.querySelector('#note'), {

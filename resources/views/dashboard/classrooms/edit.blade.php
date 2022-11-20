@@ -155,17 +155,27 @@
                 // $('#accessKey').hide();
                 // $('#classLink').hide();
 
-                let accessKey = $('#accessKey').val();
-                let classLink = $('#classLink').val();
-
-                if (class_type == 1){
+                if ($('#class_type').val() == 1){
                     $('#accessKey').hide();
                     $('#classLink').hide();
                 }
-                else if(class_type == 2){
+                if ($('#class_type').val() == 2) {
                     $('#accessKey').show();
                     $('#classLink').show();
                 }
+
+
+                // let accessKey = $('#accessKey').val();
+                // let classLink = $('#classLink').val();
+                //
+                // if (class_type == 1){
+                //     $('#accessKey').hide();
+                //     $('#classLink').hide();
+                // }
+                // else if(class_type == 2){
+                //     $('#accessKey').show();
+                //     $('#classLink').show();
+                // }
 
                 $('#class_type').on('change',function () {
                     if (this.value == 1){
@@ -187,7 +197,7 @@
                         type: 'post',
                         data: { batchId: batch_id},
                         success: function(response) {
-                            // $('#subject').html(response)
+                            $('#subject').html(response)
                             console.log(response);
                             $.each(response, function(key, value) {
                                 console.log(value.id)

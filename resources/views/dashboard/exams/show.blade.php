@@ -2,17 +2,6 @@
 
 @section('title', 'Exam Details')
 
-@section('breadcrumb')
-    <nav aria-label="breadcrumb" class="d-flex align-items-center justify-content-between" style="width: 100%">
-        <ol class="breadcrumb my-0 ms-2">
-            <li class="breadcrumb-item">
-                <a href="{{ route('admin.exams.index') }}">Exam List</a>
-            </li>
-        </ol>
-        <a href="{{ route('admin.exams.index') }}" class="btn btn-sm btn-dark">Back to list</a>
-    </nav>
-@endsection
-
 @section('content')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -29,6 +18,16 @@
                         </tr>
 
                         <tr>
+                            <td>Start Date</td>
+                            <td colspan="5">{{ $exam->start_date }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>End Date</td>
+                            <td colspan="5">{{ $exam->end_date }}</td>
+                        </tr>
+
+                        <tr>
                             <td>Status</td>
                             <td colspan="5">{{ $exam->status ? 'Active' : 'Inactive' }}</td>
                         </tr>
@@ -37,13 +36,6 @@
                             <td>Exam Note</td>
                             <td colspan="5"><b>{!! $exam->note !!}</b></td>
                         </tr>
-
-                        {{-- @php
-                            $count = 0;
-                            foreach($exam->examDetails as $key => $examDetail ){
-                                $count = $key;
-                            }
-                        @endphp --}}
 
                         <tr>
                             <table class="table table-bordered">
@@ -66,16 +58,20 @@
                                             </td>
 
                                             <td>
-                                                Start Date: {{$examDetail->start_date}}
+                                                Date: {{$examDetail->date}}
                                             </td>
+                                            {{-- <td>
+                                                Start Date: {{$examDetail->start_date}}
+                                            </td> --}}
 
                                             <td>
                                                 Start Time: {{$examDetail->start_time}}
                                             </td>
+                                            
 
-                                            <td>
+                                            {{-- <td>
                                                 End Date: {{$examDetail->end_date}}
-                                            </td>
+                                            </td> --}}
 
                                             <td>
                                                 End Time: {{$examDetail->end_time}}

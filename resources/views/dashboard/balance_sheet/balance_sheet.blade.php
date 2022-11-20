@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'Balance sheet')
+@section('title', 'Balance Sheet')
 
 @push('css')
     <style>

@@ -16,9 +16,14 @@ class SettingController extends Controller
 
     public function generalUpdate(Request $request)
     {
+        // $this->validate($request, [
+        //     'site_title'     => 'required',
+        //     'logo'           => 'required',
+        //     'favicon'        => 'required',
+        //     'site_address'   => 'required',
+        // ]);
         try {
             $isDbHas = Setting::first();
-
             //logo
             if ($request->has('logo')) {
                 if(isset($isDbHas->logo)){

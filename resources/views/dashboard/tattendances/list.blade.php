@@ -26,7 +26,11 @@
         <p class="m-0">Teacher Attendance</p>
     </div>
     <div class="card-body">
-        {{-- <p>Attendance Date:<b> {{$date}}</b></p> --}}
+        <div class="row mt-1">
+            <div class="col-sm-4">
+                <p> Attendance Date : <b> {{ $date }}</b>
+            </div>
+        </div>
 
         {{-- Create --}}
         @if(!empty($teachers))

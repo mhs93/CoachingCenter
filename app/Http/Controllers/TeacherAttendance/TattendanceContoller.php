@@ -29,6 +29,12 @@ class TattendanceContoller extends Controller
                     ->get();
             $date = $request->date;
 
+            $currentDate = date('Y-m-d');
+            if($date > $currentDate) {
+                return back()->with('error', 'Your date must be less than or equal current date');
+            }
+
+
             if (empty($attendances->toArray())) {
                 $teachers = Teacher::whereIn('id', $request->teacher_id)->get();
                 return view('dashboard.tattendances.list', compact('teachers', 'date'));
@@ -53,25 +59,32 @@ class TattendanceContoller extends Controller
                 $teacher->created_by = Auth::id();
                 $teacher->save();
             }
-            return redirect()->route('admin.tattendances.index')->with('Teacher Attendance Add Successfully Done');
+            // return redirect()->route('admin.attendances.index')->with('t-success', 'Attendance successfully taken');
+            return redirect()->route('admin.tattendances.index')->with('t-success', 'Teacher Attendance Added Successfully Done');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
 
+
     // Update
     public function update(Request $request)
     {
-        for ($i = 0; $i < count($request->teacher_id); $i++) {
-            $atten = 'attendance_' . $i;
-            $teacher = Tattendance::where('teacher_id', $request->teacher_id[$i])->first();
-            $teacher->teacher_id = $request->teacher_id[$i];
-            $teacher->date = $request->date[$i];
-            $teacher->status = $request->$atten;
-            $teacher->updated_by = Auth::id();
-            $teacher->update();
+        try{
+            for ($i = 0; $i < count($request->teacher_id); $i++) {
+                $atten = 'attendance_' . $i;
+                $teacher = Tattendance::where('teacher_id', $request->teacher_id[$i])->first();
+                $teacher->teacher_id = $request->teacher_id[$i];
+                $teacher->date = $request->date[$i];
+                $teacher->status = $request->$atten;
+                $teacher->updated_by = Auth::id();
+                $teacher->update();
+            }
+            return redirect()->route('admin.tattendances.index')->with('t-success', 'Teacher Attendance Successfully Updated');
         }
-        return redirect()->route('admin.tattendances.index')->with('Teacher Attendance Successfully Ipdated');
+        catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
 

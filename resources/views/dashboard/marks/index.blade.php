@@ -39,7 +39,7 @@
         </div>
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Result lists</p>
-            @can('batches_create')
+            @can('exam_modify')
                 <a href="{{ route('admin.marks.create') }}" class="btn btn-sm btn-info" title="Create">Give Mark</a>
             @endcan
         </div>
@@ -131,36 +131,6 @@
                 });
             });
 
-
-            // function edit(id) {
-            //     $("#tbody").empty();
-
-            //     $('#getDataFrom').trigger("reset");
-            //     $('#modalTitle').html("Edit Marks");
-            //     $('#modalCollapse').modal('show');
-            //     $('#errors').hide();
-
-            //     var url = 'marks/marked/show/'+id;
-
-            //     $.ajax({
-            //         url: "{{ route('admin.marks.getBatches') }}",
-            //         type: 'post',
-            //         data: { examId: id},
-            //         success: function(response) {
-            //             $.each(response, function(key, value) {
-            //                 $("#tbody").append(
-            //                     // '<tr> <td colspan="2">'+value.exam.name+'</td></tr>'+
-            //                     '<tr>'+
-            //                         '<td>'+ value.batch.name +'</td>'+
-            //                         '<td><a href="'+ url +'" '+
-            //                         '" class="btn btn-small btn-success">Edit</a></td>'+
-            //                     '</tr>'
-            //                 );
-            //             });
-            //         }
-            //     });
-            // }
-
             function edit(id) {
                 $("#tbody").empty();
 
@@ -180,8 +150,8 @@
                     success: function(response) {
                         $.each(response, function(key, value) {
                             // var url = "{{url('marks/marked/show')}}" + "/" + id + "/" + value.batch_id;
-                            var url = "marks/marked/show" + "/" + id + "/" + value.batch_id;
-                            var delete_url = "marks/marked/delete" + "/" + id + "/" + value.batch_id;
+                            var url = "mark/edit" + "/" + id + "/" + value.batch_id;
+                            var delete_url = "mark/delete" + "/" + id + "/" + value.batch_id;
                             $("#tbody").append(
                                 '<tr>'+
                                     '<td>'+ value.batch.name +'</td>'+

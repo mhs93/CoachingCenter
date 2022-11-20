@@ -107,7 +107,6 @@
                             <label for="gender"><b>Gender</b> </label>
                             <select name="gender" id="gender" value="{{ ($student->gender) }}"
                                     class="form-select @error('gender') is-invalid @enderror">
-                                <option>--Select gender--</option>
                                 <option value="1" @if($student->gender == 1) selected @endif>Male</option>
                                 <option value="2" @if($student->gender == 2) selected @endif>Female</option>
                             </select>

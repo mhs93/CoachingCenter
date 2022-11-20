@@ -7,7 +7,6 @@
         <ol class="breadcrumb my-0 ms-2">
             <li class="breadcrumb-item">
                 <a href="{{ route('admin.transaction.index') }}">Transaction List</a>
-
             </li>
         </ol>
         <a href="{{route('admin.transaction.index')}}" class="btn btn-sm btn-dark">Back</a>

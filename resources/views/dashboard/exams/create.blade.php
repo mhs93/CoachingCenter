@@ -13,6 +13,7 @@
     </style>
 @endpush
 
+
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <form action="{{ route('admin.exams.store') }}" enctype="multipart/form-data" method="POST">
@@ -42,6 +43,27 @@
                                         <option value="0">Deactive</option>
                                     </select>
                                 </div>
+                            </div>
+                        </div>
+
+                        {{-- Date --}}
+                        <div class="row mt-3">
+                            {{-- Start Date --}}
+                            <div class="form-group col-md-6">
+                                <h6>Start Date <span style="color: red">*</span></h6>
+                                <input type="date" name="start_date" class="form-control" placeholder="Start Time">
+                                @error("start_date")
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- End Date --}}
+                            <div class="form-group col-md-6">
+                                <h6>End Date <span style="color: red">*</span></h6>
+                                <input type="date" name="end_date" class="form-control" placeholder="Start Time">
+                                @error("end_date")
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 

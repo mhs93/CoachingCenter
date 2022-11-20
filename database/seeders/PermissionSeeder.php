@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        $module = Module::updateOrCreate(['name' => 'Student Manage']);
+        $module = Module::updateOrCreate(['name' => 'Student']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
             'title' => 'Student List',
@@ -24,31 +24,13 @@ class PermissionSeeder extends Seeder
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Register Student',
-            'name' => 'register_student',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Student Profile',
-            'name' => 'student_profile',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Student Edit',
-            'name' => 'student_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Student Delete',
-            'name' => 'student_delete',
+            'title' => 'Student Modify',
+            'name' => 'student_modify',
             'guard_name' => 'web',
         ]);
 
 
-        $module = Module::updateOrCreate(['name' => 'Batches Manage']);
+        $module = Module::updateOrCreate(['name' => 'Batches']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
             'title' => 'Batches Manage',
@@ -57,64 +39,27 @@ class PermissionSeeder extends Seeder
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Batches Create',
-            'name' => 'batches_create',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Batches Edit',
-            'name' => 'batches_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Batches Delete',
-            'name' => 'batches_delete',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Batches Show',
-            'name' => 'batches_show',
+            'title' => 'Batches Modify',
+            'name' => 'batches_modify',
             'guard_name' => 'web',
         ]);
 
 
-        $module = Module::updateOrCreate(['name' => 'Subject Manage']);
+        $module = Module::updateOrCreate(['name' => 'Subject']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Subject Manage',
-            'name' => 'subject_manage',
+            'title' => 'Subject List',
+            'name' => 'subject_list',
             'guard_name' => 'web',
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Subject Create',
-            'name' => 'subject_create',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Subject Show',
-            'name' => 'subject_show',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Subject Edit',
-            'name' => 'subject_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Subject Delete',
-            'name' => 'subject_delete',
+            'title' => 'Subject Modify',
+            'name' => 'subject_modify',
             'guard_name' => 'web',
         ]);
 
-
-        $module = Module::updateOrCreate(['name' => 'Announcement Manage']);
+        $module = Module::updateOrCreate(['name' => 'Announcement']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
             'title' => 'Announcement Manage',
@@ -123,61 +68,26 @@ class PermissionSeeder extends Seeder
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Announcement Show',
-            'name' => 'announcement_show',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Announcement Create',
-            'name' => 'announcement_create',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Announcement Edit',
-            'name' => 'announcement_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Announcement Delete',
-            'name' => 'announcement_delete',
+            'title' => 'Announcement List',
+            'name' => 'announcement_list',
             'guard_name' => 'web',
         ]);
 
-        $module = Module::updateOrCreate(['name' => 'ClassRooms Manage']);
+        $module = Module::updateOrCreate(['name' => 'Special Class']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'ClassRooms Manage',
-            'name' => 'classRooms_manage',
+            'title' => 'Special Class Manage',
+            'name' => 'specialClass_manage',
             'guard_name' => 'web',
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'ClassRooms Create',
-            'name' => 'classRooms_create',
+            'title' => 'Special Class List',
+            'name' => 'specialClass_list',
             'guard_name' => 'web',
         ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'ClassRooms Show',
-            'name' => 'classRooms_show',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'ClassRooms Edit',
-            'name' => 'classRooms_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'ClassRooms Delete',
-            'name' => 'classRooms_delete',
-            'guard_name' => 'web',
-        ]);
-        $module = Module::updateOrCreate(['name' => 'Attendance Manage']);
+
+        $module = Module::updateOrCreate(['name' => 'Attendance']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
             'title' => 'Attendance Manage',
@@ -186,8 +96,14 @@ class PermissionSeeder extends Seeder
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Make Attendance',
-            'name' => 'make_attendance',
+            'title' => 'Student Attendance',
+            'name' => 'student_attendance',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Teacher Attendance',
+            'name' => 'teacher_attendance',
             'guard_name' => 'web',
         ]);
         Permission::updateOrCreate([
@@ -207,7 +123,7 @@ class PermissionSeeder extends Seeder
         ]);
 
 
-        $module = Module::updateOrCreate(['name' => 'Resources Manage']);
+        $module = Module::updateOrCreate(['name' => 'Resource']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
             'title' => 'Resources List',
@@ -216,58 +132,33 @@ class PermissionSeeder extends Seeder
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Upload Resource',
-            'name' => 'upload_resource',
+            'title' => 'Resource Upload',
+            'name' => 'resource_upload',
             'guard_name' => 'web',
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Show Resource',
-            'name' => 'show_resource',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Upload Delete',
-            'name' => 'upload_delete',
+            'title' => 'Resource Manage',
+            'name' => 'resource_manage',
             'guard_name' => 'web',
         ]);
 
-
-        $module = Module::updateOrCreate(['name' => 'Teacher Manage']);
+        $module = Module::updateOrCreate(['name' => 'Teacher']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Teacher List',
+            'title' => 'Teachers List',
             'name' => 'teacher_list',
             'guard_name' => 'web',
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Teacher Register',
-            'name' => 'teacher_register',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Teacher Profile',
-            'name' => 'teacher_profile',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Teacher Edit',
-            'name' => 'teacher_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Teacher Delete',
-            'name' => 'teacher_delete',
+            'title' => 'Teacher Modify',
+            'name' => 'teacher_modify',
             'guard_name' => 'web',
         ]);
 
         // Exam
-        $module = Module::updateOrCreate(['name' => 'Exam Manage']);
+        $module = Module::updateOrCreate(['name' => 'Exam']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
             'title' => 'Exam List',
@@ -276,29 +167,10 @@ class PermissionSeeder extends Seeder
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Exam Create',
-            'name' => 'exam_create',
+            'title' => 'Exam Modify',
+            'name' => 'exam_modify',
             'guard_name' => 'web',
         ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Exam Edit',
-            'name' => 'exam_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Exam Delete',
-            'name' => 'exam_delete',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Exam Show',
-            'name' => 'exam_show',
-            'guard_name' => 'web',
-        ]);
-
 
         // Mark
         $module = Module::updateOrCreate(['name' => 'Mark Manage']);
@@ -321,21 +193,7 @@ class PermissionSeeder extends Seeder
             'guard_name' => 'web',
         ]);
 
-        $module = Module::updateOrCreate(['name' => 'Result Manage']);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Result List',
-            'name' => 'result_list',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Exam Result',
-            'name' => 'exam_result',
-            'guard_name' => 'web',
-        ]);
-
-        $module = Module::updateOrCreate(['name' => 'Class Routine Manage']);
+        $module = Module::updateOrCreate(['name' => 'Class Routine']);
         Permission::updateOrCreate([
             'module_id' => $module->id,
             'title' => 'Routine List',
@@ -344,23 +202,80 @@ class PermissionSeeder extends Seeder
         ]);
         Permission::updateOrCreate([
             'module_id' => $module->id,
-            'title' => 'Routine Create',
-            'name' => 'routine_create',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Routine Edit',
-            'name' => 'routine_edit',
-            'guard_name' => 'web',
-        ]);
-        Permission::updateOrCreate([
-            'module_id' => $module->id,
-            'title' => 'Routine Delete',
-            'name' => 'routine_delete',
+            'title' => 'Routine Modify',
+            'name' => 'routine_modify',
             'guard_name' => 'web',
         ]);
 
+        $module = Module::updateOrCreate(['name' => 'Account Manage']);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Account Manage',
+            'name' => 'account_manage',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Account List',
+            'name' => 'account_list',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Student Payment',
+            'name' => 'student_payment',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Teacher Payment',
+            'name' => 'teacher_payment',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Income Manage',
+            'name' => 'income_manage',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Expense Manage',
+            'name' => 'expense_manage',
+            'guard_name' => 'web',
+        ]);
+
+        $module = Module::updateOrCreate(['name' => 'Report Manage']);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Report Manage',
+            'name' => 'report_manage',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Students Report',
+            'name' => 'student_report',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Students Transaction Report',
+            'name' => 'student_transaction_report',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Teachers Report',
+            'name' => 'teacher_report',
+            'guard_name' => 'web',
+        ]);
+        Permission::updateOrCreate([
+            'module_id' => $module->id,
+            'title' => 'Teachers Transaction Report',
+            'name' => 'teacher_transaction_report',
+            'guard_name' => 'web',
+        ]);
 
     }
 }

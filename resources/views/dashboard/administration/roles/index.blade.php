@@ -29,8 +29,9 @@
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
             <p class="m-0">Role lists</p>
+            <a href="{{ route('admin.roles.create') }}" class="btn btn-sm btn-info">Create role</a>
         </div>
         <div class="card-body">
             <table id="table" class="table table-bordered data-table" style="width: 100%">

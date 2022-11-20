@@ -1,23 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\Attendance;
-
-
 use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
-use App\Models\Tattendance;
+
 use App\Models\Student;
 use Illuminate\Http\Request;
 
 use App\Models\Batch;
-use App\Models\Student;
 use App\Models\Subject;
-use App\Models\Attendance;
-
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -58,6 +51,7 @@ class AttendanceController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+    
 
     public function store(Request $request)
     {

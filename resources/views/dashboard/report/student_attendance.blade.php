@@ -67,10 +67,10 @@
             <div class="row">
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label for="batch_id"> Select Batch <span class="text-danger">*</span>
+                        <label for="batch_id"><b>Select Batch</b>  <span class="text-danger">*</span>
                         </label>
                         <select name="batch_id" id="batch_id" class=" form-select form-control mt-1">
-                            <option value=""> Select Batch </option>
+                            <option value=""> --Select Batch-- </option>
                             @foreach ($batches as $item)
                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                             @endforeach
@@ -85,10 +85,10 @@
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label for="student_id"> Select Student <span class="text-danger">*</span>
+                        <label for="student_id"><b>Select Student</b>  <span class="text-danger">*</span>
                         </label>
                         <select name="student_id" id="student_id" class=" form-select form-control mt-1">
-                            <option value=""> Select Student </option>
+                            <option value=""> --Select Student-- </option>
 
 
                         </select>
@@ -103,7 +103,7 @@
 
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label for="start_date"> Start Date <span class="text-danger">*</span></label>
+                        <label for="start_date"><b>Start Date</b>  <span class="text-danger">*</span></label>
                         <input type="date" name="start_date" id="start_date" value="{{ old('start_date') }}"
                             class="form-control mt-1 @error('start_date') is-invalid @enderror"
                             placeholder="Enter start date" required>
@@ -119,7 +119,7 @@
 
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <label for="end_date"> End Date <span class="text-danger">*</span></label>
+                        <label for="end_date"><b>End Date</b>  <span class="text-danger">*</span></label>
                         <input type="date" name="end_date" id="end_date" value="{{ old('end_date') }}"
                             class="form-control mt-1 @error('end_date') is-invalid @enderror"
                             placeholder="Enter end date" required>

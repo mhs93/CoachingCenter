@@ -3,65 +3,87 @@
 namespace App\Http\Controllers\Routine;
 
 use App\Models\Batch;
-<<<<<<< HEAD
-use App\Models\Subject;
-use Illuminate\Http\Request;
-use function Symfony\Component\String\length;
-=======
+
 use App\Models\Routine;
+use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
->>>>>>> f5e37c0317a3f71f1aa5959af818ea288b2558f2
+use function Symfony\Component\String\length;
+
 
 class RoutineController extends Controller
 {
     public function getlist(){
-        $data = Routine::select('id','batch_id','subject_id','day','start_time','end_time')
-            ->orderBy('id', 'DESC')->get();
+
+        // $data = Routine::select('id','batch_id','subject_id','day','start_time','end_time')
+        //     ->orderBy('id', 'DESC')->get();
+
+        $user = User::findOrFail(Auth::id());
+        if($user->type == '0'){
+            $data = Routine::select('id','batch_id','subject_id','day','start_time','end_time')
+                    ->orderBy('id', 'DESC')
+                    ->get();
+        }
+        else{
+            if($user->type == '1'){
+                $data = Routine::select('id','batch_id','subject_id','day','start_time','end_time')
+                    ->orderBy('id', 'DESC')
+                    ->get();
+            }
+            else{
+                $student = Student::where('id', $user->student_id)->first();
+                $data = Routine::select('id','batch_id','subject_id','day','start_time','end_time')
+                    ->orderBy('id', 'DESC')
+                    ->where('batch_id', $student->batch_id)
+                    // ->orWhere('batch_id', 0)
+                    ->get();
+            }
+        }
+
         return DataTables::of($data)->addIndexColumn()
+            ->addColumn('batch_name',function ($data){
+                return $data->batch->name;
+            })
+            ->addColumn('subject_name',function ($data){
+                return $data->subject->name;
+            })
+            ->addColumn('day',function ($data){
+                if($data->day == 1){
+                    return '<span>Saturday</span>';
+                }elseif ($data->day == 2){
+                    return '<span>Sunday</span>';
+                }elseif ($data->day == 3){
+                    return '<span>Monday</span>';
+                }elseif ($data->day == 4){
+                    return '<span>Tuesday</span>';
+                }elseif ($data->day == 5){
+                    return '<span>Wednesday</span>';
+                }elseif ($data->day == 6){
+                    return '<span>Thursday</span>';
+                }elseif ($data->day == 7){
+                    return '<span>Friday</span>';
+                }
+            })
 
-        ->addColumn('batch_name',function ($data){
-            return $data->batch->name;
-        })
-        ->addColumn('subject_name',function ($data){
-            return $data->subject->name;
-        })
-        ->addColumn('day',function ($data){
-            if($data->day == 1){
-                return '<span>Saturday</span>';
-            }elseif ($data->day == 2){
-                return '<span>Sunday</span>';
-            }elseif ($data->day == 3){
-                return '<span>Monday</span>';
-            }elseif ($data->day == 4){
-                return '<span>Tuesday</span>';
-            }elseif ($data->day == 5){
-                return '<span>Wednesday</span>';
-            }elseif ($data->day == 6){
-                return '<span>Thursday</span>';
-            }elseif ($data->day == 7){
-                return '<span>Friday</span>';
-            }
-        })
+            ->addColumn('action', function ($data) {
+                if (Auth::user()->can('routine_modify')) {
+                    $routineEdit = '<a href="' . route('admin.routine.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bxs-edit-alt\'></i></a>';
+                } else {
+                    $routineEdit = '';
+                }
+                if (Auth::user()->can('routine_modify')) {
+                    $routineDelete = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
+                } else {
+                    $routineDelete = '';
+                }
 
-        ->addColumn('action', function ($data) {
-            if (Auth::user()->can('routine_edit')) {
-                $routineEdit = '<a href="' . route('admin.routine.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bxs-edit-alt\'></i></a>';
-            } else {
-                $routineEdit = '';
-            }
-            if (Auth::user()->can('routine_delete')) {
-                $routineDelete = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
-            } else {
-                $routineDelete = '';
-            }
-
-            return '<div class = "btn-group">'. $routineEdit . $routineDelete .'</div>';
-        })
+                return '<div class = "btn-group">'. $routineEdit . $routineDelete .'</div>';
+            })
             ->rawColumns(['subject_name','batch_name','day','action', 'status'])
             ->make(true);
     }
@@ -83,10 +105,6 @@ class RoutineController extends Controller
 
     public function getSubject(Request $request)
     {
-<<<<<<< HEAD
-
-=======
->>>>>>> f5e37c0317a3f71f1aa5959af818ea288b2558f2
         $batch = Batch::where('id', $request->batchId)->select('subject_id')->first();
         $batchs = json_decode($batch->subject_id);
         $subjects = Subject::whereIn('id', $batchs)->get();
@@ -114,7 +132,6 @@ class RoutineController extends Controller
         $request->validate([
             'batch_id' =>'required',
             'subject_id' => 'required',
-//            'day_' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
         ]);

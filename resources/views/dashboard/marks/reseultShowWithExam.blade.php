@@ -97,12 +97,14 @@
                 });
             });
             // data: { batchId: batch_id, examId: exam_id},
+            var batch_id = '';
             $('#subForm').hide();
             $(document).ready(function() {
                 // Dependancy for batch and subjects
                 $('#batchIdEx').on('change', function() {
                     $('#subForm').show();
-                    let batch_id = $(this).val();
+                    batch_id = $(this).val();
+                    // let batch_id = $(this).val();
                     $("#subForm").empty();
                     $.ajax({
                         url: "{{ route('admin.result.getResults') }}",
@@ -115,18 +117,23 @@
                     });
                 });
                 // Dependancy End
-            });
 
-            // $('#batchIdEx').on('change', function() {
-            //         $.ajax({
-            //             url: "{{ route('admin.marks.deleteted') }}",
-            //             type: 'post',
-            //             data: { batchId: batch_id, examId: exam_id},
-            //             success: function(response) {
-            //                 $('#subForm').html(response);
-            //             }
-            //         });
-            //     });
+                // PDF
+
+                $('#exportPDF').on('change', function() {
+
+                    $("#subForm").empty();
+                    $.ajax({
+                        url: "{{ route('admin.result.resultPDF') }}",
+                        type: 'post',
+                        // data: { batchId: batch_id},
+                        data: { batchId: batch_id, examId: exam_id},
+                        success: function(response) {
+                            $('#subForm').html(response);
+                        }
+                    });
+                });
+            });
 
         </script>
     @endpush

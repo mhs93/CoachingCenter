@@ -34,14 +34,32 @@
                         </tr>
                         <tr>
                             <td>Class Type</td>
-                            <td>{{ $classroom->class_type ? 'Physical' : 'Online' }}</td>
+                            <td>
+                                @if($classroom->class_type == 1)
+                                    Physical
+                                    @else
+                                    Online
+                                @endif
+                            </td>
                         </tr>
                         <tr>
-                            <td>Start Date</td>
+                            <td>Class Link</td>
+                            <td>{{ $classroom->class_link }}</td>
+                        </tr>
+                        <tr>
+                            <td>Class Access Key</td>
+                            <td>{{ $classroom->access_key }}</td>
+                        </tr>
+                        <tr>
+                            <td>Class Date</td>
+                            <td>{{ $classroom->date }}</td>
+                        </tr>
+                        <tr>
+                            <td>Start Time</td>
                             <td>{{ $classroom->start_time }}</td>
                         </tr>
                         <tr>
-                            <td>End Date</td>
+                            <td>End Time</td>
                             <td>{{ $classroom->end_time }}</td>
                         </tr>
                         <tr>

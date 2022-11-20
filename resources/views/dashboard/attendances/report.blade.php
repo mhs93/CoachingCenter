@@ -30,12 +30,12 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-3 form-group">
-                            <label for="month">Month and Year<span class="text-red-600">*</span></label>
+                            <label for="month">Month and Year<span class="text-danger">*</span></label>
                             <input type="month" class="form-control" name="month" required>
                         </div>
 
                         <div class="col-md-3 form-group">
-                            <label for="batch">Batch<span class="text-red-600">*</span></label>
+                            <label for="batch">Batch<span class="text-danger">*</span></label>
                             <select class="form-control" name="batch_id" id="batchId" required>
                                 <option>select batch</option>
                                 @foreach($batches as $batch)
@@ -46,7 +46,7 @@
                         
 
                         <div class="col-md-3 form-group">
-                            <label for="batch">Student<span class="text-red-600">*</span></label>
+                            <label for="batch">Student</label>
                             <select class="form-control select2" name="student_id" id="studentId"></select>
                         </div>
                         <div class="col-md-3">
@@ -116,8 +116,6 @@
                         }else {
                             alert('NO Student Found')
                         }
-
-
                     }
                 });
             })

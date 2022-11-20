@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -47,7 +47,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row mt-2">
                     <div class="form-group col-md-12">
                         <label for="fee"> <b>Subject Fee</b>  <span style="color: red">*</span></label>
                         <input type="number" class="form-control @error('fee') is-invalid @enderror" name="fee" id="fee" value="{{ old('fee') }}" >

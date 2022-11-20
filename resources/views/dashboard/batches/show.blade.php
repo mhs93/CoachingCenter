@@ -31,22 +31,22 @@
                                 <td>{{ $batch->batch_fee }}</td>
                             </tr>
                             <tr>
+                                <td>Start Date</td>
+                                <td>{{ $batch->start_date }}</td>
+                            </tr>
+                            <tr>
+                                <td>End Date</td>
+                                <td>{{ $batch->end_date }}</td>
+                            </tr>
+                            <tr>
                                 <td>Description</td>
                                 <td>{!! $batch->note !!}</td>
-                            </tr>
-                            <tr>
-                                <td>Start Time</td>
-                                <td>{{ $batch->start_time }}</td>
-                            </tr>
-                            <tr>
-                                <td>End Time</td>
-                                <td>{{ $batch->end_time }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-3">
-                    @can('batch_edit')
+                    @can('batches_modify')
                         <div class="form-group mt-3">
                             <a href="{{ route('admin.batches.edit', $batch->id) }}" class="btn btn-sm btn-primary" onclick="">Edit</a>
                         </div>

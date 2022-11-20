@@ -49,19 +49,24 @@ class TchpaymentController extends Controller
         $this->validate($request,[
             'month' => 'required|string',
             'additional_amount' => 'integer|nullable',
-            'discount_amount' => 'integer|nullable',
+            'deduction_amount' => 'integer|nullable',
             'payment_type' => 'required|integer',
             'cheque_number' => 'nullable|string|unique:stdpayments,cheque_number,NULL,id,deleted_at,NULL',
             'total_amount' => 'required|integer',
             'note' => 'nullable|max:255',
         ]);
+
+        if($request->total_amount > $request->current_balance){
+            return redirect()->back()->with('error', "Don't have enough balance");
+        }
+
         try{
             DB::beginTransaction();
             $tchpayment = new Tchpayment();
             $tchpayment->tch_id = $request->tch_id;
             $tchpayment->month = $request->month;
             $tchpayment->additional_amount = $request->additional_amount;
-            $tchpayment->discount_amount = $request->discount_amount;
+            $tchpayment->deduction_amount = $request->deduction_amount;
             $tchpayment->payment_type = $request->payment_type;
             if ($tchpayment->payment_type == 1){
                 $tchpayment->account_id = $request->account_id;
@@ -135,7 +140,7 @@ class TchpaymentController extends Controller
         $this->validate($request,[
             'month' => 'required|string',
             'additional_amount' => 'integer|nullable',
-            'discount_amount' => 'integer|nullable',
+            'deduction_amount' => 'integer|nullable',
             'payment_type' => 'required|integer',
             'cheque_number' => 'nullable|string|unique:tchpayments,cheque_number,' . $request->id . ',id,deleted_at,NULL',
             'total_amount' => 'required|integer',
@@ -148,7 +153,7 @@ class TchpaymentController extends Controller
             $tchpayment = Tchpayment::findOrFail($id);
             $tchpayment->month = $request->month;
             $tchpayment->additional_amount = $request->additional_amount;
-            $tchpayment->discount_amount = $request->discount_amount;
+            $tchpayment->deduction_amount = $request->deduction_amount;
             $tchpayment->payment_type = $request->payment_type;
             if ($request->payment_type == 2){
                 $tchpayment->cheque_number = NULL;
@@ -185,6 +190,11 @@ class TchpaymentController extends Controller
         }
     }
 
+    public function tchprint($id){
+//        dd($id);
+        $data = Tchpayment::findOrFail($id);
+        return view('dashboard.tch_payment.print',compact('data'));
+    }
     /**
      * Remove the specified resource from storage.
      *

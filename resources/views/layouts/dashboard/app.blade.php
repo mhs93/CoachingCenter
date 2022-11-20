@@ -69,7 +69,7 @@
     </div>
     <footer class="footer">
         <div>Coaching Center © 2022 Wardan Tech Limited.</div>
-        <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">Wardan Tech Limited</a></div>
+        <div class="ms-auto">Powered by&nbsp;<a href="https://wardan.tech/" target="_blank" >Wardan Tech Limited</a></div>
         {{-- <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io">Bootstrap Admin Template</a> © 2022 creativeLabs.</div>
         <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">CoreUI UI Components</a></div> --}}
     </footer>

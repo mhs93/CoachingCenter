@@ -32,7 +32,16 @@
             <form action="{{ route('admin.announcements.store') }}" method="POST">
                 @csrf
                 <div class="row">
-                    <div class="form-group">
+                    {{-- Title --}}
+                    <div class="form-group col-md-12 mt-2">
+                        <label for="title"><b>Title</b> <span style="color: red">*</span></label>
+                        <input type="text" name="title" class="form-control" placeholder="Enter Titile" value="{{ old('title') }}">
+                        @error('title')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group col-md-12 mt-2">
                         <label for="batch_id"><b>Select Bathces</b>  <span style="color: red">*</span></label>
                         <select name="batch_id[]" class="multi-subject form-control @error('batch_id') is-invalid @enderror" multiple="multiple" id="mySelect2">
                             <option value="0">
@@ -48,15 +57,6 @@
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
-                        @enderror
-                    </div>
-
-                    {{-- Title --}}
-                    <div class="form-group col-md-12 mt-2">
-                        <label for="title"><b>Title</b> <span style="color: red">*</span></label>
-                        <input type="text" name="title" class="form-control" placeholder="Enter Titile" value="{{ old('title') }}">
-                        @error('title')
-                            <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>

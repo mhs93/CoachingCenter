@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'student payment create')
+@section('title', 'Student Payment Create')
 
 @push('css')
     <style>
@@ -78,7 +78,7 @@
                                     class="form-select @error('account_id') is-invalid @enderror" onchange="getAccountBalance()">
                                 <option value="">--Select account--</option>
                                 @forelse ($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->account_no }}</option>
+                                    <option value="{{ $account->id }}">{{ $account->account_no }} || {{ $account->account_holder }}</option>
                                 @empty
                                     <option>--No account--</option>
                                 @endforelse

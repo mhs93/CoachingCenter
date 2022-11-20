@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'income create')
+@section('title', 'Create Inocome')
 
 @push('css')
     <style>
@@ -15,7 +15,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Create Income</p>
-            <a href="{{route('admin.income.list')}}" class="btn btn-sm btn-info">Back</a>
+            <a href="{{route('admin.income.index')}}" class="btn btn-sm btn-info">Back</a>
         </div>
         <div class="card-body">
             <div>
@@ -23,7 +23,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-4 form-group">
-                            <lavel for="income_source">Income Source</lavel>
+                            <label for="income_source"><b>Income Source</b> <span class="text-danger"><b>*</b></span></label>
                             <input type="text" class="form-control @error('income_source') is-invalid @enderror" name="income_source" value="{{old('income_source')}}">
                             @error('income_source')
                             <span class="invalid-feedback" role="alert">
@@ -32,8 +32,8 @@
                             @enderror
                         </div>
                         <div class="col-md-4 form-group">
-                            <lavel for="amount">Amount</lavel>
-                            <input type="text" id="amount" class="t_amount form-control @error('amount') is-invalid @enderror" name="amount" value="{{old('amount')}}">
+                            <label for="amount"><b>Amount</b><span class="text-danger"><b>*</b></span></label>
+                            <input type="number" id="amount" class="t_amount form-control @error('amount') is-invalid @enderror" name="amount" value="{{old('amount')}}">
                             @error('amount')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -41,7 +41,7 @@
                             @enderror
                         </div>
                         <div class="col-md-4 form-group" id="paymentType">
-                            <label for="paymentTypeSelect">Payment Type</label>
+                            <label for="paymentTypeSelect"><b>Payment Type</b> <span class="text-danger"><b>*</b></span></label>
                             <select name="payment_type" id="paymentTypeSelect"
                                     class="form-select @error('payment_type') is-invalid @enderror">
                                 <option value="">--Select type--</option>
@@ -58,7 +58,7 @@
 
                     <div class="row mt-2">
                         <div class="col-md-4 form-group" id="accountId">
-                            <label for="account">Account</label>
+                            <label for="account"><b>Select Account</b> <span class="text-danger"><b>*</b></span></label>
                             <select name="account_id" id="account"
                                     class="form-select @error('account_id') is-invalid @enderror" onchange="getAccountBalance()">
                                 <option value="">--Select account--</option>
@@ -76,7 +76,7 @@
                         </div>
 
                         <div class="col-md-4 form-group" id="chequeNumber">
-                            <label for="cheque_number">Cheque Number</label>
+                            <label for="cheque_number"><b>Cheque Number</b> <span class="text-danger"><b>*</b></span></label>
                             <input type="text" name="cheque_number" id="cheque_number"
                                    class="form-control @error('cheque_number') is-invalid @enderror"
                                    value="{{ old('cheque_number') }}" placeholder="Enter cheque number">
@@ -89,7 +89,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="note"> Note</label>
+                        <label for="note"><b>Note</b> </label>
                         <textarea name="note" class="form-control" id="note" cols="40" rows="6"></textarea>
                         @error('note')
                         <span class="text-danger" role="alert">

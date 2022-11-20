@@ -18,7 +18,7 @@ class SubjectController extends Controller
             return DataTables::of($data)->addIndexColumn()
 
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('subject_edit')){
+                    if(Auth::user()->can('subject_manage')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -48,18 +48,18 @@ class SubjectController extends Controller
 
                 })
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('subject_show')){
+                    if (Auth::user()->can('subject_manage')){
                         $showButton = '<a href="'. route('admin.subjects.show', $data->id) .'" class="btn btn-sm btn-info text-white" title="View"><i class="bx bxs-low-vision"></i></a>';
                     }else{
                         $showButton = '';
                     }
-                    if(Auth::user()->can('subject_edit')){
+                    if(Auth::user()->can('subject_modify')){
                         $editButton = '<a href="' . route('admin.subjects.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class="bx bxs-edit-alt"></i></a>';
                     }else{
                         $editButton =  '';
                     }
 
-                    if(Auth::user()->can('subject_delete')){
+                    if(Auth::user()->can('subject_modify')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';

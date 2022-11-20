@@ -189,6 +189,10 @@ class StdpaymentController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+    public function stdprint($id){
+        $data = Stdpayment::findOrFail($id);
+        return view('dashboard.std_payment.print',compact('data'));
+    }
 
     /**
      * Remove the specified resource from storage.

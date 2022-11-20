@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Carbon\Carbon;
 use App\Models\Exam;
 use App\Models\Mark;
 use App\Models\User;
@@ -11,8 +12,10 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\ExamDetails;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+// use Barryvdh\DomPDF\Facade\Pdf;
+use PDF;
 
+use Illuminate\Support\Facades\Auth;
 use function Symfony\Component\String\b;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -21,41 +24,42 @@ class MarkController extends Controller
     public function getList()
     {
         try {
-            // $data = Exam::select('id', 'status', 'name')
-            //     ->orderBy('id', 'DESC')->get();
 
-            // $user = User::findOrFail(Auth::id());
-            // if($user->type == '0'){
-            //     $data = Mark::select('id', 'status', 'exam_id')
-            //         ->with('exam')
-            //         ->groupBy('exam_id')
-            //         ->orderBy('id', 'DESC')
-            //         ->get();
-            // }
-            // else{
-            //     if($user->type == '1'){
-            //         $data = Mark::select('id', 'status', 'exam_id')
-            //             ->with('exam')
-            //             ->groupBy('exam_id')
-            //             ->orderBy('id', 'DESC')
-            //             ->get();
-            //     }
-            //     else{
-            //         $student = Student::where('id', $user->student_id)->first();
-            //         // return $student;
-            //         $data = Mark::select('id', 'status', 'exam_id')
-            //             ->where('batch_id', $student->batch_id)
-            //             ->with('exam')
-            //             ->groupBy('exam_id')
-            //             ->orderBy('id', 'DESC')
-            //             ->get();
-            //     }
-            // }
-
-            $data = Exam::select('id', 'status', 'name')
+            $user = User::findOrFail(Auth::id());
+            if($user->type == '0'){
+                $data = Exam::select('id', 'status', 'name')
                     ->where('mark_status', '1')
                     ->orderBy('id', 'DESC')
                     ->get();
+            }
+            else{
+                if($user->type == '1'){
+                    $data = Exam::select('id', 'status', 'name')
+                    ->where('mark_status', '1')
+                    ->orderBy('id', 'DESC')
+                    ->get();
+                }
+                else{
+                    $student = Student::where('id', $user->student_id)->first();
+                    $examDetails = ExamDetails::where('batch_id', $student->batch_id)
+                                ->groupBy('exam_id')
+                                ->get();
+                    $data = [];
+                    foreach($examDetails as $examDetail){
+                        $data[] = Exam::select('id', 'name', 'status')
+                                ->orderBy('id', 'DESC')
+                                ->where('id',  $examDetail->exam_id)
+                                ->where('mark_status', '1')
+                                ->first();
+                    }
+                    if($data){
+                        if($data[0] == null){
+                            $data = [];
+                        }
+                    }
+
+                }
+            }
 
             return DataTables::of($data)->addIndexColumn()
                 //Status
@@ -83,39 +87,12 @@ class MarkController extends Controller
                 })
                 //Action
                 ->addColumn('action', function ($data) {
-                    // if (Auth::user()->can('mark_edit')){
-                    //     $showDetails = '<a href="' . route('admin.exams.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
-                    // }else{
-                    //     $showDetails = '';
-                    // }
-
-
-                    // if (Auth::user()->can('mark_edit')){
-                    //     $editButton = '<a href="' . route('admin.marks.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>';
-                    // }else{
-                    //     $editButton = '';
-                    // }
-
                     if(Auth::user()->can('mark_edit')){
-                        $editButton = '<a href="javascript:void(0)" onclick="edit(' . $data->id . ')" class="btn btn-sm btn-warning" title="Edit"><i class="bx bxs-edit-alt"></i></a>';
+                        $editButton = '<a href="javascript:void(0)" onclick="edit(' . $data->id . ')" class="btn btn-sm btn-warning" title="Edit and Delete">Action</a>';
                     }else{
                         $editButton =  '';
                     }
-
-                    // if (Auth::user()->can('mark_delete')){
-                    //     $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
-                    // }else{
-                    //     $deleteButton = '';
-                    // }
-
-                    if (Auth::user()->can('mark_delete')){
-                        $deleteButton = '<a href="' . route('admin.marks.deleteted', $data->id) . '" class="btn btn-sm btn-danger text-white" title="Delete"><i class="bx bxs-trash"></i></a>';
-
-                    }else{
-                        $deleteButton = '';
-                    }
-                    // return '<div class = "btn-group">'.$showDetails.$editButton.$deleteButton.'</div>';
-                    return '<div class = "btn-group">'.$editButton.$deleteButton.'</div>';
+                    return '<div class = "btn-group">'.$editButton.'</div>';
                 })
 
                 ->rawColumns(['action', 'status'])
@@ -145,14 +122,6 @@ class MarkController extends Controller
 
     //Start of Marks Creating Purpose Start
     public function getBatches(Request $request){
-        // $bathces = Examdetails::with('batch')
-        //             ->with('exam')
-        //             ->where('exam_id', $request->examId)
-        //             ->groupBy('batch_id')
-        //             ->get();
-
-        // return $bathces;
-        // jhsd
         $user = User::findOrFail(Auth::id());
         if($user->type == '0'){
             $bathces = Examdetails::with('batch')
@@ -247,11 +216,12 @@ class MarkController extends Controller
                                 ->first();
 
         if($examBatchExist != ''){
-            return redirect()->route('admin.marks.index')->with('error', 'Exam and Batch alreaduy exist');
+            return redirect()->route('admin.marks.index')->with('error', 'Marks already created');
         }
 
         try {
             $c = count($request->subject_id);
+            // dd($c);
             $j = 0;
             $iMax = count($request->student_id);
             $examId = 0;
@@ -307,7 +277,6 @@ class MarkController extends Controller
                 ->where('exam_id', $request->examId)
                 ->orderByRaw('CONVERT(total, SIGNED) desc')
                 ->get();
-        // return $marks;
         $returnHTML = view('dashboard.marks.result-show-with-exam-render',compact('marks'))
                 ->render();
         return $returnHTML;
@@ -342,49 +311,13 @@ class MarkController extends Controller
                 ->where('exam_id', $request->examId)
                 ->orderByRaw('CONVERT(total, SIGNED) desc')
                 ->get();
-        // return $marks;
         $returnHTML = view('dashboard.marks.result-show-with-exam-render',compact('marks'))
-        // $returnHTML = view('dashboard.marks.result-render',compact('marks'))
                 ->render();
         return $returnHTML;
     }
     // Result Show In the Exam Create Page End
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $exam = Exam::findOrFail($id);
-        $marks = Mark::with(['batch' => function ($query) {
-                    $query->select('id', 'name');
-                }])
-                ->where('exam_id', $exam->id)
-                ->get();
-        $batch = [];
-        foreach($marks as $m){
-            $batch[] = $m->batch;
-        }
-        $batch = array_unique($batch);
-        return view('dashboard.marks.edit', compact('batch'));
-    }
-
-    public function getResultsEdit(Request $request){
-        $batch = Batch::where('id', $request->batchId)
-                        ->first();
-        $marks = Mark::where('batch_id', $batch->id)
-                ->orderByRaw('CONVERT(total, SIGNED) desc')
-                ->get();
-
-        $returnHTML = view('dashboard.marks.edit-result-render',compact('marks'))
-            ->render();
-        return $returnHTML;
-    }
-
-    // Start
+    // Edit Start
     public function getMarkedBatches(Request $request){
         $bathces = Mark::with('batch')
                     ->with('exam')
@@ -394,66 +327,49 @@ class MarkController extends Controller
         return $bathces;
     }
 
-    public function markedShow($id1, $id2){
+    public function edit($id1, $id2){
         $exam_id = $id1;
         $batch_id = $id2;
+        $batch= Batch::find($batch_id);
+        $subjectIds= json_decode($batch->subject_id);
         $marks = Mark::where('batch_id', $id2)
                 ->where('exam_id', $id1)
                 ->get();
 
-        return view('dashboard.marks.edit-mark', compact('marks', 'exam_id', 'batch_id'));
+        return view('dashboard.marks.edit-mark',
+                compact('marks', 'exam_id', 'batch_id', 'subjectIds'));
     }
 
-    public function markShowSubmit(Request $request){
-        // dd($request->all());
+    public function update(Request $request){
         $marks = Mark::where('batch_id', $request->batch_id)
             ->where('exam_id', $request->exam_id)
             ->get();
 
         $c = count($request->subject_id);
         $j = 0;
-        $iMax = count($request->student_id);
         $i = 0;
 
         $markAsSub = [];
         foreach( $marks as $key => $mark){
-
             $mark->student_id   =       $request->student_id[$i];
             $mark->total        =       $request->total[$i];
-            // for($j; $j < $c; $j++){
-            //     $markAsSub[] = $request->mark[$j];
-            // }
-            // $c += count($request->subject_id);
+            for($j; $j < $c; $j++){
+                $markAsSub[] = $request->mark[$j];
+            }
+            $c += count($request->subject_id);
             $mark->subject_id   =       json_encode($request->subject_id);
-            // $mark->mark         =       json_encode($markAsSub);
-            $mark->mark         =       json_encode($request->mark);
-            $i++;
-            // $markAsSub = (array) null;
+            $mark->mark         =       json_encode($markAsSub);
+
+            $markAsSub = (array) null;
             $mark->update();
+            $i++;
         }
 
         return redirect()->route('admin.marks.index')->with('t-success', 'Mark Edited successfully');
-
-
-        // for($i=0; $i< $iMax; $i++){
-        //     $markAsSub = [];
-
-        //     $mark->student_id   =       $request->student_id[$i];
-        //     $mark->total        =       $request->total[$i];
-
-        //     for($j; $j < $c; $j++){
-        //         $markAsSub[] = $request->mark[$j];
-        //     }
-        //     // $c += count($request->subject_id);
-
-        //     $mark->subject_id   =       json_encode($request->subject_id);
-        //     $mark->mark         =       json_encode($markAsSub);
-        //     $mark->update();
-        // }
-        // return redirect()->route('admin.marks.index')->with('t-success', 'Mark Edited successfully');
     }
+    //Edit End
 
-    public function markedDelete($id1, $id2){
+    public function delete($id1, $id2){
         try {
             $marks = Mark::where('batch_id', $id2)
                 ->where('exam_id', $id1)
@@ -461,35 +377,35 @@ class MarkController extends Controller
             foreach($marks as $mark){
                 $mark->delete();
             }
-            // return response()->json([
-            //     'success' => true,
-            //     'message' => 'Mark Deleted Successfully.',
-            // ]);
-            return redirect()->route('admin.marks.index')->with('message', 'Mark deleted successfully');
+
+            $mark = Mark::where('exam_id', $id1)->first();
+            if(!$mark){
+                $exam = Exam::findOrFail($id1);
+                $exam->mark_status = '0';
+                $exam->save();
+            }
+
+            return redirect()->route('admin.marks.index')->with('t-success', 'Mark deleted successfully');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
 
-    public function updatee(Request $request)
-    {
-        try {
-            // return redirect()->route('admin.exams.index')->with('t-success', 'Exam updated successfully');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+    // For PDF
+    public function resultPDF(Request $request){
+        $exam = Exam::findOrFail($request->examId);
+        $batch = Batch::findOrFail($request->batchId);
+        $marks = Mark::where('batch_id', $request->batchId)
+                ->where('exam_id', $request->examId)
+                ->orderByRaw('CONVERT(total, SIGNED) desc')
+                ->get();
+        return view('dashboard.marks.marksPDF',
+            compact('marks', 'exam', 'batch'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
+    // PDF
+    public function exportPDF(){
+        // $pdf = Pdf::loadView('dashboard.marks.marksPDF');
+        // return $pdf->download('invoice.pdf');
     }
 
     /**
@@ -501,28 +417,11 @@ class MarkController extends Controller
     public function destroy($id)
     {
         try {
-            // $mark = Mark::findOrFail($id)->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Result deleted successfully',
-            ]);
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
     }
-
-    // public function markDelete(Request $request){
-    //     $marks = Mark::where('batch_id', $request->batchId)
-    //             ->where('exam_id', $request->examId)
-    //             ->get();
-    //     foreach($marks as $mark){
-    //         $mark->delete();
-    //     }
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Marks Deleted Successfully.',
-    //     ]);
-    // }
 
     public function changeStatus(Mark $mark)
     {
@@ -549,4 +448,74 @@ class MarkController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function StudentMark(){
+        try {
+            $exams = Exam::all();
+            return view('dashboard.report.batch_wise_student_mark', compact('exams'));
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function StudentMarkList(Request $request){
+
+        try {
+            if ($request->ajax()) {
+                $data = Mark::with('student','exam','batch')
+                ->where('exam_id', $request->exam_id)
+                ->where('batch_id', $request->batch_id)
+                ->where('student_id', $request->student_id)
+                ->get();
+
+
+                return Datatables::of($data)
+
+                    ->addColumn('dateFormat', function (Mark $data) {
+                        $date = Carbon::parse($data->created_at)->format('d M, Y');
+                        return $date;
+                    })
+
+                    ->addColumn('reg_no', function (Mark $data) {
+                        $value = isset($data->student->reg_no) ? $data->student->reg_no : null;
+                        return $value;
+                    })
+
+                    ->addColumn('contact_number', function (Mark $data) {
+                        $contact = isset($data->student->contact_number) ? $data->student->contact_number : null;
+                        return $contact;
+                    })
+
+                    ->addColumn('subjects_mark', function (Mark $data) {
+                        $subjectIds = json_decode($data->subject_id);
+                        $subjects = Subject::whereIn('id', $subjectIds)->get();
+                        $subMark = json_decode($data->mark);
+
+                        $subNames = '';
+                        $subMarks = '';
+
+                        foreach($subjects as $key => $subject) {
+                            $value = $subject->name;
+                            $subNames.= $value .  '<br/>';
+                            $subMarks.= $subMark[$key].  '<br/>';
+                        }
+                        return '<table >
+                                    <tr >
+                                        <td >'. $subNames.'</td>
+                                        <td >'. $subMarks.'</td>
+                                    </tr>
+                                </table>';
+                            })
+
+                    ->addIndexColumn()
+                    ->rawColumns(['dateFormat','reg_no','contact_number','subjects_mark'])
+                    ->make(true);
+                    // ->toJson();
+            }
+
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
 }

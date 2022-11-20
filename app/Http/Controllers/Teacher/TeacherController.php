@@ -37,10 +37,6 @@ class TeacherController extends Controller
                     if($data->subject_id != NULL){
                         $subjectIds = json_decode($data->subject_id);
                         if(in_array("0", $subjectIds)){
-                            // $subjects = Subject::get(['id','name']);
-                            // foreach($subjects as $key=>$item) {
-                            //     $batchSubs .= $item->name.", ";
-                            // }
                             $batchSubs = "All Subjects".", ";
                         }else{
                             $subjects = Subject::whereIn('id',$subjectIds)->get(['id','name']);
@@ -57,7 +53,7 @@ class TeacherController extends Controller
 
                 //status
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('teacher_edit')){
+                    if(Auth::user()->can('teacher_modify')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
                         if ($data->status == 1) {
@@ -80,23 +76,23 @@ class TeacherController extends Controller
 
                 //Action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('teacher_profile')){
+                    if (Auth::user()->can('teacher_modify')){
                         $showProfile = '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info" title="show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showProfile = '';
                     }
-                    if (Auth::user()->can('teacher_edit')){
+                    if (Auth::user()->can('teacher_modify')){
                         $editProfile = '<a href="' . route('admin.teachers.edit', $data->id) . '" class="btn btn-sm btn-warning" title="edit"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $editProfile = '';
                     }
-                    if (Auth::user()->can('teacher_delete')){
+                    if (Auth::user()->can('teacher_modify')){
                         $deleteProfile = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteProfile = '';
                     }
                      // Change Password
-                     if (Auth::user()->can('teacher_password')) {
+                     if (Auth::user()->can('teacher_modify')) {
                         $changePassword = '<a href="' . route('admin.adteacher.password', $data->id) . '" class="btn btn-sm btn-info" title="change password"><i class="bx bxs-key"></i></a>';
                     } else {
                         $changePassword = '';
@@ -130,7 +126,7 @@ class TeacherController extends Controller
         $user = User::where('teacher_id', $request->id)->first();
         $user->password = Hash::make($request->password);
         if($user->save()){
-            return redirect()->route('admin.teachers.index')
+            return redirect()->route('admin.user.profile')
                 ->with('t-success', 'Password Updated Successfully');
         }else{
             return redirect()->route('admin.adteacher.password', $request->id)->with('t-success', 'Current password does not match your old password...Please try again...');
@@ -149,9 +145,11 @@ class TeacherController extends Controller
             'password' => 'required|confirmed'
         ]);
         try {
+            $user = User::find(Auth::user()->id);
             $hashedPassword = Auth::user()->password;
             if (Hash::check($request->currentPassword, $hashedPassword)) {
                 $password = Hash::make($request->password);
+                $user->update();
                 return redirect()->route('admin.teachers.index')
                 ->with('t-success', 'Password Updated Successfully');
             } else {

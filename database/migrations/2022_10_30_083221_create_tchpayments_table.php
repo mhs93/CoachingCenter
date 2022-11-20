@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('month');
             $table->integer('total_amount');
             $table->integer('account_id')->nullable();
-            $table->integer('discount_amount')->nullable();
+            $table->integer('deduction_amount')->nullable();
             $table->integer('additional_amount')->nullable();
-            $table->integer('payment_type');
+            $table->integer('payment_type')->comment('1=cheque/2=cash');
             $table->string('cheque_number')->nullable();
             $table->string('note')->nullable();
             $table->integer('created_by');

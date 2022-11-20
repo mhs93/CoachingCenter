@@ -77,14 +77,14 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="start_time"><b>Start Date</b> <span style="color: red">*</span></label>
-                                <input type="date" name="start_time" class="form-control" placeholder="Start Time" value="{{ old('start_time') }}">
+                                <input type="date" name="start_date" class="form-control" placeholder="Start Time" value="{{ old('start_time') }}">
                                 @error('start_time')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="end_time"><b>End Date</b> <span style="color: red">*</span></label>
-                                <input type="date" name="end_time" class="form-control" placeholder="End Time" value="{{ old('end_time') }}">
+                                <input type="date" name="end_date" class="form-control" placeholder="End Time" value="{{ old('end_time') }}">
                                 @error('end_time')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -117,7 +117,18 @@
         <script>
             $(document).ready(function() {
                 $('.multi-subject').select2();
-            });
+                $('#subject_id').on('change', function () {
+                    let val = $('#subject_id').val();
+                    console.log(val);
+                    if (val == 0) {
+                        $('#subject_id').attr('disabled', true);
+                    } else {
+                        $('#subject_id').attr('disabled', false);
+                    }
+                })
+            ;})
+
+
         </script>
 
 

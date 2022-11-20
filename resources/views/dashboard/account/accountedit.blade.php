@@ -38,7 +38,7 @@
                     <div class="card-body">
 
                         <div class="form-group mt-3">
-                            <label for="account_no">Account No</label>
+                            <label for="account_no"><b>Account No</b> </label>
                             <input type="text" name="account_no" id="account_no" class="form-control @error('account_no') is-invalid @enderror" value="{{ ($account->account_no) }}">
                             @error('account_no')
                             <span class="invalid-feedback" role="alert">
@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="account_holder">Account Holder</label>
+                            <label for="account_holder"><b>Account Holder</b> </label>
                             <input type="text" name="account_holder" id="account_holder" class="form-control @error('account_holder') is-invalid @enderror" value="{{ ($account->account_holder) }}">
                             @error('account_holder')
                             <span class="invalid-feedback" role="alert">
@@ -58,7 +58,7 @@
                         </div>
 
                         <div class="form-group mt-3 ">
-                            <label for="bank_name">Bank Name</label>
+                            <label for="bank_name"><b>Bank Name</b></label>
                             <input type="text" name="bank_name" id="bank_name" class="form-control @error('bank_name') is-invalid @enderror" value="{{ $account->bank_name }}" >
                             @error('bank_name')
                             <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
@@ -66,7 +66,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="branch_name">Branch Name</label>
+                            <label for="branch_name"><b>Branch Name</b></label>
                             <input type="text" name="branch_name" id="branch_name" class="form-control @error('branch_name') is-invalid @enderror" value="{{ ($account->branch_name) }}">
                             @error('branch_name')
                             <span class="invalid-feedback" role="alert">
@@ -76,7 +76,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="description">Description</label>
+                            <label for="description"><b>Description</b></label>
                             <textarea type="text" name="description" id="description" class="form-control @error('description') is-invalid @enderror">{!! $account->description !!}</textarea>
                             @error('description')
                             <span class="invalid-feedback" role="alert">
