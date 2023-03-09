@@ -111,7 +111,7 @@ class ReportController extends Controller
                 $data = Attendance::with('batch','student')
                 ->where('student_id', $request->student_id)
                 ->where('date', '>', $request->start_date)
-                ->where('date', '<', $request->end_date)
+                ->where('date', '<=', $request->end_date)
                 ->get();
 
                 return Datatables::of($data)
@@ -178,7 +178,7 @@ class ReportController extends Controller
                 ->where('batch_id', $request->batch_id)
                 ->where('status', $request->status)
                 ->where('date', '>', $request->start_date)
-                ->where('date', '<', $request->end_date)
+                ->where('date', '<=', $request->end_date)
                 ->get();
 
                 return Datatables::of($data)
@@ -324,7 +324,7 @@ class ReportController extends Controller
                 $data = Tattendance::with('teacher')
                     ->where('teacher_id', $request->teacher_id)
                     ->where('date', '>', $request->start_date)
-                    ->where('date', '<', $request->end_date)
+                    ->where('date', '<=', $request->end_date)
                     ->get();
                 return Datatables::of($data)
 

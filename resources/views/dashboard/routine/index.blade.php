@@ -29,19 +29,25 @@
             @endcan
         </div>
         <div class="card-body">
+            <div style="text-align: center">
+                @can('routine_modify')
+                <a class="btn btn-outline-dark" href="{{route('admin.routine.print')}}" title="print">PDF</a>
+                    @endcan
+            </div>
+            
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
-                <tr>
-                    <th>SN</th>
-                    <th>Batch Name</th>
-                    <th>Subject Name</th>
-                    <th>Day</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Action</th>
-                </tr>
+                <thead style="text-align: center">
+                    <tr>
+                        <th>SN</th>
+                        <th>Batch Name</th>
+                        <th>Subject Name</th>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
         </div>
@@ -104,9 +110,7 @@
 
             // Change status
             function changeStatus(id) {
-
                 var url = '{{ route("admin.routine.change-status", ":id") }}';
-
                 $.ajax({
                     url: url.replace(':id', id ),
                     method: "PUT",
@@ -149,13 +153,11 @@
                     type: "DELETE",
                     url: url.replace(':id', id ),
                     success: function (resp) {
-                        // Reloade DataTable
                         $('.data-table').DataTable().ajax.reload();
                         if (resp.success === true) {
-                            // show toast message
                             toastr.success(resp.message);
                         }
-                    }, // success end
+                    },
                     error: function (error) {
                         location.reload();
                     }

@@ -11,7 +11,6 @@
                 <tr>
                     <td style="vertical-align: middle;">{{$key + 1}}</td>
                     <td style="vertical-align: middle;">{{$mark->student->name}}</td>
-                    {{-- <td style="vertical-align: middle;">Aunoyyyyyyyyyyyy</td> --}}
                     <td>
                         @php
                             $subject_id = json_decode($mark->subject_id);
@@ -30,7 +29,10 @@
             @endforeach
         </tbody>
     </table>
-
+    <div>
+        <a class="btn btn-primary" href="{{ route('admin.result.print-result', ['id1'=>$examId, 'id2'=>$batchId]) }}">Print</a>
+        <a class="btn btn-success" href="{{ route('admin.result.pdf-generate-for-mark', ['id1'=>$examId, 'id2'=>$batchId]) }}">PDF</a>
+    </div>
 @else
 <div>
     <p><h4 align="center">There is no marks for this batch</h4></p>

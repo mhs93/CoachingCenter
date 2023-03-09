@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use PDF;
 use App\Helper\Accounts;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
@@ -10,6 +11,10 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BalanceSheetController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:payment_manage');
+    }
 
     // BalanceSheet
     public function balanceSheet(Request $request){
@@ -23,7 +28,8 @@ class BalanceSheetController extends Controller
                 return DataTables::of($transaction)
                     ->addIndexColumn()
                     ->addColumn('bankinfo', function ($transaction) {
-                        if ($transaction->account_id == 0){
+//                        return $transaction->account->account_no . ' | ' . $transaction->account->account_holder;
+                        if ($transaction->account_id == 1){
                             return 'Cash';
                         }else{
                             return $transaction->account->account_no . ' | ' . $transaction->account->account_holder;
@@ -48,4 +54,15 @@ class BalanceSheetController extends Controller
             return redirect()->back()->with('error', $exception->getMessage());
         }
     }
+
+    // public function allPrint(){
+    //     $transaction = Transaction::latest()->with('account')->groupBy('account_id')->get();
+    //     return view('dashboard.income.all-print', compact('incomes') );
+    // }
+
+    // public function pdf(){
+    //     $incomes = Income::get();
+    //     $pdf = PDF::loadView('dashboard.income.pdf', compact('incomes') );
+    //     return $pdf->download('Income List.pdf');
+    // }
 }

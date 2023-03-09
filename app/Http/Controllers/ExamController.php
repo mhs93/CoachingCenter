@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
+use Illuminate\Support\Carbon;
 use App\Models\Exam;
 use App\Models\User;
 use App\Models\Batch;
@@ -15,6 +17,10 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ExamController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:exam_modify')->except(['index','getList','show']);
+    }
 
     public function getList()
     {
@@ -28,7 +34,6 @@ class ExamController extends Controller
                     ->select('id', 'name', 'start_date', 'end_date', 'status')
                     ->orderBy('id', 'DESC')
                     ->get();
-                // dd($data);
             }
             else{
                 if($user->type == '1'){
@@ -52,7 +57,6 @@ class ExamController extends Controller
                     }
                 }
             }
-
 
             return DataTables::of($data)->addIndexColumn()
                 //Batch
@@ -112,12 +116,18 @@ class ExamController extends Controller
                         $deleteButton = '';
                     }
                     if (Auth::user()->can('exam_list')){
-                        $resultButton = '<a href=" '. route('admin.result_batch.show', $data->id) . '" class="btn btn-sm btn-success">See Result</a>';
+                        $resultButton = '<a href=" '. route('admin.result-show-by-batch', $data->id) . '" class="btn btn-sm btn-success">See Result</a>';
                     }
                     else{
                         $resultButton = '';
                     }
                     return '<div class = "btn-group">'.$showDetails.$editButton.$deleteButton.$resultButton.'</div>';
+                })
+                ->addColumn('start_date', function ($data){
+                    return  Carbon::parse($data->start_date)->format('Y/m/d');
+                })
+                ->addColumn('end_date', function ($data){
+                    return  Carbon::parse($data->end_date)->format('Y/m/d');
                 })
 
                 ->rawColumns(['action', 'batch_id', 'status'])
@@ -185,26 +195,27 @@ class ExamController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'         => 'required|string',
+            'name'       => 'required|string',
+            'start_date' => 'required',
+            'start_date' => 'required',
+            'batch_id'   => 'required',
         ]);
+
+        if($request->start_date > $request->end_date){
+            return back()->with('error', 'Start date must be less than or equal to the end date');
+        }
 
         DB::beginTransaction();
         try {
             $exam = new Exam();
-            $exam->name         =       $request->name;
-            $exam->status       =       $request->status;
-            $exam->start_date     =       $request->start_date;
-            $exam->end_date       =       $request->end_date;
-            $exam->note         =       strip_tags($request->note);
+            $exam->name       = $request->name;
+            $exam->status     = $request->status;
+            $exam->start_date = $request->start_date;
+            $exam->end_date   = $request->end_date;
+            $exam->note       = strip_tags($request->note);
             $exam->save();
             $x = 0;
             foreach($request->batch_id as $batchKey=> $batchId){
@@ -217,7 +228,6 @@ class ExamController extends Controller
                     foreach($subs as $sub){
                         $batchSubjects [] = $sub;
                     }
-
                     // $subs = Subject::pluck('id');
                     // $batchSubjects =  $subs->id;
                 }
@@ -226,16 +236,13 @@ class ExamController extends Controller
                 }
 
                 foreach($batchSubjects as $subkey => $subId){
-                // foreach($batchS as $subkey => $subId){
                     $examDetail = new ExamDetails();
-                    $examDetail->exam_id        =       $exam->id;
-                    $examDetail->batch_id       =       $batchId;
-                    $examDetail->subject_id     =       $subId;
-                    $examDetail->date           =       $request->date[$x];
-                    $examDetail->start_time     =       $request->start_time[$x];
-                    // $examDetail->end_date       =       $request->end_date[$x];
-                    // $examDetail->start_time     =       $request->start_time[$x];
-                    $examDetail->end_time       =       $request->end_time[$x];
+                    $examDetail->exam_id     =  $exam->id;
+                    $examDetail->batch_id    =  $batchId;
+                    $examDetail->subject_id  =  $subId;
+                    $examDetail->date        =  $request->date[$x];
+                    $examDetail->start_time  =  $request->start_time[$x];
+                    $examDetail->end_time    =  $request->end_time[$x];
                     $examDetail->save();
                     $x++;
                 }
@@ -247,31 +254,18 @@ class ExamController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Exam  $exam
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         try {
             $exam = Exam::with('examDetails')
                 ->where('id', $id)
                 ->first();
-
             return view('dashboard.exams.show', compact('exam'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Exam  $exam
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         DB::beginTransaction();
@@ -303,21 +297,19 @@ class ExamController extends Controller
     {
         try {
             $exam = Exam::findOrFail($request->id);
-            $exam->name         =       $request->name;
-            $exam->start_date   =       $request->start_date;
-            $exam->end_date     =       $request->end_date;
-            $exam->status       =       $request->status;
-            $exam->note         =       $request->note;
+            $exam->name       = $request->name;
+            $exam->start_date = $request->start_date;
+            $exam->end_date   = $request->end_date;
+            $exam->status     = $request->status;
+            $exam->note       = $request->note;
             $exam->update();
 
             $x = 0;
             $examDetails = ExamDetails::where('exam_id', $request->id)->get();
             foreach($examDetails as $key => $exam){
-                // $exam->start_date     =       $request->start_date[$x];
-                $exam->date     =       $request->date[$x];
-                $exam->start_time     =       $request->start_time[$x];
-                // $exam->end_date       =       $request->end_date[$x];
-                $exam->end_time       =       $request->end_time[$x];
+                $exam->date        =  $request->date[$x];
+                $exam->start_time  =  $request->start_time[$x];
+                $exam->end_time    =  $request->end_time[$x];
                 $exam->update();
                 $x++;
             }
@@ -368,5 +360,16 @@ class ExamController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function print(){
+        $exams = Exam::get();
+        return view('dashboard.exams.print', compact('exams') );
+    }
+
+    public function pdf(){
+        $exams = Exam::get();
+        $pdf = PDF::loadView('dashboard.exams.pdf', compact('exams') );
+        return $pdf->download('Account List.pdf');
     }
 }

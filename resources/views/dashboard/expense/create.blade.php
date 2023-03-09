@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -73,17 +73,16 @@
 
                         <div class="col-md-4 mt-2">
                             <div class="form-group">
-                            <label for="amount"><b>Amount</b> <span id="showHide">( Available : <b id="balance"> </b> )</span> <span class="text-danger"><b>*</b></span></label>
-                            <input type="hidden" id="current_balance" name="current_balance">
+                                <label for="amount"><b>Amount</b> <span id="showHide">( Available : <b id="balance"> </b> )</span> <span class="text-danger"><b>*</b></span></label>
+                                <input type="hidden" id="current_balance" name="current_balance">
+                                <input oninput="validationCheck()" name="amount" type="number" id="amount" value="{{ old('amount') }}" class="form-control t_amount @error('amount') is-invalid @enderror" placeholder="Enter expense amount" required>
 
-                            <input oninput="validationCheck()" name="amount" type="number" id="amount" value="{{ old('amount') }}" class="form-control t_amount @error('amount') is-invalid @enderror" placeholder="Enter expense amount" required>
-
-                            @error('amount')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
+                                @error('amount')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="col-md-4 mt-2" id="chequeNumber">
@@ -99,7 +98,6 @@
                             @enderror
                         </div>
                         </div>
-
                     </div>
 
                     <div class="form-group mt-2">
@@ -141,9 +139,9 @@
                 if(this.value == 2) {
                     $('#chequeNumber').hide();
                     $('#accountId').hide();
-                    $('#showHide').hide();
-                    $('#balance').empty();
-                    $('#current_balance').empty();
+                    // $('#showHide').hide();
+                    // $('#balance').empty();
+                    // $('#current_balance').empty();
                 }
             });
         })

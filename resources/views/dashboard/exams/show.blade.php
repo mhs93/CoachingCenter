@@ -2,16 +2,16 @@
 
 @section('title', 'Exam Details')
 
-@section('content')
+@section('content') 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Exam Information</p>
-            <a href="{{ route('admin.exams.index') }}" class="btn btn-sm btn-dark">Back to list</a>
+            <a href="{{ route('admin.exams.index') }}" class="btn btn-sm btn-dark">Back</a>
         </div>
         <div class="card-body">
             <div class="row">
                 <table id="table" class="table table-bordered data-table" style="width: 100%">
-                    <tbody>
+                    <tbody style="text-align: center">
                         <tr>
                             <td>Exam Name</td>
                             <td colspan="5">{{ $exam->name }}</td>
@@ -19,12 +19,12 @@
 
                         <tr>
                             <td>Start Date</td>
-                            <td colspan="5">{{ $exam->start_date }}</td>
+                            <td colspan="5">{{ $exam->start_date->format('d/m/Y') }}</td>
                         </tr>
 
                         <tr>
                             <td>End Date</td>
-                            <td colspan="5">{{ $exam->end_date }}</td>
+                            <td colspan="5">{{ $exam->end_date->format('d/m/Y') }}</td>
                         </tr>
 
                         <tr>
@@ -34,7 +34,7 @@
 
                         <tr>
                             <td>Exam Note</td>
-                            <td colspan="5"><b>{!! $exam->note !!}</b></td>
+                            <td colspan="5">{!! $exam->note !!}</td>
                         </tr>
 
                         <tr>
@@ -67,7 +67,7 @@
                                             <td>
                                                 Start Time: {{$examDetail->start_time}}
                                             </td>
-                                            
+
 
                                             {{-- <td>
                                                 End Date: {{$examDetail->end_date}}

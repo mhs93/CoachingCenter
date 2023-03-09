@@ -8,7 +8,7 @@
 
     <style>
         .ck-editor__editable[role="textbox"] {
-                min-height: 320px;
+                min-height: 200px;
             }
     </style>
 @endpush

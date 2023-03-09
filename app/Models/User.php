@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
 
-    
+
     public function student()
     {
         return $this->belongsTo(Student::class,'student_id')->withTrashed();
@@ -22,6 +22,10 @@ class User extends Authenticatable
     public function teacher(){
         return $this->belongsTo(Teacher::class,'teacher_id')->withTrashed();
     }
+
+    // public function accountant(){
+    //     return $this->belongsTo(Accountant::class,'teacher_id')->withTrashed();
+    // }
 
     public function get_roles()
     {

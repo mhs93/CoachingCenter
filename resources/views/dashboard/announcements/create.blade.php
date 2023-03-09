@@ -43,12 +43,16 @@
 
                     <div class="form-group col-md-12 mt-2">
                         <label for="batch_id"><b>Select Bathces</b>  <span style="color: red">*</span></label>
-                        <select name="batch_id[]" class="multi-subject form-control @error('batch_id') is-invalid @enderror" multiple="multiple" id="mySelect2">
+                        <select name="batch_id[]" class="multi-subject form-control @error('batch_id') is-invalid @enderror"
+                            multiple="multiple" id="batch_id">
                             <option value="0">
                                 All Batch
                             </option>
                             @forelse ($batches as $batch)
-                                <option value="{{ $batch->id }}">{{ $batch->name }} </option>
+                                <option value="{{ $batch->id }}"
+                                    @if (old("batch_id")) {{ (in_array($batch->id, old("batch_id")) ? "selected":"") }}@endif>
+                                    {{ $batch->name }}
+                                </option>
                             @empty
                                 <option>--No batch--</option>
                             @endforelse
@@ -95,6 +99,29 @@
         <script>
             $(document).ready(function() {
                 $('.multi-subject').select2();
+            });
+
+            $(document).on("change", "#batch_id", function () {
+                let value = $(this).val();
+                console.log(value.includes("0"))
+                if(value.includes("0")){
+                    $(this).empty();
+                    $(this).append('<option selected value="0">All Batch</option>');
+                }
+                if(value == ''){
+                    $("#batch_id").empty();
+                    $.ajax({
+                        url: "{{ route('admin.announcements.getAllBatch') }}",
+                        type: 'get',
+                        success: function(response) {
+                            $("#batch_id").append('<option value="0">All Batch</option>');
+                            $.each(response, function(key, value) {
+                                $("#batch_id").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                }
             });
 
             // CKEditor

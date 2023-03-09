@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Models;
-
-use App\Models\Student;
-use App\Models\Subject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Batch extends Model
 {
     use HasFactory ,SoftDeletes;
+
+    protected $fillable = ['name','status','subject_id','note','start_date','end_date','total_amount'];
     
     public function subjects()
     {

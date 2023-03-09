@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\TeacherAttendance;
 
-use App\Models\Batch;
 use App\Models\Teacher;
 use App\Models\Tattendance;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-
-
 class TattendanceContoller extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:teacher_attendance');
+    }
+
     public function index()
     {
         try {
@@ -59,13 +61,11 @@ class TattendanceContoller extends Controller
                 $teacher->created_by = Auth::id();
                 $teacher->save();
             }
-            // return redirect()->route('admin.attendances.index')->with('t-success', 'Attendance successfully taken');
             return redirect()->route('admin.tattendances.index')->with('t-success', 'Teacher Attendance Added Successfully Done');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
-
 
     // Update
     public function update(Request $request)
@@ -87,7 +87,47 @@ class TattendanceContoller extends Controller
         }
     }
 
+    public function report(){
+        return view('dashboard.tattendances.report');
+        // return view('dashboard.attendances.report', compact('batches', 'students'));
+    }
 
+    public function getTeacherByMonth(Request $request){
+        $month = date_format(date_create($request->month), "m");
+        $year = date_format(date_create($request->month), "Y");
+        $attendances = Tattendance::whereMonth('created_at', $month)
+                                    ->whereYear('created_at', $year)
+                                    ->get();
+        $teacherIds = [];
+        foreach($attendances as $item){
+            $teacherIds[] = $item->teacher_id;
+        }
+        $teachers = Teacher::whereIn('id', $teacherIds)->get();
+        return $teachers;
+    }
+
+    public function reportList(Request $request){
+        $month = date_format(date_create($request->month), "m");
+        $year = date_format(date_create($request->month), "Y");
+
+        if ($request->teacher_id == null) {
+            $reports = Tattendance::whereMonth('created_at', $month)
+                        ->whereYear('created_at', $year)
+                        ->with('teacher')
+                        ->get();
+        }
+        else{
+            $reports = Tattendance::whereMonth('created_at', $month)
+                        ->whereYear('created_at', $year)
+                        ->where('teacher_id', $request->teacher_id)
+                        ->with('teacher')
+                        ->get();
+        }
+        // return $reports;
+        return view('dashboard.tattendances.reportlist', compact('reports'));
+    }
+
+ 
     public function destroy($id)
     {
         //

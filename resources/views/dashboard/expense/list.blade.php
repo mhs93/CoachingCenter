@@ -7,7 +7,6 @@
         table {
             width: 100%;
         }
-
         .paging_simple_numbers,
         .dataTables_filter {
             float: right;
@@ -24,6 +23,11 @@
             <a href="{{ route('admin.expense.create') }}" class="btn btn-sm btn-info">Create Expense</a>
         </div>
         <div class="card-body">
+
+            <div style="text-align: center">
+                <a class="btn btn-outline-dark" href="{{route('admin.expense.all-print')}}" title="print">PDF</a>
+            </div>
+
             <table id="table" class="table table-bordered data-table" style="width: 100%">
                 <thead>
                 <tr>
@@ -40,6 +44,60 @@
                 <tbody style="text-align: center">
                 </tbody>
             </table>
+
+            {{-- Show Modal --}}
+            <div class="modal fade" id="showModel" aria-hidden="true" >
+                <div class="modal-dialog" style="max-width: 800px">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitle"></h5>
+                            <button class="btn-close" type="button" data-coreui-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <ul id="errors" class="mt-2"></ul>
+                            <form id="getDataFrom">
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Expense Purpose</th>
+                                                        <td id="expense_purpose"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Payment Type</th>
+                                                        <td id="payment_type"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Account Id</th>
+                                                        <td id="account_id"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Cheque Number</th>
+                                                        <td id="cheque_number"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Amount</th>
+                                                        <td id="amount"></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th>Note</th>
+                                                        <td id="note"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-sm btn-secondary" type="button" data-coreui-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection
@@ -58,6 +116,40 @@
                 'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
             }
         });
+
+        // show
+        function show(id) {
+            $('#getDataFrom').trigger("reset");
+            $('#modalTitle').html("Expense Information");
+            $('#showModel').modal('show');
+            var url = '{{ route("admin.expense.show", ":id") }}';
+            $.ajax({
+                url: url.replace(':id', id ),
+                type: 'get',
+                success: function(response) {
+                    console.log(response);
+                    if (response.success === true) {
+                        $('#expense_purpose').html(response.data.expense_purpose);
+                        if(response.data.payment_type == 1){
+                            $('#payment_type').html('Check');
+                            $('#account_id').html(response.data.classroom.start_time);
+                            $('#cheque_number').html(response.data.classroom.end_time);
+                        }else{
+                            $('#payment_type').html('Cash');
+                            $('#account_id').html('---');
+                            $('#cheque_number').html('---');
+                        }
+                        $('#amount').html(response.data.amount);
+
+                        if(response.data.note){
+                            $('#note').html(response.data.classroom.note);
+                        }else{
+                            $('#note').html('---');
+                        }
+                    }
+                }
+            });
+        }
 
         $('.data-table').DataTable({
             processing: true,

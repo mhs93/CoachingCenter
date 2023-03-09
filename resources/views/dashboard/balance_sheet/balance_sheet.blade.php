@@ -20,10 +20,8 @@
         <ol class="breadcrumb my-0 ms-2">
             <li class="breadcrumb-item">
                 <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-
             </li>
         </ol>
-
         <a href="{{ route('admin.transaction.create') }}" class="btn btn-sm btn-info">Create Transaction</a>
     </nav>
 @endsection
@@ -35,6 +33,11 @@
             <p class="m-0">Balance sheet</p>
         </div>
         <div class="card-body">
+
+            <div style="text-align: center">
+                {{-- <a class="btn btn-outline-dark" href="{{route('admin.balance-sheet.print')}}" title="print" style="text-align: center">PDF</a> --}}
+            </div>
+
             <table id="table" class="table table-bordered data-table" style="width: 100%">
                 <thead>
                 <tr>
@@ -83,6 +86,5 @@
                 {data: 'balance', name: 'balance',orderable: true, searchable: true},
             ]
         });
-
     </script>
 @endpush

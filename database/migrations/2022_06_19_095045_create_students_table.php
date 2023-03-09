@@ -20,10 +20,19 @@ return new class extends Migration
             $table->string('current_address');
             $table->string('permanent_address');
             $table->string('contact_number');
+            $table->string('parent_information');
             $table->string('parent_contact');
+            $table->string('guardian_information');
+            $table->string('guardian_contact');
             $table->string('profile')->nullable();
             $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
-            $table->double('monthly_fee')->nullable();
+            $table->integer('adjustment_type')->nullable()->comment('1 = Addition / 2 = Subtraction');
+            $table->double('initial_amount');
+            $table->double('adjustment_balance')->nullable();
+            $table->string('adjustment_cause')->nullable();
+            $table->double('total_amount');
+            $table->string('monthly_fee');
+
             $table->text('note')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExportBatch;
+use App\Imports\ImportBatch;
+use PDF;
 use App\Models\Batch;
 use App\Models\Subject;
 use Illuminate\Http\Request;
@@ -10,18 +13,17 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BatchController extends Controller
 {
-    /**
-     * Get all batch lists
-     *
-     * @return void
-     */
+    public function __construct()
+    {
+        $this->middleware('can:batches_modify')->except(['index','getList','show']);
+    }
 
     public function getList()
     {
         try {
             $data = Batch::select('id', 'name', 'subject_id', 'status')
-                ->orderBy('id', 'DESC')
-                ->get();
+                    ->orderBy('id', 'DESC')
+                    ->get();
 
             return DataTables::of($data)->addIndexColumn()
                 //Subject
@@ -71,8 +73,9 @@ class BatchController extends Controller
 
                 //Action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('batches_modify')){
-                        $showDetails = '<a href="' . route('admin.batches.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
+                    if (Auth::user()->can('batches_list')){
+                        $showDetails = '<a href="javascript:void(0)" onclick="show(' . $data->id . ')" class="btn btn-sm btn-info text-white" title="Show"><i class="bx bxs-low-vision"></i></a>';
+                        // $showDetails = '<a href="' . route('admin.batches.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
@@ -135,30 +138,71 @@ class BatchController extends Controller
 
     public function store(Request $request)
     {
+//         dd($request->all());
         $this->validate($request, [
-            'name' => 'required|string|unique:batches,name,NULL,id,deleted_at,NULL',
-            "subject_id"    => "required",
-            'batch_fee' => 'required|numeric'
+            'name'       => 'required|string|unique:batches,name,NULL,id,deleted_at,NULL',
+            "subject_id" => "required",
+            "start_date" => "required",
+            "end_date"   => "required",
+            "image"   => "required",
         ],
-            [
-                'batch_fee.numeric' => 'Batch fee must be numeric',
+        [
+            'batch_fee.numeric' => 'Batch fee must be numeric',
+        ]);
+
+        if( $request->start_date > $request->end_date ) {
+            return back()->with('error', 'Start date must be less than or equal to the end date');
+        }
+
+        if($request->adjustment_type){
+            $this->validate($request, [
+                'adjustment_type'    => 'required|string|unique:batches,name,NULL,id,deleted_at,NULL',
+                "adjustment_balance" => "required",
+                "total_amount"       => "required",
+                "adjustment_cause"   => "required",
             ]);
+        }
 
         try {
-            $batch = new Batch();
-            $batch->name = $request->name;
+            $batch              = new Batch();
+            $batch->name        = $request->name;
             // $batch->status = $request->status;
-            $batch->note = $request->note;
-            $batch->start_date = $request->start_date;
-            $batch->end_date = $request->end_date;
-            $batch->batch_fee = $request->batch_fee;
-            $batch->created_by = Auth::id();
+            $batch->note        = $request->note;
+            $batch->start_date  = $request->start_date;
+            $batch->end_date    = $request->end_date;
+            $batch->created_by  = Auth::id();
+
             if (in_array("0", $request->subject_id)){
-                $batch->subject_id = json_encode($request->subject_id);
+                $empty=[];
+                $subjects = Subject::select('id')
+                    ->where('status', 1)
+                    ->get();
+                foreach ($subjects as $subject){
+                    $sub_data=$subject->id;
+                    $empty[]=strval($sub_data);
+                }
+                $batch->subject_id = json_encode($empty);
             }
             else{
                 $batch->subject_id = json_encode($request->subject_id);
             }
+
+            $batch->initial_amount     =  $request->initial_amount;
+            $batch->adjustment_balance =  $request->adjustment_balance;
+            $batch->adjustment_type    =  $request->adjustment_type;
+            $batch->total_amount       =  $request->total_amount;
+            $batch->adjustment_cause   =  $request->adjustment_cause;
+
+            if ($request->has('image')) {
+                $imageUploade = $request->file('image');
+                $imageName    = time() . '.' . $imageUploade->getClientOriginalExtension();
+                $imagePath    = public_path('images/batches/');
+                $imageUploade->move($imagePath, $imageName);
+                $batch->image   =   $imageName;
+            } else {
+                $batch->image = 'batch_image.jpg';
+            }
+
             $batch->save();
             return redirect()->route('admin.batches.index')->with('t-success', 'New batches added successfully');
 
@@ -174,19 +218,25 @@ class BatchController extends Controller
             $subjectIds = json_decode($batch->subject_id);
             $batchSubs= '';
             if(in_array("0", $subjectIds)){
-                $subjects = Subject::get(['id','name']);
-                foreach($subjects as $key=>$item) {
-                    $batchSubs .= $item->name.", ";
-                }
+                $batchSubs = "All Subject, ";
             }else{
-                $subjects = Subject::whereIn('id',$subjectIds)->get(['id','name']);
+                $subjects = Subject::whereIn('id', $subjectIds)->get(['id','name']);
                 foreach($subjects as $key=>$item) {
                     $batchSubs .= $item->name.", ";
                 }
             }
-            // Remove last 2 elements from the $batchSubs string
             $batchSubs = substr($batchSubs, 0, -2);
-            return view('dashboard.batches.show', compact('batch', 'subjects', 'batchSubs'));
+            $balance = $batch->adjustment_balance;
+            $array = [
+                'batch'     => $batch,
+                'batchSubs' => $batchSubs,
+                'balance'   => $balance
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data'    => $array,
+            ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
@@ -204,8 +254,9 @@ class BatchController extends Controller
     {
         try {
             $batch = Batch::findOrFail($id);
+            $balance = $batch->adjustment_balance;
             $subjects = Subject::select('id', 'name')->get();
-            return view('dashboard.batches.edit', compact('batch', 'subjects'));
+            return view('dashboard.batches.edit', compact('batch', 'subjects', 'balance'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
@@ -226,11 +277,32 @@ class BatchController extends Controller
 
         try {
             $batch = Batch::findOrFail($request->batch_id);
-            $batch->name = $request->name;
-            $batch->subject_id = json_encode($request->subject_id);
-            $batch->note = $request->note;
-            $batch->start_date = $request->start_date;
-            $batch->end_date = $request->end_date;
+            $batch->name        =   $request->name;
+            $batch->subject_id  =   json_encode($request->subject_id);
+            $batch->note        =   $request->note;
+            $batch->start_date  =   $request->start_date;
+            $batch->end_date    =   $request->end_date;
+
+            $batch->initial_amount      =   $request->initial_amount;
+            $batch->adjustment_balance  =   $request->adjustment_balance;
+            $batch->adjustment_type     =   $request->adjustment_type;
+            $batch->total_amount        =   $request->total_amount;
+            $batch->adjustment_cause    =   $request->adjustment_cause;
+
+            if ($request->has('image')) {
+                $imagePath = public_path('images/batches/');
+                $old_image = $imagePath . $batch->image;
+                if (file_exists($old_image)) {
+                    unlink($old_image);
+                }
+                $imageUpdate = $request->file('image');
+                $imageName = time() . '.' . $imageUpdate->getClientOriginalExtension();
+                $imageUpdate->move($imagePath, $imageName);
+                $batch->image = $imageName;
+            } else {
+                $imageName = 'batch_image.jpg';
+            }
+
             $batch->updated_by = Auth::id();
             $batch->update();
 
@@ -292,5 +364,58 @@ class BatchController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function getAllSubject(){
+        return Subject::get();
+    }
+
+    public function getSubjectFee(Request $request){
+        if($request->subjectId){
+            if(in_array("0", $request->subjectId)){
+                $subjectFee = Subject::sum('fee');
+                return [
+                    'status' => 'fee',
+                    'data' => $subjectFee
+                ];
+            }
+            else{
+                $subjects = Subject::whereIn('id', $request->subjectId)->get();
+                return [
+                    'status' => true,
+                    'data' => $subjects
+                ];
+            }
+        }
+        else{
+            return [
+                'status' => false,
+            ];
+        }
+    }
+
+    public function importView(Request $request){
+        return view('dashboard.batches.index');
+    }
+
+    public function importBatches(Request $request){
+        Excel::import(new ImportBatch, request()->file('file'));
+        return redirect()->back()->with('message','Batch imported successfully');
+    }
+
+    public function exportBatches()
+    {
+        return Excel::download(new ExportBatch, 'batches.xlsx');
+    }
+    public function print(){
+        $batches = Batch::get();
+        // dd($batches);
+        return view('dashboard.batches.print', compact('batches') );
+    }
+
+    public function pdf(){
+        $batches = Batch::get();
+        $pdf = PDF::loadView('dashboard.batches.pdf', compact('batches') );
+        return $pdf->download('batchList.pdf');
     }
 }

@@ -63,7 +63,7 @@
             }
         }
     </style>
-    
+
 </head>
 <body>
 <div style="background: #ffeb3b40;" class="container">
@@ -111,7 +111,7 @@
             <td>Extra Amount</td>
             <td class="t-center">
                 @if($data->additional_amount == NULL)
-                    {{"--"}}
+                    {{"---"}}
                 @else
                     {{$data->additional_amount}}
                 @endif
@@ -122,7 +122,7 @@
             <td>Discount</td>
             <td class="t-center">
                 @if($data->discount_amount == NULL)
-                    {{"--"}}
+                    {{"---"}}
                 @else
                     {{$data->discount_amount}}
                 @endif
@@ -134,6 +134,7 @@
             <td class="t-center"><strong>{{$data->total_amount}}/=</strong></td>
         </tr>
     </table>
+    <div style="text-align: right">In words:</div>
     <table id="f-table">
         <tr>
             <td>Paid By: <u>@if($data->payment_type == 1)
@@ -141,7 +142,7 @@
                     @else
                         {{"Cash"}}
                     @endif</u></td>
-            {{--<td style="text-align: right;">Balance if any...Course Fee 6000-1300-4700/-</td>--}}
+            {{--<td style="text-align: right;">In words: One thousand taka</td>--}}
         </tr>
         <tr>
             <td><p style="padding-top: 30px">Authority Signature</p></td>

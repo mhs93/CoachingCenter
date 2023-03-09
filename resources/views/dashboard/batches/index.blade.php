@@ -45,8 +45,17 @@
             @endcan
         </div>
         <div class="card-body">
+
+            <form action="{{ route('admin.import-batches') }}" method="post" enctype="multipart/form-data" style="text-align: center">
+                @csrf
+                <a class="btn btn-outline-dark" href="{{route('admin.batches.print')}}" title="print" style="text-align: center">PDF</a>
+                <a class="btn btn-outline-dark" href="{{ route('admin.export-batches') }}">Export</a>
+                <input class="btn btn-outline-dark" type="file" name="file" required>
+                <input class="btn btn-outline-dark" type="submit" value="import">
+            </form>
+
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
+                <thead style="text-align: center">
                     <tr>
                         <th>Id</th>
                         <th>Batch Name</th>
@@ -55,9 +64,73 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
+
+            {{-- Show Modal --}}
+            <div class="modal fade" id="showModel" aria-hidden="true" >
+                <div class="modal-dialog" style="max-width: 800px">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalTitle"></h5>
+                      <button class="btn-close" type="button" data-coreui-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <ul id="errors" class="mt-2"></ul>
+                    <form id="getDataFrom">
+                        <div class="modal-body">
+                            <div class="">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th>Batch name</th>
+                                            <td id="subjectName"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Subject List</th>
+                                            <td id="subjectList"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Start Date</th>
+                                            <td id="startDate"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>End Date</th>
+                                            <td id="endDate"></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="initialFee">Initial Fee</th>
+                                            <td id="initialFee"></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="adjustmentType">Adjustment Type</th>
+                                            <td id="adjustmentType"></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="adjustmentBalance">Adjustment Balance</th>
+                                            <td id="adjustmentBalance"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Batch Fee</th>
+                                            <td id="batchFee"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Batch Details</th>
+                                            <td id="batchDetails"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-sm btn-secondary" type="button" data-coreui-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
@@ -97,6 +170,63 @@
                     ]
                 });
             });
+
+            $('.initialFee').hide();
+            $('.adjustmentType').hide();
+            $('.adjustmentBalance').hide();
+
+            $('#initialFee').hide();
+            $('#adjustmentType').hide();
+            $('#adjustmentBalance').hide();
+
+            // show
+            function show(id) {
+                $('#getDataFrom').trigger("reset");
+                $('#modalTitle').html("Batch Details");
+                $('#showModel').modal('show');
+
+                var url = '{{ route("admin.batches.show", ":id") }}';
+                $.ajax({
+                    url: url.replace(':id', id ),
+                    type: 'get',
+                    success: function(response) {
+                        console.log(response.batch);
+                        // console.log(response.data.batch.name);
+                        if (response.success === true) {
+                            // $('#subjectName').html(response.batch.name);
+                            $('#subjectName').html(response.data.batch.name);
+                            $('#subjectList').html(response.data.batchSubs);
+                            $('#startDate').html(response.data.batch.start_date);
+
+                            $('#endDate').html(response.data.batch.end_date);
+
+                            if(response.data.balance){
+                                $('.initialFee').show();
+                                $('.adjustmentType').show();
+                                $('.adjustmentBalance').show();
+
+                                $('#initialFee').show();
+                                $('#adjustmentType').show();
+                                $('#adjustmentBalance').show();
+
+                                $('#initialFee').html(response.data.batch.initial_amount);
+                                $('#adjustmentType').html(response.data.batch.adjustment_balance);
+                                if(response.data.batch.adjustment_type == 1){
+                                    $('#adjustmentBalance').html('Addition');
+                                }else{
+                                    $('#adjustmentBalance').html('Subtraction');
+                                }
+                            }
+                            $('#batchFee').html(response.data.batch.total_amount);
+                            if(response.data.batch.note){
+                                $('#batchDetails').html(response.data.batch.note);
+                            }else{
+                                $('#batchDetails').html('---');
+                            }
+                        }
+                    }
+                });
+            }
 
             // Change status alert
             function statusConfirm(id) {

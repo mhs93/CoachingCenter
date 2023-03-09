@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('reg_no');
             $table->string('email');
+            $table->string('reference');
+            $table->string('id_number');
+            $table->string('qualification');
             $table->integer('gender');
             $table->string('current_address');
             $table->string('permanent_address');

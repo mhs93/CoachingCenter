@@ -45,7 +45,7 @@
         </div>
         <div class="card-body">
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
+                <thead style="text-align: center">
                     <tr>
                         <th>Id</th>
                         <th>Exam Name</th>
@@ -53,7 +53,7 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
         </div>
@@ -67,24 +67,17 @@
               <h5 class="modal-title" id="modalTitle"></h5>
               <button class="btn-close" type="button" data-coreui-dismiss="modal" aria-label="Close"></button>
             </div>
-            {{-- For validation error message show --}}
             <ul id="errors" class="mt-2"></ul>
-
-
             <form id="getDataFrom">
                 <div class="modal-body">
                     <div class="form-group">
-
                         <table class="table table-bordered">
-
-                            <thead>
+                            <thead align="center">
                                 <th>Name</th>
                                 <th>Action</th>
                             </thead>
-
                             <tbody id="tbody">
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -133,32 +126,32 @@
 
             function edit(id) {
                 $("#tbody").empty();
-
                 $('#getDataFrom').trigger("reset");
                 $('#modalTitle').html("Edit Marks");
                 $('#modalCollapse').modal('show');
                 $('#errors').hide();
 
-
                 var url = '';
                 var delete_url = '';
+                var sms_url = '';
                 $.ajax({
                     url: "{{ route('admin.marks.getMarkedBatches') }}",
                     type: 'post',
-                    // data: { markId: id},
                     data: { examId: id},
                     success: function(response) {
                         $.each(response, function(key, value) {
-                            // var url = "{{url('marks/marked/show')}}" + "/" + id + "/" + value.batch_id;
                             var url = "mark/edit" + "/" + id + "/" + value.batch_id;
                             var delete_url = "mark/delete" + "/" + id + "/" + value.batch_id;
+                            var sms_url = "mark/sms" + "/" + id + "/" + value.batch_id;
                             $("#tbody").append(
-                                '<tr>'+
+                                '<tr align="center">'+
                                     '<td>'+ value.batch.name +'</td>'+
                                     '<td><a href=" '+url+ ' " '+
                                     ' class="btn btn-small btn-success">Edit</a>'+
                                     '<a href=" '+delete_url+ ' " '+
                                     ' class="btn btn-small btn-danger">Delete</a>'+
+                                    '<a href=" '+sms_url+ ' " '+
+                                    ' class="btn btn-small btn-secondary">SMS</a>'+
                                     '</td>'+
                                 '</tr>'
                             );

@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -32,28 +32,127 @@
                                 </span>
                             @enderror
                         </div>
+
                         <div class="col-md-3 form-group" >
-                            <label for="monthly_fee">Monthly Fee</label>
-                            <input type="number" id="monthly_amount" class="m_fee form-control " value="{{ $tchpayment->teacher->monthly_salary }}" readonly>
+                            <label for="monthly_salary"><b>Monthly Salary</b></label>
+                            <input type="number" id="monthly_salary" class="m_fee form-control " value="{{ $tchpayment->teacher->monthly_salary }}" readonly>
                         </div>
-                        <div class="col-md-3 form-group">
-                            <label for="additional_amount">Extra Amount</label>
-                            <input name="additional_amount" oninput="extraAmount()" id="extra_amount" type="number" value="{{$tchpayment->additional_amount}}" class="e_amount form-control @error('additional_amount') is-invalid @enderror">
-                            @error('additional_amount')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                        <div class="col-md-3 form-group">
-                            <label for="discount_amount">Deduction Amount</label>
-                            <input name="discount_amount" oninput="discountAmount()" id="discount_amount" type="number" value="{{$tchpayment->discount_amount}}" class="form-control @error('discount_amount') is-invalid @enderror">
-                            @error('discount_amount')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
+
+                        @if($balance)
+                            <div class="row mt-2">
+                                <div class="col-12 mb-2">
+                                    <div class="form-group">
+                                        <label><b>Adjustment</b></label>
+                                        <input class="form-check-input " type="checkbox" id="adjustment-btn" value="" checked>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group adjustment">
+                                        <label><b>Adjustment Type</b></label>
+                                        <select class="form-control" id="adjustment_type" name="adjustment_type"
+                                                onchange="adjustmentBalanceCount()">
+                                            <option value="" selected>--Select--</option>
+                                            <option value="1" {{ $tchpayment->adjustment_type== 1 ? 'selected': '' }}>Addition</option>
+                                            <option value="2" {{ $tchpayment->adjustment_type== 2 ? 'selected': '' }}>Subtraction</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group adjustment">
+                                        <label><b>Adjustment Balance</b></label>
+                                        <input type="number" name="adjustment_balance" id="adjustment_balance"
+                                               class="form-control " value="{{ $tchpayment->adjustment_balance }}" placeholder="0.00"
+                                               onkeyup="adjustmentBalanceCount()">
+                                        @error('adjustment_balance')
+                                        <span class="text-danger" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label><b>Final Balance </b><span class="text-danger">*</span></label>
+                                        <input type="hidden" value="" id="amount_balance">
+                                        <input type="number" name="total_amount" id="total_amount" class="form-control "
+                                               value="{{ $tchpayment->total_amount }}" placeholder="0.00" readonly >
+                                        @error('total_amount')
+                                        <span class="text-danger" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-2 adjustment">
+                                    <label for="description"><b>Adjustment Cuase</b></label>
+                                    <textarea name="adjustment_cause" class="form-control" id="adjustment_cause" rows="4">{{ $tchpayment->adjustment_cause }}</textarea>
+                                    @error('adjustment_cause')
+                                    <span class="text-danger" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        @else
+                            <div class="row mt-2">
+                                <div class="col-12 mb-2">
+                                    <div class="form-group">
+                                        <label><b>Adjustment</b></label>
+                                        <input class="form-check-input " type="checkbox" id="adjustment-btn" value="">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group adjustment" style="display: none">
+                                        <label><b>Adjustment Type</b></label>
+                                        <select class="form-control" id="adjustment_type" name="adjustment_type"
+                                                onchange="adjustmentBalanceCount()">
+                                            <option value="" selected>--Select--</option>
+                                            <option value="1">Addition</option>
+                                            <option value="2">Subtraction</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group adjustment" style="display: none">
+                                        <label><b>Adjustment Balance</b></label>
+                                        <input type="number" name="adjustment_balance" id="adjustment_balance"
+                                               class="form-control " value="" placeholder="0.00"
+                                               onkeyup="adjustmentBalanceCount()">
+                                        @error('adjustment_balance')
+                                        <span class="text-danger" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label><b>Final Balance </b><span class="text-danger">*</span></label>
+                                        <input type="hidden" value="" id="amount_balance">
+                                        <input type="number" name="total_amount" id="total_amount" class="form-control "
+                                               value="{{ $tchpayment->total_amount }}" placeholder="0.00" readonly >
+                                        @error('total_amount')
+                                        <span class="text-danger" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-2 adjustment" style="display: none">
+                                    <label for="description"><b>Adjustment Cause</b></label>
+                                    <textarea name="adjustment_cause" class="form-control" id="adjustment_cause" rows="4"></textarea>
+                                    @error('adjustment_cause')
+                                    <span class="text-danger" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="row mt-2">
@@ -96,16 +195,6 @@
                                    class="form-control @error('cheque_number') is-invalid @enderror"
                                    value="{{ $tchpayment->cheque_number }}" placeholder="Enter cheque number">
                             @error('cheque_number')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4 form-group">
-                            <lavel for="amount">Total Amount</lavel>
-                            <input type="text" id="total_amount" class="t_amount form-control @error('total_amount') is-invalid @enderror" name="total_amount" value="{{ $tchpayment->total_amount}}">
-                            @error('total_amount')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -167,6 +256,25 @@
                 }
             });
         })
+
+        $('#showHide').hide();
+        function getAccountBalance() {
+            var accountId = $('#account').val();
+            if(accountId !== null){
+                var url = '{{ route("admin.account-balance",":id") }}';
+                $.ajax({
+                    type: "GET",
+                    url: url.replace(':id', accountId ),
+                    dataType: 'Json',
+                    success: function(data) {
+                        $('#showHide').show();
+                        $("#balance").empty();
+                        $("#balance").append(data);
+                        $("#current_balance").val(data);
+                    }
+                })
+            }
+        }
     </script>
 
     <script>

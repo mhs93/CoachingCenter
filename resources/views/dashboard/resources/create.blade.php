@@ -14,7 +14,7 @@
             font-size: initial;
         }
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -64,7 +64,10 @@
                                     All Batch
                                 </option>
                                 @forelse ($batches as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    <option value="{{ $item->id }}"
+                                        @if (old("batch_id")) {{ (in_array($item->id, old("batch_id")) ? "selected":"") }}@endif>
+                                        {{ $item->name }}
+                                    </option>
                                 @empty
                                     <option>No batch</option>
                                 @endforelse
@@ -76,7 +79,6 @@
                             @enderror
                         </div>
 
-
                         {{-- Subjects --}}
                         <div class="form-group mt-3">
                             <label for="batch"><B>Select Subjects</B>  <b><span style="color: red">*</span></b> </label>
@@ -84,9 +86,10 @@
                             <select name="subject_id[]" id="subjectEx"
                                 class="multi-subject mySelect2 form-control @error('subject_id') is-invalid @enderror"
                                 multiple="multiple">
-                                <option value="0">
+
+                                {{-- <option value="0">
                                     All Subject
-                                </option>
+                                </option> --}}
                             </select>
                             @error('subject_id')
                                 <span class="invalid-feedback" role="alert">
@@ -161,9 +164,11 @@
                 $('.dropify').dropify();
 
                 // Dependancy for batch and subjects
+                $("#subjectEx").hide();
                 $('#batchIdEx').on('change', function() {
                     let batch_id = $(this).val();
-                    $("#subjectEx").empty();
+                    $("#subjectEx").show();
+                    $("#subjectEx").append('<option value="0">All Subject</option>');
                     $.ajax({
                         url: "{{ route('admin.getSubjects') }}",
                         type: 'post',
@@ -173,11 +178,60 @@
                             $.each(response, function(key, value) {
                                 console.log(value.id)
                                 $("#subjectEx").append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
+                                .id + '  ">' + value.name + '</option>');
                             });
                         }
                     });
                 });
+
+                // All Batch Validation
+                $(document).on("change", "#batchIdEx", function () {
+                    let value = $(this).val();
+                    console.log(value.includes("0"))
+                    if(value.includes("0")){
+                        $(this).empty();
+                        $(this).append('<option selected value="0">All Batch</option>');
+                    }
+                    if(value == ''){
+                        $("#batchIdEx").empty();
+                        $.ajax({
+                            url: "{{ route('admin.announcements.getAllBatch') }}",
+                            type: 'get',
+                            success: function(response) {
+                                $("#batchIdEx").append('<option value="0">All Batch</option>');
+                                $.each(response, function(key, value) {
+                                    $("#batchIdEx").append('<option value="' + value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                            }
+                        });
+                    }
+                });
+
+                // All subject Validation
+                $(document).on("change", "#subjectEx", function () {
+                    let value = $(this).val();
+                    console.log(value.includes("0"))
+                    if(value.includes("0")){
+                        $(this).empty();
+                        $(this).append('<option selected value="0">All Subject</option>');
+                    }
+                    if(value == ''){
+                        $("#subjectEx").empty();
+                        $.ajax({
+                            url: "{{ route('admin.announcements.getAllSubject') }}",
+                            type: 'get',
+                            success: function(response) {
+                                $("#subjectEx").append('<option value="0">All Subject</option>');
+                                $.each(response, function(key, value) {
+                                    $("#subjectEx").append('<option value="' + value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                            }
+                        });
+                    }
+                });
+
             });
         </script>
 

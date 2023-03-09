@@ -1,0 +1,117 @@
+﻿
+.header {
+    background-color: #fff;
+}
+.btn-details {
+    background: transparent linear-gradient(111deg, #0078FF 0%, #840DC9 100%) 0% 0% no-repeat padding-box !important;
+}
+
+    .btn-details:hover {
+        background: transparent linear-gradient(249deg, #0078FF 0%, #840DC9 100%) 0% 0% no-repeat padding-box !important;
+    }
+.course-home-section {
+    background: #E1DBFF;
+}
+    .course-home-section .load-more {
+        background: #E1DBFF;
+        box-shadow: 0px -17px 65px 100px rgb(225 219 255);
+    }
+    .course-home-section h1 {
+        color: #0F0254;
+        border-color: #0f025482;
+    }
+.course-details {
+    background: linear-gradient(to bottom, #008377, #1FA396);
+}
+    .branch-section {
+        background-color: #904FF4;
+    }
+.branch-details {
+    background: #904FF4;
+}
+.branch-section .card .phoneNo .number::before, .branch-details-view .card .phoneNo .number::before, .branch-details-view .address span::before {
+    background-color: #2BC144;
+}
+.success-section {
+    background-image: url('../img/udvash/successbg.png');
+}
+    .success-section h1 {
+        color: #112780;
+        border-color: #1e3aab44;
+    }
+.counter-section {
+    background-image: url('../img/udvash/counterbg.png');
+}
+.testimonial-section {
+    background-color: #fff;
+    background-image: url('../img/udvash/testimonialbg.png');
+}
+    .testimonial-section .card .card-body p {
+        font-family: BalooDa2;
+        color: #000000;
+        font-size: 17px;
+    }
+    .testimonial-section h1 {
+        color: #580000;
+        border-color: #36363649;
+    }
+    .testimonial-section .card hr{
+        opacity: 1;
+    }
+    .testimonial-section .quote{
+        display: none;
+    }
+.video-section {
+    background-image: url('../img/udvash/videobg.png');
+}
+    .video-section h1 {
+        color: #6585E3;
+        border-color: #6584e33f;
+    }
+.service-section {
+    background-color: #F5FDFF;
+}
+    .service-section::before {
+        background-image: url('../img/udvash/serviceBefore.png');
+        left: 0;
+        top: 0;
+        width: 1000px;
+        height: 480px;
+    }
+
+    .service-section::after {
+        background-image: url('../img/udvash/serviceAfter.png');
+        right: 0;
+        bottom: 0;
+        width: 700px;
+        height: 400px;
+    }
+    .service-section h1 {
+        color: #6ABE45;
+        border-color: #69be4542;
+        z-index: 1;
+    }
+.easy-written-section {
+    background-color: #ecf7e7;
+    background: url('../img/udvash/easyBg.png');
+}
+    .easy-written-section h2 {
+        color: #6ABE45;
+    }
+    .easy-written-section h1 {
+        color: #6ABE45;
+    }
+.hasel-free-section {
+    background-color: #FAEFFF;
+}
+    .hasel-free-section h1 {
+        color: #995699;
+    }
+.footer-section {
+    background-color: #532356;
+}
+
+footer {
+    background-color: #532356;
+}
+

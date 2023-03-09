@@ -30,12 +30,12 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-3 form-group">
-                            <label for="month">Month and Year<span class="text-danger">*</span></label>
+                            <label for="month"><b>Month and Year<span class="text-danger">*</span></b> </label>
                             <input type="month" class="form-control" name="month" required>
                         </div>
 
                         <div class="col-md-3 form-group">
-                            <label for="batch">Batch<span class="text-danger">*</span></label>
+                            <label for="batch"><b>Batch<span class="text-danger">*</span></b> </label>
                             <select class="form-control" name="batch_id" id="batchId" required>
                                 <option>select batch</option>
                                 @foreach($batches as $batch)
@@ -43,10 +43,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        
 
                         <div class="col-md-3 form-group">
-                            <label for="batch">Student</label>
+                            <label for="batch"><b>Student </b> </label>
                             <select class="form-control select2" name="student_id" id="studentId"></select>
                         </div>
                         <div class="col-md-3">
@@ -58,6 +57,10 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <div style="text-align: center" id="no-found">
+        <h4>No student in this batch</h4>
     </div>
 @endsection
 
@@ -92,8 +95,13 @@
             @endif
         });
 
+        $('#no-found').hide();
         $(document).ready(function () {
             $('#batchId').on('change', function () {
+
+                $(':input[type="submit"]').prop('disabled', false);
+                $('#no-found').hide();
+
                 let batchId = this.value;
                 $("#studentId").html('');
                 $.ajax({
@@ -114,7 +122,9 @@
                                     .id + '">' + value.name + '</option>');
                             });
                         }else {
-                            alert('NO Student Found')
+                            // alert('No Student Found');
+                            $(':input[type="submit"]').prop('disabled', true);
+                            $('#no-found').show();
                         }
                     }
                 });

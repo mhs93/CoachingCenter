@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -14,17 +14,27 @@
     @include('layouts.dashboard.partials.alert')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <p class="m-0">Create student payment</p>
+            <p class="m-0"><b>Create student payment</b></p>
             <a href="{{route('admin.student.payment',$student->id)}}" class="btn btn-sm btn-info">Back</a>
         </div>
         <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div>
                 <form action="{{route('admin.std-payment.store')}}" method="POST">
                     @csrf
                     <input type="hidden" name="std_id" value="{{ $student->id }}">
                     <div class="row">
                         <div class="col-md-3 form-group">
-                            <label for="month">Month and Year<span class="text-red-600 @error('month') is-invalid @enderror">*</span></label>
+                            <label for="month"><b>Month and Year</b><span style="color: red">*</span></label>
                             <input type="month" class="form-control" name="month" required value="{{ old('month') }}">
                             @error('month')
                                 <span class="invalid-feedback" role="alert">
@@ -33,32 +43,70 @@
                             @enderror
                         </div>
                         <div class="col-md-3 form-group" >
-                            <label for="monthly_fee">Monthly Fee</label>
-                            <input type="number" id="monthly_amount" class="m_fee form-control " value="{{ $student->monthly_fee }}" readonly>
+                            <label for="monthly_fee"><b>Monthly Fee</b></label>
+                            <input type="number" name="monthly_fee" id="monthly_fee" class="m_fee form-control " value="{{ $student->monthly_fee }}" readonly>
                         </div>
-                        <div class="col-md-3 form-group">
-                            <label for="additional_amount">Extra Amount</label>
-                            <input name="additional_amount" oninput="extraAmount()" id="extra_amount" type="number" value="{{ old('additional_amount') }}" class="e_amount form-control @error('additional_amount') is-invalid @enderror">
-                            @error('additional_amount')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                        <div class="col-md-3 form-group">
-                            <label for="discount_amount">Discount</label>
-                            <input name="discount_amount" oninput="discountAmount()" id="discount_amount" type="number" value="{{ old('discount_amount') }}" class="form-control @error('discount_amount') is-invalid @enderror">
-                            @error('discount_amount')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+
+                        <div class="row mt-2">
+                            <div class="col-12 mb-2">
+                                <div class="form-group">
+                                    <label><b>Adjustment</b></label>
+                                    <input class="form-check-input " type="checkbox" id="adjustment-btn" value="">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group adjustment" style="display: none">
+                                    <label><b>Adjustment Type <span style="color: red">*</span></b></label>
+                                    <select class="form-control" id="adjustment_type" name="adjustment_type"
+                                            onchange="adjustmentBalanceCount()">
+                                        <option value="" selected>--Select--</option>
+                                        <option value="1">Addition</option>
+                                        <option value="2">Subtraction</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group adjustment" style="display: none">
+                                    <label><b>Adjustment Amount <span style="color: red">*</span> </b></label>
+                                    <input type="number" name="adjustment_balance" id="adjustment_balance"
+                                           class="form-control " value="" placeholder="0.00"
+                                           onkeyup="adjustmentBalanceCount()">
+                                    @error('adjustment_balance')
+                                    <span class="text-danger" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label><b>Final Amount </b><span class="text-danger">*</span></label>
+                                    <input type="number" name="total_amount" id="total_amount" class="form-control "
+                                           value="{{old('total_amount')}}" placeholder="0.00" readonly >
+                                    @error('total_amount')
+                                    <span class="text-danger" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-2 adjustment" style="display: none">
+                                <label for="description"><b>Adjustment Cause <span style="color: red">*</span></b></label>
+                                <textarea name="adjustment_cause" class="form-control" id="adjustment_cause" rows="4"></textarea>
+                                @error('adjustment_cause')
+                                <span class="text-danger" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                @enderror
+                            </div>
                         </div>
                     </div>
 
                     <div class="row mt-2">
                         <div class="col-md-4 form-group" id="paymentType">
-                            <label for="paymentTypeSelect">Payment Type</label>
+                            <label for="paymentTypeSelect"><b>Payment Type</b><span class="text-danger">*</span></label>
                             <select name="payment_type" id="paymentTypeSelect"
                                     class="form-select @error('payment_type') is-invalid @enderror">
                                 <option value="">--Select type--</option>
@@ -73,7 +121,7 @@
                         </div>
 
                         <div class="col-md-4 form-group" id="accountId">
-                            <label for="account">Account</label>
+                            <label for="account"><b>Account <span style="color: red">*</span></b></label>
                             <select name="account_id" id="account"
                                     class="form-select @error('account_id') is-invalid @enderror" onchange="getAccountBalance()">
                                 <option value="">--Select account--</option>
@@ -91,7 +139,7 @@
                         </div>
 
                         <div class="col-md-4 form-group" id="chequeNumber">
-                            <label for="cheque_number">Cheque Number</label>
+                            <label for="cheque_number"><b>Cheque Number <span style="color: red">*</span></b> </label>
                             <input type="text" name="cheque_number" id="cheque_number"
                                    class="form-control @error('cheque_number') is-invalid @enderror"
                                    value="{{ old('cheque_number') }}" placeholder="Enter cheque number">
@@ -101,21 +149,10 @@
                             </span>
                             @enderror
                         </div>
-
-
-                        <div class="col-md-4 form-group">
-                            <lavel for="amount">Total Amount</lavel>
-                            <input type="text" id="total_amount" class="t_amount form-control @error('total_amount') is-invalid @enderror" name="total_amount" value="{{old('total_amount')}}">
-                            @error('total_amount')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="note"> Note</label>
+                    <div class="form-group mt-2">
+                        <label for="note"> <b>Note</b></label>
                         <textarea name="note" class="form-control" id="note" cols="40" rows="6"></textarea>
                         @error('note')
                         <span class="text-danger" role="alert">
@@ -160,37 +197,38 @@
                 }
             });
         })
-    </script>
 
-    <script>
-        var monthly_fee = $('#monthly_amount').val();
+        var monthly_fee = $('#monthly_fee').val();
         $('#total_amount').val(monthly_fee);
 
-        function extraAmount(){
-            var extra_amount = $('#extra_amount').val() || 0;
-            var monthly_fee = $('#monthly_amount').val();
-            var discount_amount = $('#discount_amount').val() || 0;
-            var subTotal= monthly_fee-discount_amount;
+        $(document).on("click", "#adjustment-btn", function () {
+            if ($('#adjustment-btn').is(":checked"))
+                $(".adjustment").show();
+            else
+                $(".adjustment").hide();
+            $('#adjustment_balance').val(0);
+            adjustmentBalanceCount();
+        });
 
-            var total = subTotal + parseFloat(extra_amount) ;
-                $('#total_amount').val(total);
+        // Adjustment Balance Count
+        function adjustmentBalanceCount() {
+            var adjustmentType    =     document.getElementById('adjustment_type').value;
+            var monthly_fee     =     document.getElementById('monthly_fee').value;
+            var adjustmentBalance =     document.getElementById('adjustment_balance').value;
+            $("#total_amount").val(monthly_fee);
+            var totalBalance = document.getElementById('total_amount').value;
+
+            if (adjustmentType == 1) {
+                if (adjustmentBalance) {
+                    var finalBalance = parseFloat(totalBalance) + parseFloat(adjustmentBalance);
+                    $("#total_amount").val(finalBalance);
+                }
+            } else if (adjustmentType == 2) {
+                if (adjustmentBalance) {
+                    var finalBalance = totalBalance - adjustmentBalance;
+                    $("#total_amount").val(finalBalance);
+                }
             }
-
-        function discountAmount(){
-            var extra_amount = $('#extra_amount').val() || 0;
-            var monthly_fee = $('#monthly_amount').val();
-
-            var subTotal = parseFloat(monthly_fee) + parseFloat(extra_amount) ;
-
-            var total_amount = $('#total_amount').val();
-            var discount_amount = $('#discount_amount').val();
-
-            if(!discount_amount){
-                discount_amount=0;
-            }
-
-            var total = subTotal - parseFloat(discount_amount) ;
-            $('#total_amount').val(total);
         }
     </script>
     <script>

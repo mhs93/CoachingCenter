@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers\Resource;
 
+use PDF;
 use App\Models\Batch;
 use App\Models\Student;
 use App\Models\Subject;
@@ -101,8 +102,8 @@ class ResourceController extends Controller
                 //action
                 ->addColumn('action', function ($data) {
                     if (Auth::user()->can('resources_list')){
-
-                        $showDetails = '<a href="' . route('admin.resources.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
+                        $showDetails = '<a href="javascript:void(0)" onclick="show(' . $data->id . ')" class="btn btn-sm btn-info text-white" title="Show"><i class="bx bxs-low-vision"></i></a>';
+//                         $showDetails = '<a href="' . route('admin.resources.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
@@ -122,8 +123,7 @@ class ResourceController extends Controller
 
 
     // Get Subject Batch Wise
-    public function getSubjects(Request $request)
-    {
+    public function getSubjects(Request $request){
         $subjectIds = [];
         if(in_array("0", $request->batchId)){
             $batches = Batch::all();
@@ -139,34 +139,32 @@ class ResourceController extends Controller
         return $subjects;
     }
 
-    public function index()
-    {
+    public function index(){
         $resources = Resource::all();
         return view('dashboard.resources.index', compact('resources'));
     }
 
-    public function create()
-    {
+    public function create(){
         $batches = Batch::all();
         $subjects = Subject::all();
         return view('dashboard.resources.create', compact('batches', 'subjects'));
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $request->validate(
             [
-                'subject_id' => 'required',
-                'title' => 'required',
-                'batch_id' => 'required',
-                'subject_id' => 'required',
-                'file' => 'required|mimes:png,jpg,jpeg,csv,txt,xlx,xls,pdf,docx|max:4096'
+                'subject_id' =>     'required',
+                'title'      =>     'required',
+                'batch_id'   =>     'required',
+                'subject_id' =>     'required',
+//                'file'       =>     'required|mimes:png,jpg,jpeg,csv,txt,xlx,xls,pdf,docx|max:40096'
+                'file'       =>     'required|mimes:png,jpg,jpeg,csv,txt,xlx,xls,pdf,docx'
             ],
             [
-                'subject_id.required' => 'Subject is required',
-                'batch_id.required' => 'Batch is required',
-                'title.required' => 'Title is required',
-                'file.mimes' => 'File must be png, jpg, jpeg, csv, txt, xlx, xls, pdf, docx',
+                'subject_id.required'   =>  'Subject is required',
+                'batch_id.required'     =>  'Batch is required',
+                'title.required'        =>  'Title is required',
+                'file.mimes'            =>  'File must be png, jpg, jpeg, csv, txt, xlx, xls, pdf, docx',
             ]
         );
 
@@ -183,8 +181,7 @@ class ResourceController extends Controller
                 $resource->batch_id = json_encode($request->batch_id);
 
             }
-            
-            // $resource->batch_id = json_encode($request->batch_id);
+
             $resource->note = $request->note;
             $resource->file = $request->file;
 
@@ -233,8 +230,7 @@ class ResourceController extends Controller
     }
 
 
-    public function show($id)
-    {
+    public function show($id){
         $resource = Resource::findOrFail($id);
         $batch_name = '';
         $resource_batches = json_decode($resource->batch_id);
@@ -247,10 +243,11 @@ class ResourceController extends Controller
             $subject_name = '';
             $resource_subjects = json_decode($resource->subject_id);
             if(in_array("0", $resource_subjects)){
-                $subjects = Subject::all();
-                foreach($subjects as $key=>$item) {
-                    $subject_name .= $item->name.", ";
-                }
+                // $subjects = Subject::all();
+                // foreach($subjects as $key=>$item) {
+                //     $subject_name .= $item->name.", ";
+                // }
+                $subject_name = "All Subject, ";
             }else{
                 $subjects = Subject::whereIn('id', $resource_subjects)->get(['id','name']);
                 foreach($subjects as $key=>$item) {
@@ -261,9 +258,20 @@ class ResourceController extends Controller
             $subjects='';
         }
         $subject_name = substr($subject_name, 0, -2);
-        return view('dashboard.resources.show', compact('resource', 'batch_name', 'subject_name'));
-    }
 
+        $array = [
+            'resource'=>  $resource,
+            'batch_name' => $batch_name,
+            'subject_name' => $subject_name
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data'    => $array,
+        ]);
+
+//         return view('dashboard.resources.show', compact('resource', 'batch_name', 'subject_name'));
+    }
 
     public function edit($id)
     {
@@ -272,7 +280,7 @@ class ResourceController extends Controller
 
     public function update(Request $request, $id)
     {
-//
+
     }
 
     public function destroy($id)
@@ -286,5 +294,25 @@ class ResourceController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
+    }
+
+    public function getAllBatch(){
+        return Batch::get();
+    }
+
+    public function getAllSubject(){
+        return Subject::get();
+    }
+
+    public function print(){
+        $resources = Resource::get();
+        // dd($batches);
+        return view('dashboard.resources.print', compact('resources') );
+    }
+
+    public function pdf(){
+        $resources = Resource::get();
+        $pdf = PDF::loadView('dashboard.resources.pdf', compact('resources') );
+        return $pdf->download('Resource List.pdf');
     }
 }

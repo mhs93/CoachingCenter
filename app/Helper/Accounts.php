@@ -24,7 +24,6 @@ class Accounts
     {
         $credit = self::creditBalance($account_id);
         $debit = self::debitBalance($account_id);
-
         return ($credit - $debit);
     }
 }

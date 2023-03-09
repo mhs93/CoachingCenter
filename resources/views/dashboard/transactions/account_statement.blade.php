@@ -71,7 +71,7 @@
                         </label>
                         <select name="account_id" id="account_id" class=" form-select form-control mt-1">
                             <option value=""> Select Account </option>
-                            <option value="0"> Cash Account </option>
+                            {{--<option value="0"> Cash Account </option>--}}
                             @foreach ($accounts as $item)
                             <option value="{{ $item->id }}">{{ $item->account_holder }} || {{ $item->account_no }}</option>
                             @endforeach

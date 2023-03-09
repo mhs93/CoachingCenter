@@ -20,7 +20,7 @@
                         <p class="text-muted mb-1">Reg No: {{$user->student->reg_no}}</p>
                         <div class="row">
                             <div class="mt-3">
-                                <a href="{{route('admin.password')}}" class="btn btn-sm btn-success">Change Password</a>
+                                <a href="{{route('admin.student..change.password')}}" class="btn btn-sm btn-success">Change Password</a>
                             </div>
                         </div>
                     </div>

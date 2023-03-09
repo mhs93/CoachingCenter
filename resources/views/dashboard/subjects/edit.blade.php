@@ -29,6 +29,7 @@
             <a href="{{ route('admin.subjects.index') }}" class="btn btn-sm btn-dark">Back</a>
         </div>
         <div class="card-body">
+
             <form action="{{ route('admin.subjects.update', $subject->id) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -83,6 +84,7 @@
                     <button type="submit" class="btn btn-info">Update</button>
                 </div>
             </form>
+
         </div>
     </div>
     <div class="mb-5"></div>

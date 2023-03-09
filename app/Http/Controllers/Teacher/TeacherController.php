@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Teacher;
 
+use App\Exports\ExportTeacher;
+use App\Imports\ImportTeacher;
+use PDF;
 use App\Models\User;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -13,14 +16,14 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
 use App\Models\Subject;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TeacherController extends Controller
 {
-    /**
-     * Get all teacher lists
-     *
-     * @return void
-     */
+    public function __construct()
+    {
+        $this->middleware('can:teacher_modify')->except(['index','getList','show','teacherPassword','teacherPasswordSubmit']);
+    }
 
     public function getList()
     {
@@ -76,7 +79,7 @@ class TeacherController extends Controller
 
                 //Action
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('teacher_modify')){
+                    if (Auth::user()->can('teacher_list')){
                         $showProfile = '<a href="' . route('admin.teachers.show', $data->id) . '" class="btn btn-sm btn-info" title="show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showProfile = '';
@@ -101,8 +104,13 @@ class TeacherController extends Controller
                         $payment = '<a href="' . route('admin.teacher.payment', $data->id) . '" class="btn btn-sm btn-success" title="payment"><i class="bx bx-dollar-circle"></i></a>';
                     } else {
                         $payment = '';
+                    } 
+                    if (Auth::user()->can('teacher_modify')) {
+                        $sms = '<a href="' . route('admin.teacher.registration.sms', $data->id) . '" class="btn btn-sm btn-warning" title="SMS"><i class="bx bxs-chat"></i></a>';
+                    } else {
+                        $sms = '';
                     }
-                    return '<div class = "btn-group">'.$showProfile.$editProfile.$deleteProfile.$changePassword.$payment.'</div>';
+                    return '<div class = "btn-group">'.$showProfile.$editProfile.$deleteProfile.$changePassword.$payment.$sms.'</div>';
                 })
                 ->rawColumns(['action', 'status', 'student_id'])
                 ->make(true);
@@ -116,6 +124,7 @@ class TeacherController extends Controller
         $teacher = Teacher::findOrFail($id);
         return view('dashboard.teachers.adminChangePassword', compact('teacher'));
     }
+
 
     public function adminPasswordSubmit(Request $request){
         $this->validate($request,
@@ -196,7 +205,6 @@ class TeacherController extends Controller
                 $sum = $expReg[1] + 1;
                 $latestReg = 'TCH_' . $sum;
             }
-
             return view('dashboard.teachers.create', compact('subjects', 'latestReg'));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -218,6 +226,9 @@ class TeacherController extends Controller
             $teacher->name = $request->name;
             $teacher->reg_no = $request->reg_no;
             $teacher->email = $request->email;
+            $teacher->reference = $request->reference;
+            $teacher->id_number = $request->id_number;
+            $teacher->qualification = $request->qualification;
             $teacher->gender = $request->gender;
             if (in_array("0", $request->subject_id)){
                 $teacher->subject_id = json_encode($request->subject_id);
@@ -343,6 +354,9 @@ class TeacherController extends Controller
             }
             $teacher->name = $request->name;
             $teacher->email = $request->email;
+            $teacher->reference = $request->reference;
+            $teacher->id_number = $request->id_number;
+            $teacher->qualification = $request->qualification;
             $teacher->gender = $request->gender;
             $teacher->subject_id = json_encode($request->subject_id);
             $teacher->current_address = $request->current_address;
@@ -418,5 +432,32 @@ class TeacherController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function getAllSubject(){
+        return Subject::get();
+    }
+
+    public function print(){
+        $teachers = Teacher::get();
+        // dd($batches);
+        return view('dashboard.teachers.print', compact('teachers') );
+    }
+
+    public function pdf(){
+        $teachers = Teacher::get();
+        $pdf = PDF::loadView('dashboard.teachers.pdf', compact('teachers') );
+        return $pdf->download('teacherList.pdf');
+    }
+    public function importView(Request $request){
+        return view('dashboard.teachers.index');
+    }
+    public function importTeachers(Request $request){
+        Excel::import(new ImportTeacher, request()->file('file'));
+        return redirect()->back()->with('message','Teachers imported successfully');
+    }
+    public function exportTeachers()
+    {
+        return Excel::download(new ExportTeacher, 'teachers.xlsx');
     }
 }

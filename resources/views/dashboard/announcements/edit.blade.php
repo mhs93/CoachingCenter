@@ -35,7 +35,7 @@
                 <div class="row">
                     {{-- Title --}}
                     <div class="form-group col-md-6">
-                        <label for="title"><b>Title</b> </label>
+                        <label for="title"><b>Title <span style="color: red">*</span></b> </label>
                         <input type="text" name="title" class="form-control" placeholder="Enter Titile" value="{{ $announcement->title }}">
                         @error('title')
                             <div class="text-danger">{{ $message }}</div>
@@ -47,8 +47,9 @@
                         $batchIds = json_decode($announcement->batch_id);
                     @endphp
                     <div class="form-group col-md-6">
-                        <label for="batch_id"><b>Select Batch</b></label>
-                        <select name="batch_id[]" class="multi-subject form-control @error('batch_id') is-invalid @enderror" multiple="multiple" id="mySelect2">
+                        <label for="batch_id"><b>Select Batch <span style="color: red">*</span></b></label>
+                        <select name="batch_id[]" class="multi-subject form-control @error('batch_id') is-invalid @enderror"
+                            multiple="multiple" id="batch_id">
                             <option value="0"
                                 @if (in_array("0", $batchIds))
                                     selected
@@ -112,6 +113,29 @@
                 .catch(error => {
                     console.error(error);
                 });
+            });
+
+            $(document).on("change", "#batch_id", function () {
+                let value = $(this).val();
+                console.log(value.includes("0"))
+                if(value.includes("0")){
+                    $(this).empty();
+                    $(this).append('<option selected value="0">All Batch</option>');
+                }
+                if(value == ''){
+                    $("#batch_id").empty();
+                    $.ajax({
+                        url: "{{ route('admin.announcements.getAllBatch') }}",
+                        type: 'get',
+                        success: function(response) {
+                            $("#batch_id").append('<option value="0">All Batch</option>');
+                            $.each(response, function(key, value) {
+                                $("#batch_id").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                }
             });
         </script>
     @endpush

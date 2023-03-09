@@ -45,8 +45,20 @@
                             <td>{{ $student->contact_number }}</td>
                         </tr>
                         <tr>
-                            <td>Parent Phone</td>
+                            <td>Parent Information</td>
+                            <td>{{ $student->parent_information }}</td>
+                        </tr>
+                        <tr>
+                            <td>Parent Contact Number</td>
                             <td>{{ $student->parent_contact }}</td>
+                        </tr>
+                        <tr>
+                            <td>Guardian Information</td>
+                            <td>{{ $student->guardian_information }}</td>
+                        </tr>
+                        <tr>
+                            <td>Guardian Contact Number</td>
+                            <td>{{ $student->guardian_contact }}</td>
                         </tr>
                         <tr>
                             <td>Present Address</td>
@@ -55,6 +67,26 @@
                         <tr>
                             <td>Permanent Address</td>
                             <td>{{ $student->permanent_address }}</td>
+                        </tr>
+
+                        @if ($balance)
+                            <tr>
+                                <td>Initial Balance</td>
+                                <td>{{ $student->initial_amount }}</td>
+                            </tr>
+                            <tr>
+                                <td>Adjustment Balance</td>
+                                <td>{{ $student->adjustment_balance }}</td>
+                            </tr>
+                            <tr>
+                                <td>Adjustment Cause</td>
+                                <td>{{ $student->adjustment_cause }}</td>
+                            </tr>
+                        @endif
+
+                        <tr>
+                            <td>Monthly Fee</td>
+                            <td>{{ $student->monthly_fee }}</td>
                         </tr>
                         <tr>
                             <td>Student Note</td>

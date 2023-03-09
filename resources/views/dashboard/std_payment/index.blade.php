@@ -7,12 +7,12 @@
     @include('layouts.dashboard.partials.alert')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <p class="m-0">Payment Information</p>
+            <p class="m-0"><b>Payment Information</b></p>
             <a href="{{ route('admin.students.index') }}" class="btn btn-sm btn-info">Back</a>
         </div>
         <div class="card-body">
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
+                <thead style="text-align: center">
                 <tr>
                     <th scope="col">Reg. No</th>
                     <th scope="col">Student Name</th>
@@ -20,25 +20,26 @@
                     <th scope="col">Batch Fee</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                     <td>{{$student-> reg_no}}</td>
                     <td>{{$student-> name}}</td>
                     <td>{{$student-> monthly_fee}}</td>
-                    <td>{{$student->batch->batch_fee}}</td>
+                    <td>{{$student->batch->total_amount}}</td>
                 </tbody>
             </table>
         </div>
     </div>
     <div class="card mt-2">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <p class="m-0">Payment History</p>
-            @can('student_payment')
+            <p class="m-0"><b>Payment History</b></p>
+            @can('payment_manage')
                 <a href="{{ route('admin.student.payment.create', $student->id) }}" class="btn btn-sm btn-info">Create Payment</a>
             @endcan
         </div>
         <div class="card-body">
-            <table class="table table-bordered" id="table">
-                <thead>
+            <div><b>Payment Due in this month: {{$dueAmount}}</b></div>
+            <table class="table table-bordered mt-3" id="table">
+                <thead style="text-align: center">
                     <tr>
                         <th>Month</th>
                         <th>Amount</th>
@@ -47,7 +48,7 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                     @foreach($stdpayments as $stdpayment)
                         <tr>
                             <th>{{$stdpayment->month}}</th>
@@ -57,14 +58,19 @@
                                     Cash
                                     @else
                                        {{ $stdpayment->account->account_no}}
-                                    @endif
+                                @endif
                             </th>
                             <th>{{$stdpayment->created_at}}</th>
                             <th>
-                                <a href="{{ route('admin.student.payment.show',$stdpayment->id) }}" class="btn btn-sm btn-info" title="details"><i class='bx bxs-show'></i></a>
-                                <a href="{{route('admin.student.payment.edit', $stdpayment->id)}}" title="edit" class="btn btn-sm btn-warning"><i class='bx bxs-edit-alt'></i></a>
-                                <a href="{{route('admin.student.payment.stdprint', $stdpayment->id)}}" title="print" class="btn btn-sm btn-warning"><i class='bx bxs-printer'></i></a>
-                                <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm( {{ $stdpayment->id }})" title="Delete"><i class="bx bxs-trash"></i></a>
+                                @can('payment_list_student')
+                                    <a href="{{ route('admin.student.payment.show',$stdpayment->id) }}" class="btn btn-sm btn-info" title="details"><i class='bx bxs-show'></i></a>
+                                @endcan
+                                @can('payment_manage')
+                                    <a href="{{route('admin.student.payment.edit', $stdpayment->id)}}" title="edit" class="btn btn-sm btn-warning"><i class='bx bxs-edit-alt'></i></a>
+                                    <a href="{{route('admin.student.payment.stdprint', $stdpayment->id)}}" title="print" class="btn btn-sm btn-warning"><i class='bx bxs-printer'></i></a>
+                                    <a href="{{route('admin.student.payment.sms', $stdpayment->id)}}" title="SMS" class="btn btn-sm btn-warning"><i class='bx bxs-chat'></i></a>
+                                    <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm( {{ $stdpayment->id }})" title="Delete"><i class="bx bxs-trash"></i></a>
+                                @endcan
                             </th>
                         </tr>
                     @endforeach

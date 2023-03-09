@@ -2,7 +2,6 @@
 
 @section('title', 'Teacher Payment List')
 
-
 @section('content')
     @include('layouts.dashboard.partials.alert')
     <div class="card">
@@ -12,13 +11,13 @@
         </div>
         <div class="card-body">
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
+                <thead style="text-align: center">
                 <tr>
                     <th scope="col">Teacher Name</th>
                     <th scope="col">Monthly Salary</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 <td>{{ $teacher-> name }}</td>
                 <td>{{ $teacher-> monthly_salary }}</td>
                 </tbody>
@@ -28,22 +27,23 @@
     <div class="card mt-2">
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Payment History</p>
-            @can('teacher_payment')
+            @can('payment_manage')
                 <a href="{{ route('admin.teacher.payment.create', $teacher->id) }}" class="btn btn-sm btn-info">Create Payment</a>
             @endcan
         </div>
         <div class="card-body">
+            <div><b>Payment Due in this month: {{$dueAmount}}</b></div>
             <table class="table table-bordered" id="table">
-                <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Amount</th>
-                    <th>Account Number</th>
-                    <th>Payment Date</th>
-                    <th>Action</th>
-                </tr>
+                <thead style="text-align: center">
+                    <tr>
+                        <th>Month</th>
+                        <th>Amount</th>
+                        <th>Account Number</th>
+                        <th>Payment Date</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 @foreach($tchpayments as $tchpayment)
                     <tr>
                         <th>{{$tchpayment->month}}</th>
@@ -54,21 +54,24 @@
                             @else
                                 {{ $tchpayment->account->account_no}}
                             @endif
-
                         </th>
                         <th>{{$tchpayment->created_at}}</th>
                         <th>
-                            <a href="{{ route('admin.teacher.payment.show',$tchpayment->id) }}" class="btn btn-sm btn-info" title="details"><i class='bx bxs-show'></i></a>
-                            <a href="{{route('admin.teacher.payment.edit', $tchpayment->id)}}" title="edit" class="btn btn-sm btn-warning"><i class='bx bxs-edit-alt'></i></a>
-                            <a href="{{route('admin.teacher.payment.tchprint', $tchpayment->id)}}" title="print" class="btn btn-sm btn-warning"><i class='bx bxs-printer'></i></a>
-                            <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm( {{ $tchpayment->id }})" title="Delete"><i class="bx bxs-trash"></i></a>
+                            @can('payment_list_teacher')
+                                <a href="{{ route('admin.teacher.payment.show',$tchpayment->id) }}" class="btn btn-sm btn-info" title="details"><i class='bx bxs-show'></i></a>
+                            @endcan
+                            @can('payment_manage')
+                                <a href="{{route('admin.teacher.payment.edit', $tchpayment->id)}}" title="edit" class="btn btn-sm btn-warning"><i class='bx bxs-edit-alt'></i></a>
+                                <a href="{{route('admin.teacher.payment.tchprint', $tchpayment->id)}}" title="print" class="btn btn-sm btn-warning"><i class='bx bxs-printer'></i></a>
+                                <a href="{{route('admin.teacher.payment.sms', $tchpayment->id)}}" title="SMS" class="btn btn-sm btn-warning"><i class='bx bxs-chat'></i></a>
+                                <a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm( {{ $tchpayment->id }})" title="Delete"><i class="bx bxs-trash"></i></a>
+                            @endcan
                         </th>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
         </div>
-
     </div>
 @endsection
 

@@ -37,6 +37,7 @@
         @endforeach
     </tbody>
 </table>
+
 @else
 <div>
     <p><h4 align="center">There is no students for this batch</h4></p>

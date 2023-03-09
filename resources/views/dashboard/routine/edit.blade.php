@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -62,7 +62,7 @@
                         </thead>
                         <tbody >
                             <tr>
-                                <td>
+                                <td style="text-align: center">
                                     <div class="align-items-center">{{ $routine->subject->name }}</div>
                                 </td>
                                 <td>
@@ -88,11 +88,17 @@
 
                                         <div class="form-group col-md-4">
                                             <h6>Class Start Time</h6>
-                                            <input type="time" name="start_time" value="{{$routine->start_time}}" class="form-control">
+                                            <input type="time" name="start_time" class="form-control" value="{{ date('H:i', strtotime($routine->start_time)) }}">
+                                            @error("start_time")
+                                                <div class="text-danger">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
                                         </div>
+
                                         <div class="form-group col-md-4">
                                             <h6>Class End Time</h6>
-                                            <input type="time" name="end_time" value="{{$routine->end_time}}" class="form-control">
+                                            <input type="time" name="end_time" value="{{ date('H:i', strtotime($routine->end_time)) }}" class="form-control">
                                             @error("end_time")
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -114,7 +120,7 @@
                 </div>
 
                 <div class="form-group mt-3 float-right">
-                    <button type="submit" class="btn btn-info float-right">Save</button>
+                    <button type="submit" class="btn btn-info float-right">Update</button>
                 </div>
             </form>
         </div>

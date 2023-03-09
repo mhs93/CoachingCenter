@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers\Routine;
 
-use App\Models\Batch;
+use Carbon\Carbon;
 
+use PDF;
+use App\Models\Batch;
 use App\Models\Routine;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use function Symfony\Component\String\length;
-
 
 class RoutineController extends Controller
 {
-    public function getlist(){
+    public function __construct()
+    {
+        $this->middleware('can:routine_modify')->except(['getlist','index']);
+    }
 
-        // $data = Routine::select('id','batch_id','subject_id','day','start_time','end_time')
-        //     ->orderBy('id', 'DESC')->get();
+    public function getlist(){
 
         $user = User::findOrFail(Auth::id());
         if($user->type == '0'){
@@ -84,6 +85,9 @@ class RoutineController extends Controller
 
                 return '<div class = "btn-group">'. $routineEdit . $routineDelete .'</div>';
             })
+//            ->addColumn('start_time', function ($data){
+//                return $data->start_time->format('h:i:s');
+//            })
             ->rawColumns(['subject_name','batch_name','day','action', 'status'])
             ->make(true);
     }
@@ -105,16 +109,22 @@ class RoutineController extends Controller
 
     public function getSubject(Request $request)
     {
-        $batch = Batch::where('id', $request->batchId)->select('subject_id')->first();
-        $batchs = json_decode($batch->subject_id);
-        $subjects = Subject::whereIn('id', $batchs)->get();
+        $batch      = Batch::where('id', $request->batchId)->select('subject_id')->first();
+        $subjectIds = json_decode($batch->subject_id);
+
+        if(in_array('0', $subjectIds)){
+            $subjects = Subject::get();
+            return $subjects;;
+        }
+
+        $subjects = Subject::whereIn('id', $subjectIds)->get();
         return $subjects;
     }
 
     public function create()
     {
         try{
-            $batches = Batch::all()->where('status',1);
+            $batches = Batch::all()->where('status', 1);
             return view('dashboard.routine.create',compact('batches'));
         }catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -130,32 +140,34 @@ class RoutineController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'batch_id' =>'required',
+            'batch_id'   => 'required',
             'subject_id' => 'required',
             'start_time' => 'required',
-            'end_time' => 'required',
+            'end_time'   => 'required',
         ]);
 
         try{
             $batch = Batch::findOrFail($request->batch_id);
             $batchSubjects = json_decode($batch->subject_id);
             for ($k=0; $k<count($request->subject_id); $k++){
-                $day="day_".$request->subject_id[$k];
-                $dayCount= count($request->$day);
+                $day      = "day_".$request->subject_id[$k];
+                $dayCount = count($request->$day);
+
                 for($key=0; $key<$dayCount; $key++){
-                    $ttt=$request->$day;
-                    $routine = new Routine();
-                    $routine->subject_id = $request->subject_id[$k];
-                    $routine->batch_id = $request->batch_id;
-                    $routine->day = $ttt[$key];
-                    $routine->start_time = $request->start_time[$key];
-                    $routine->end_time = $request->end_time[$key];
-                    $routine->status = $request->status;
-                    $routine->note = $request->note;
+                    $ttt                 =  $request->$day;
+                    $routine             =  new Routine();
+                    $routine->subject_id =  $request->subject_id[$k];
+                    $routine->batch_id   =  $request->batch_id;
+                    $routine->day        =  $ttt[$key];
+                    // $data->time = Carbon::parse($request->time)->format('h:ia');
+                    $routine->start_time =  Carbon::parse($request->start_time[$key])->format('h:ia');
+                    $routine->end_time   =  Carbon::parse($request->end_time[$key])->format('h:ia');
+                    $routine->status     =  $request->status;
+                    $routine->note       =  $request->note;
                     $routine->save();
                 }
             }
-            return redirect()->route('admin.routine.index')->with('t-success','routine created successfully');
+            return redirect()->route('admin.routine.index')->with('t-success','Routine Created Successfully');
         }catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -182,12 +194,10 @@ class RoutineController extends Controller
      */
     public function edit($id)
     {
-//        dd($id);
-//        DB::beginTransaction();
         try{
             $routine = Routine::with('batch')->findOrFail($id);
-            $batches = Batch::where('status',1)->get();
-            return view('dashboard.routine.edit',compact('routine','batches'));
+//            $batches = Batch::where('status',1)->get();
+            return view('dashboard.routine.edit',compact('routine'));
         }catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -203,21 +213,21 @@ class RoutineController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'day' => 'required',
+            'day'        => 'required',
             'start_time' => 'required',
-            'end_time' => 'required',
+            'end_time'   => 'required',
         ]);
         try{
-            $routine = Routine::findOrFail($id);
-//            $routine->batch_id = $request->batch_id;
-//            $routine->subject_id = $subId;
-            $routine->day = $request->day;
-            $routine->start_time = $request->start_time;
-            $routine->end_time = $request->end_time;
-            $routine->status = $request->status;
-            $routine->note = $request->note;
+            $routine             = Routine::findOrFail($id);
+            // $routine->batch_id   = $request->batch_id;
+            // $routine->subject_id = $subId;
+            $routine->day        = $request->day;
+            $routine->start_time = Carbon::parse($request->start_time)->format('h:ia');
+            $routine->end_time   = Carbon::parse($request->end_time)->format('h:ia');
+            $routine->status     = $request->status;
+            $routine->note       = $request->note;
             $routine->save();
-            return redirect()->route('admin.routine.index')->with('t-success','routine updated successfully');
+            return redirect()->route('admin.routine.index')->with('t-success','Routine Updated Successfully');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -234,6 +244,7 @@ class RoutineController extends Controller
         Routine::where('id', $routine->id)->delete();
         return redirect()->back()->with('t-error','Routine deleted successfully');
     }
+
     public function changeStatus(Routine $routine)
     {
         try {
@@ -242,18 +253,31 @@ class RoutineController extends Controller
                 $routine->update();
                 return response()->json([
                     'success' => true,
-                    'message' => 'Routine inactivated successfully',
+                    'message' => 'Routine Inactivated successfully',
                 ]);
             }
             $routine->status = 1;
             $routine->update();
             return response()->json([
                 'success' => true,
-                'message' => 'Routine activated successfully',
+                'message' => 'Routine Activated successfully',
             ]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function printClassRoutine(){
+        $routines = Routine::with('batch')->get();
+        // $routines = Routine::groupBy('batch_id')->get();
+        // return $routines;
+        return view('dashboard.routine.print', compact('routines') );
+    }
+
+    public function pdfClassRoutine(){
+        $routines = Routine::with('batch')->get();
+        $pdf      = PDF::loadView('dashboard.routine.pdf', compact('routines') );
+        return $pdf->download('Class Routine List.pdf');
     }
 
 }

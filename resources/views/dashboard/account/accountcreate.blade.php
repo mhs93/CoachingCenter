@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -23,7 +23,7 @@
                 @endforeach
             </ul>
         </div>
-    @endif --}}
+    @endif --}} 
 
     <form action="{{route('admin.account.store')}}" enctype="multipart/form-data" method="POST">
         @csrf

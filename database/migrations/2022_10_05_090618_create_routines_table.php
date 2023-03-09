@@ -18,9 +18,7 @@ return new class extends Migration
             $table->foreignId('batch_id');
             $table->foreignId('subject_id');
             $table->tinyInteger('day');
-            $table->string('start_date');
             $table->string('start_time');
-            $table->string('end_date');
             $table->string('end_time');
             $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
             $table->text('note')->nullable();

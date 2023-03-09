@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use App\Models\User;
 use App\Models\Batch;
 use App\Models\Student;
 use App\Models\Subject;
-use App\Models\ClassRoom;
+use App\Models\Classroom;
 use function Termwind\div;
 use Illuminate\Http\Request;
 use App\Rules\ClassroomTimeOverlap;
@@ -15,24 +16,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ClassRoomController extends Controller
 {
-    /**
-     * Get all class room lists
-     *
-     * @return void
-     */
+    public function __construct()
+    {
+        $this->middleware('can:specialClass_modify')->except(['getList','index','show']);
+    }
 
     public function getList()
     {
         try {
-            // $data = ClassRoom::with(['batch' => function ($query) {
-            //                             $query->select('id', 'name');
-            //                         },
-            //                         'subject' => function ($query) {
-            //                             $query->select('id', 'name');
-            //                         }
-            //                         ])->orderBy('id', 'DESC')
-            //                         ->get();
-
             $user = User::findOrFail(Auth::id());
             if($user->type == '0'){
                 $data = ClassRoom::with(['batch' => function ($query) {
@@ -93,7 +84,7 @@ class ClassRoomController extends Controller
                     }
                 })
                 ->addColumn('status', function ($data) {
-                    if (Auth::user()->can('classRooms_edit')){
+                    if (Auth::user()->can('specialClass_modify')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -117,19 +108,25 @@ class ClassRoomController extends Controller
 
                 })
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('classRooms_show')){
+                    if (Auth::user()->can('specialClass_list')){
+                        $showButton = '<a href="javascript:void(0)" onclick="show(' . $data->id . ')" class="btn btn-sm btn-info text-white" title="Show"><i class="bx bxs-low-vision"></i></a>';
                         // $classRoomShow = '<a onclick="showDetailsModal(' . $data->id . ')" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
-                        $showButton = '<a href="' . route('admin.class-rooms.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
+                        // $showButton = '<a href="' . route('admin.class-rooms.show', $data->id) . '" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         // $classRoomShow = '';
                         $showButton = '';
                     }
-                    if (Auth::user()->can('classRooms_edit')){
+                    if (Auth::user()->can('specialClass_modify')){
                         $classRoomEdit = '<a href="' . route('admin.class-rooms.edit', $data->id) . '" class="btn btn-sm btn-warning"><i class=\'bx bxs-edit-alt\'></i></a>';
                     }else{
                         $classRoomEdit = '';
                     }
-                    if (Auth::user()->can('classRooms_delete')){
+//                    if (Auth::user()->can('specialClass_modify')){
+//                        $sms = '<a class="btn btn-sm btn-info text-white" onclick="" title="SMS"><i class=\'bx bxs-chat\'></i></a>';
+//                    }else{
+//                        $sms = '';
+//                    }
+                    if (Auth::user()->can('specialClass_modify')){
                         $classRoomDelete = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $classRoomDelete = '';
@@ -191,7 +188,6 @@ class ClassRoomController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation check
         $this->validate($request, [
             'batch_id'     =>  'required|integer',
             'subject_id'   =>  'required',
@@ -239,12 +235,22 @@ class ClassRoomController extends Controller
     public function show($id)
     {
         try {
-            $classroom = ClassRoom::findOrFail($id);
-            $batchId = $classroom->batch_id;
-            $subjectId = $classroom->subject_id;
-            $batch = Batch::where('id', $batchId)->first(['id','name']);
-            $subject= Subject::where('id', $subjectId)->first(['id','name']);;
-            return view('dashboard.classrooms.show', compact('classroom', 'batch', 'subject'));
+            $classroom  =   ClassRoom::findOrFail($id);
+            $batchId    =   $classroom->batch_id;
+            $subjectId  =   $classroom->subject_id;
+            $batch      =   Batch::where('id', $batchId)->first(['id','name']);
+            $subject    =   Subject::where('id', $subjectId)->first(['id','name']);
+            $array = [
+                'classroom' =>   $classroom,
+                'batch'     =>   $batch,
+                'subject'   =>   $subject
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data'    => $array,
+            ]);
+            // return view('dashboard.classrooms.show', compact('classroom', 'batch', 'subject'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
@@ -259,13 +265,7 @@ class ClassRoomController extends Controller
     public function edit(ClassRoom $classRoom)
     {
         try {
-            // $batches = Batch::select('id', 'name', 'status')->get();
-            // $batchId = $classRoom->batch_id;
-            // $subjectId = json_decode(Batch::where('id', $batchId)->first()->subject_id);
-            // $subjects = Subject::whereIn('id', $subjectId)->get();
-
             $data = new Batch();
-//            dd($data);
             $batches = $data->select('id', 'name', 'status')->get();
             $subjectId = json_decode($data->where('id', $classRoom->batch_id)->first()->subject_id);
             $subjects = Subject::whereIn('id', $subjectId)->get();
@@ -285,10 +285,9 @@ class ClassRoomController extends Controller
      */
     public function update(Request $request, ClassRoom $classRoom)
     {
-        // Validation check
         $this->validate($request, [
             'batch_id'    => 'required|integer',
-            'subject_id'    => 'required|integer',
+            'subject_id'  => 'required|integer',
             'class_type'  => 'required|string',
             'class_link'  => 'nullable|string',
             'access_key'  => 'nullable|string',
@@ -298,9 +297,9 @@ class ClassRoomController extends Controller
         ]);
 
         try {
-            $classRoom->batch_id = $request->batch_id;
-            $classRoom->subject_id = $request->subject_id;
-            $classRoom->class_type = $request->class_type;
+            $classRoom->batch_id    =   $request->batch_id;
+            $classRoom->subject_id  =   $request->subject_id;
+            $classRoom->class_type  =   $request->class_type;
             if ($request->class_type == 1){
                 $classRoom->class_link = NUll;
                 $classRoom->access_key = NUll;
@@ -308,10 +307,10 @@ class ClassRoomController extends Controller
                 $classRoom->class_link = $request->class_link;
                 $classRoom->access_key = $request->access_key;
             }
-            $classRoom->duration = $request->duration;
-            $classRoom->start_time = $request->start_time;
-            $classRoom->end_time = $request->end_time;
-            $classRoom->updated_by = Auth::id();
+            $classRoom->duration    =   $request->duration;
+            $classRoom->start_time  =   $request->start_time;
+            $classRoom->end_time    =   $request->end_time;
+            $classRoom->updated_by  =   Auth::id();
             $classRoom->update();
 
             return redirect()->route('admin.class-rooms.index')
@@ -371,5 +370,16 @@ class ClassRoomController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function print(){
+        $classRooms = ClassRoom::get();
+        return view('dashboard.classrooms.print', compact('classRooms') );
+    }
+
+    public function pdf(){
+        $classRooms = ClassRoom::get();
+        $pdf = PDF::loadView('dashboard.classrooms.pdf', compact('classRooms') );
+        return $pdf->download('Special Class List.pdf');
     }
 }

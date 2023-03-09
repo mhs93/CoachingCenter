@@ -12,10 +12,11 @@ return new class extends Migration
             $table->id();
             $table->integer('std_id');
             $table->string('month');
-            $table->integer('total_amount');
             $table->integer('account_id')->nullable();
-            $table->integer('discount_amount')->nullable();
-            $table->integer('additional_amount')->nullable();
+            $table->integer('adjustment_type')->nullable()->comment('1=Addition/2=Subtraction');
+            $table->double('adjustment_balance')->nullable();
+            $table->string('adjustment_cause')->nullable();
+            $table->double('total_amount');
             $table->integer('payment_type')->comment('1=cheque/2=cash');
             $table->string('cheque_number')->nullable();
             $table->string('note')->nullable();

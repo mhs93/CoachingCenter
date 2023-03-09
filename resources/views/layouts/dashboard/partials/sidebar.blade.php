@@ -16,7 +16,7 @@
             </a>
         </li>
         @endcan
-        @can('batches_manage')
+        @can('batches_list')
         <li class="nav-item">
             <a class="nav-link" href="{{route('admin.batches.index')}}">
                 <i class='bx bx-list-check'></i> Batches
@@ -116,7 +116,15 @@
                     @can('attendance_report')
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('admin.attendances.report')}}">
-                                <span class="nav-icon"></span>Attendance Report
+                                <span class="nav-icon"></span>Student Attendance Report
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('teacher_attendance')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('admin.teachers.attendances.report')}}">
+                                <span class="nav-icon"></span>Teacher Attendance Report
                             </a>
                         </li>
                     @endcan
@@ -138,7 +146,7 @@
                 @can('exam_list')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.exams.index')}}">
-                        <span class="nav-icon"></span> Exam Routine List
+                        <span class="nav-icon"></span> Exam Routine
                     </a>
                 </li>
                 @endcan
@@ -163,7 +171,7 @@
                     {{--</li>--}}
                 {{--@endcan--}}
                 @can('exam_list')
-                    <li class="nav-item"><a class="nav-link" href="{{route('admin.result.show')}}">
+                    <li class="nav-item"><a class="nav-link" href="{{route('admin.result-show-by-exam')}}">
                             <span class="nav-icon"></span>Exam Result Report
                         </a>
                     </li>
@@ -264,7 +272,26 @@
             </li>
         @endcan
 
-
+        {{--@can('payment_list_student')--}}
+        @role('Student')
+            <li class="nav-item">
+                <a class="nav-link " href="{{route('admin.student.payment.installments')}}">
+                    <i class='bx bx-dollar-circle'></i>
+                    Installment
+                </a>
+            </li>
+        @endrole
+        {{--@endcan--}}
+        {{--@can('payment_list_teacher')--}}
+        @role('Teacher')
+            <li class="nav-item">
+                <a class="nav-link " href="{{route('admin.teacher.payment.installments')}}">
+                    <i class='bx bx-dollar-circle'></i>
+                    Installment
+                </a>
+            </li>
+        @endrole
+        {{--@endcan--}}
 
         @role('Super Admin')
         <li class="nav-group">
@@ -276,7 +303,7 @@
             <ul class="nav-group-items">
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.roles.index')}}">
-                        <span class="nav-icon"></span> Roles
+                        <span class="nav-icon"></span> Roles and Permissions
                     </a>
                 </li>
             </ul>
@@ -390,11 +417,30 @@
         @endcan
 
 
+
+
         @role('Super Admin')
             <li class="nav-item">
-                <a class="nav-link" href="{{route('admin.setting.general')}}">
-                    <i class='bx bx-list-check'></i> Setting
+                <a class="nav-link" href="{{ route('contact.messages') }}">
+                    <i class='bx bx-group'></i> Messages
                 </a>
+            </li>
+            <li class="nav-group">
+                <a class="nav-link nav-group-toggle" href="#">
+                    <i class='bx bx-list-check'></i>
+                    Setting
+                </a>
+
+                <ul class="nav-group-items">
+                    <li class="nav-item"><a class="nav-link" href="{{route('admin.setting.general')}}">
+                            <span class="nav-icon"></span> General Settings
+                        </a>
+                    </li>
+                    {{--<li class="nav-item"><a class="nav-link" href="">--}}
+                            {{--<span class="nav-icon"></span> Frontend Settings--}}
+                        {{--</a>--}}
+                    {{--</li>--}}
+                </ul>
             </li>
         @endrole
 

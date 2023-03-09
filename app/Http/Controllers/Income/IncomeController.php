@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Income;
 
+use PDF;
 use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Income;
@@ -14,7 +15,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class IncomeController extends Controller
 {
-
     public function getlist(){
         try {
             $data = Income::with('account')->select('id','income_source','account_id','amount','payment_type','cheque_number','created_at')
@@ -23,12 +23,24 @@ class IncomeController extends Controller
 
             return DataTables::of($data)->addIndexColumn()
 
+                ->addColumn('created_at',function ($data){
+                    return $data->created_at->format('d-m-Y');
+                })
                 ->addColumn('account',function ($data){
-                    if ($data->account_id == 0){
-                        return 'cash account';
+                    if($data->account_id){
+                        if ($data->account_id == 1){
+                            return 'cash account';
+                        }else{
+                            return $data->account->account_no;
+                        }
                     }else{
-                        return $data->account->account_no;
+                        return 'Deleted';
                     }
+                    // if ($data->account_id == 1){
+                    //     return 'cash account';
+                    // }else{
+                    //     return $data->account->account_no;
+                    // }
                 })
                 ->addColumn('payment_type',function ($data){
                     if ($data->payment_type == 1){
@@ -45,22 +57,28 @@ class IncomeController extends Controller
                     }
                 })
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('income_show')){
-                        $showDetails = '<a href="' . route('admin.income.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
+                    if (Auth::user()->can('income_manage')){
+                        $showDetails = '<a href="javascript:void(0)" onclick="show(' . $data->id . ')" class="btn btn-sm btn-info text-white" title="Show"><i class="bx bxs-low-vision"></i></a>';
+                        // $showDetails = '<a href="' . route('admin.income.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
                     }else{
                         $showDetails = '';
                     }
-                    if (Auth::user()->can('income_edit')){
+                    if (Auth::user()->can('income_manage')){
                         $incomeEdit = '<a href="' . route('admin.income.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class=\'bx bx-edit\'></i></a>';
                     }else{
                         $incomeEdit = '';
                     }
-                    if (Auth::user()->can('income_delete')){
+                    if (Auth::user()->can('income_manage')){
+                        $incomePrint = '<a href="' . route('admin.income.print', $data->id) . '" class="btn btn-sm btn-info" title="Print"><i class=\'bx bxs-printer\'></i></a>';
+                    }else{
+                        $incomePrint = '';
+                    }
+                    if (Auth::user()->can('income_manage')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';
                     }
-                    return '<div class = "btn-group">'.$showDetails.$incomeEdit.$deleteButton.'</div>';
+                    return '<div class = "btn-group">'.$showDetails.$incomeEdit.$incomePrint.$deleteButton.'</div>';
                 })
 
                 ->rawColumns(['account', 'action'])
@@ -86,7 +104,7 @@ class IncomeController extends Controller
      */
     public function create()
     {
-        $accounts = Account::all();
+        $accounts = Account::where('account_no','!=','cash')->get();
         return view('dashboard.income.create',compact('accounts'));
     }
 
@@ -99,12 +117,12 @@ class IncomeController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'income_source'     =>      'required|string',
-            'amount'            =>      'required|integer',
-            'payment_type'      =>      'required',
-            'account_id'        =>      'nullable',
-            'note'              =>      'nullable|string',
-            'cheque_number'     =>      'nullable|string'
+            'income_source' => 'required|string',
+            'amount'        => 'required|integer',
+            'payment_type'  => 'required',
+            'account_id'    => 'nullable',
+            'note'          => 'nullable|string',
+            'cheque_number' => 'nullable|string'
         ]);
 
         try{
@@ -117,7 +135,7 @@ class IncomeController extends Controller
                 $income->account_id = $request->account_id;
                 $income->cheque_number = $request->cheque_number;
             }else{
-                $income->account_id = 0;
+                $income->account_id = 1;
                 $income->cheque_number = NULL;
             }
             $income->note = $request->note;
@@ -134,7 +152,7 @@ class IncomeController extends Controller
                 $transaction->account_id = $request->account_id;
                 $transaction->cheque_number = $request->cheque_number;
             }else{
-                $transaction->account_id = 0;
+                $transaction->account_id = 1;
                 $transaction->cheque_number = NULL;
             }
             $transaction->note = $request->note;
@@ -157,7 +175,17 @@ class IncomeController extends Controller
     public function show($id)
     {
         $income = Income::findOrFail($id);
-        return view('dashboard.income.show',compact('income'));
+        return response()->json([
+            'success' => true,
+            'data'    => $income,
+        ]);
+        // return view('dashboard.income.show',compact('income'));
+    }
+
+    public function print($id)
+    {
+        $data = Income::findOrFail($id);
+        return view('dashboard.income.print',compact('data'));
     }
 
     /**
@@ -203,7 +231,7 @@ class IncomeController extends Controller
                 $income->account_id = $request->account_id;
                 $income->cheque_number = $request->cheque_number;
             }else{
-                $income->account_id = 0;
+                $income->account_id = 1;
                 $income->cheque_number = NULL;
             }
             $income->note = $request->note;
@@ -219,7 +247,7 @@ class IncomeController extends Controller
                 $transaction->account_id = $request->account_id;
                 $transaction->cheque_number = $request->cheque_number;
             }else{
-                $transaction->account_id = 0;
+                $transaction->account_id = 1;
                 $transaction->cheque_number = NULL;
             }
             $transaction->note = $request->note;
@@ -252,5 +280,16 @@ class IncomeController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
+    }
+
+    public function allPrint(){
+        $incomes = Income::get();
+        return view('dashboard.income.all-print', compact('incomes') );
+    }
+
+    public function pdf(){
+        $incomes = Income::get();
+        $pdf = PDF::loadView('dashboard.income.pdf', compact('incomes') );
+        return $pdf->download('Income List.pdf');
     }
 }

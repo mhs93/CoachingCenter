@@ -21,6 +21,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MarkController extends Controller
 {
+//    public function __construct()
+//    {
+//        $this->middleware('can:mark_list')->except(['create','store','update','delete','changeStatus']);
+//    }
+
     public function getList()
     {
         try {
@@ -57,14 +62,13 @@ class MarkController extends Controller
                             $data = [];
                         }
                     }
-
                 }
             }
 
             return DataTables::of($data)->addIndexColumn()
                 //Status
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('batches_edit')){
+                    if(Auth::user()->can('mark_modify')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -87,7 +91,7 @@ class MarkController extends Controller
                 })
                 //Action
                 ->addColumn('action', function ($data) {
-                    if(Auth::user()->can('mark_edit')){
+                    if(Auth::user()->can('mark_modify')){
                         $editButton = '<a href="javascript:void(0)" onclick="edit(' . $data->id . ')" class="btn btn-sm btn-warning" title="Edit and Delete">Action</a>';
                     }else{
                         $editButton =  '';
@@ -101,7 +105,6 @@ class MarkController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-
 
     /**
      * Display a listing of the resource.
@@ -260,24 +263,26 @@ class MarkController extends Controller
 
 
     //Start of Marks Showing Purpose
-    public function resultShow(){
+    public function resulShowByExam(){
         try {
             $exams = Exam::select('id', 'name')
                 ->where('status', 1)
                 ->get();
-            return view('dashboard.marks.reseultShowWithExam', compact('exams'));
+            return view('dashboard.marks.reseult-show-with-exam', compact('exams'));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
 
     public function getResults(Request $request){
+        $examId  = $request->examId;
+        $batchId = $request->batchId;
         $batch = Batch::where('id', $request->batchId)->first();
         $marks = Mark::where('batch_id', $batch->id)
                 ->where('exam_id', $request->examId)
                 ->orderByRaw('CONVERT(total, SIGNED) desc')
                 ->get();
-        $returnHTML = view('dashboard.marks.result-show-with-exam-render',compact('marks'))
+        $returnHTML = view('dashboard.marks.result-show-with-exam-render',compact('marks', 'examId', 'batchId'))
                 ->render();
         return $returnHTML;
     }
@@ -297,21 +302,23 @@ class MarkController extends Controller
 
 
     // Result Show In the Exam Create Page Start
-    public function resultBatchShow($id){
+    public function resultShowByBatch($id){
         $exam_id = $id;
         $batches = Mark::where('exam_id', $id)
                     ->groupBy('batch_id')
                     ->get();
-        return view('dashboard.marks.resultBatchShow', compact('batches', 'exam_id'));
+        return view('dashboard.marks.result-show-by-batch', compact('batches', 'exam_id'));
     }
 
-    public function resultBatchShowRender(Request $request){
+    public function resultShowByBatchRender(Request $request){
+        $examId  = $request->examId;
+        $batchId = $request->batchId;
         $batch = Batch::where('id', $request->batchId)->first();
-        $marks = Mark::where('batch_id', $batch->id)
-                ->where('exam_id', $request->examId)
+        $marks = Mark::where('exam_id', $request->examId)
+                ->where('batch_id', $batch->id)
                 ->orderByRaw('CONVERT(total, SIGNED) desc')
                 ->get();
-        $returnHTML = view('dashboard.marks.result-show-with-exam-render',compact('marks'))
+        $returnHTML = view('dashboard.marks.result-show-with-exam-render',compact('marks', 'examId', 'batchId'))
                 ->render();
         return $returnHTML;
     }
@@ -328,12 +335,14 @@ class MarkController extends Controller
     }
 
     public function edit($id1, $id2){
-        $exam_id = $id1;
-        $batch_id = $id2;
-        $batch= Batch::find($batch_id);
-        $subjectIds= json_decode($batch->subject_id);
+        $exam_id    = $id1;
+        $batch_id   = $id2;
+        $batch      = Batch::find($batch_id);
+        $subjectIds = json_decode($batch->subject_id);
+
         $marks = Mark::where('batch_id', $id2)
                 ->where('exam_id', $id1)
+                ->orderByRaw('CONVERT(total, SIGNED) desc')
                 ->get();
 
         return view('dashboard.marks.edit-mark',
@@ -351,8 +360,8 @@ class MarkController extends Controller
 
         $markAsSub = [];
         foreach( $marks as $key => $mark){
-            $mark->student_id   =       $request->student_id[$i];
-            $mark->total        =       $request->total[$i];
+            $mark->student_id   =  $request->student_id[$i];
+            $mark->total        =  $request->total[$i];
             for($j; $j < $c; $j++){
                 $markAsSub[] = $request->mark[$j];
             }
@@ -391,21 +400,53 @@ class MarkController extends Controller
         }
     }
 
-    // For PDF
-    public function resultPDF(Request $request){
-        $exam = Exam::findOrFail($request->examId);
-        $batch = Batch::findOrFail($request->batchId);
-        $marks = Mark::where('batch_id', $request->batchId)
-                ->where('exam_id', $request->examId)
+    // For Print
+    public function printResult($id1, $id2){
+        $examId  = $id1;
+        $batchId = $id2;
+
+        $exam  = Exam::findOrFail($examId);
+        $batch = Batch::findOrFail($batchId);
+        $startDate = Carbon::parse($batch->start_date)->format('d F, Y');
+        $endDate = Carbon::parse($batch->end_date)->format('d F, Y');
+        $marks = Mark::where('batch_id', $batchId)
+                ->where('exam_id', $examId)
                 ->orderByRaw('CONVERT(total, SIGNED) desc')
                 ->get();
-        return view('dashboard.marks.marksPDF',
-            compact('marks', 'exam', 'batch'));
+        return view('dashboard.marks.print-mark-sheet',
+            compact('marks', 'exam', 'batch', 'startDate', 'endDate'));
     }
-    // PDF
-    public function exportPDF(){
-        // $pdf = Pdf::loadView('dashboard.marks.marksPDF');
-        // return $pdf->download('invoice.pdf');
+
+
+    // For PDF
+    public function pdfGenerateForMark($id1, $id2){
+        $examId  = $id1;
+        $batchId = $id2;
+
+        $exam  = Exam::findOrFail($examId);
+        $batch = Batch::findOrFail($batchId);
+        $startDate = Carbon::parse($batch->start_date)->format('d F, Y');
+        $endDate = Carbon::parse($batch->end_date)->format('d F, Y');
+        $marks = Mark::where('batch_id', $batchId)
+                ->where('exam_id', $examId)
+                ->orderByRaw('CONVERT(total, SIGNED) desc')
+                ->get();
+
+        $data = [
+            'marks'     => $marks,
+            'exam'      => $exam,
+            'batch'     => $batch,
+            'startDate' => $startDate,
+            'endDate'   => $endDate
+        ];
+        // $image = base64_encode((asset('images/setting/logo/'.setting('logo'))));
+        //dd($image);
+        //dd(setting('logo'));
+        // $pdf = PDF::loadView('dashboard.marks.pdf-mark-sheet', $data);
+        $pdf = PDF::loadView('dashboard.marks.pdf-mark-sheet',
+                compact('marks', 'exam', 'batch', 'startDate', 'endDate'));
+        return $pdf->download('result.pdf');
+
     }
 
     /**

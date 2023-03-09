@@ -37,18 +37,18 @@
         <form action="{{route('admin.tattendances.store')}}" method="POST">
             @csrf
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
-                <tr>
-                    <td scope="col">#SL</td>
-                    <th scope="col">Teacher Name</th>
-                    <th scope="col">Registration no.</th>
-                    <th scope="col">Attendance</th>
-                </tr>
+                <thead style="text-align: center">
+                    <tr>
+                        <td scope="col">#SL</td>
+                        <th scope="col">Teacher Name</th>
+                        <th scope="col">Registration no.</th>
+                        <th scope="col">Attendance</th>
+                    </tr>
                 </thead>
-                <tbody>
-
+                
+                <tbody style="text-align: center">
                     @foreach($teachers as $key=> $teacher)
-                        <tr>
+                        <tr >
                             <input type="hidden" name="teacher_id[]" value="{{ $teacher->id }}">
                             <input type="hidden" name="date[]" value="{{ $date }}">
                             <td scope="row">{{ $loop->iteration }}</td>

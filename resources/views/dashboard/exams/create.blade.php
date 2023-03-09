@@ -8,13 +8,23 @@
 
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
 
 
 @section('content')
+    {{-- @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif --}}
+
     @include('layouts.dashboard.partials.alert')
     <form action="{{ route('admin.exams.store') }}" enctype="multipart/form-data" method="POST">
         @csrf
@@ -22,16 +32,21 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <p class="m-0">Create Exam</p>
+                        <p class="m-0">Create Exam Routine</p>
                         <a href="{{ route('admin.exams.index') }}" class="btn btn-sm btn-dark">Back</a>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <div class="form-group">
-                                    <label for="batchname"><b>Exam name</b> <span style="color: red">*</span></label>
-                                    <input type="text" class="form-control my-1" id="batchName" name="name" placeholder="Enter Exam Name" >
-                                    <div id="validName" class="text-danger"></div>
+                                    <label for="name"><b>Exam name</b> <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control my-1 @error('name') is-invalid @enderror"
+                                        id="name" name="name" value="{{ old('name') }}" placeholder="Enter Exam Name">
+                                    @error('name')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -51,7 +66,8 @@
                             {{-- Start Date --}}
                             <div class="form-group col-md-6">
                                 <h6>Start Date <span style="color: red">*</span></h6>
-                                <input type="date" name="start_date" class="form-control" placeholder="Start Time">
+                                <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror"
+                                    value="{{ old('start_date') }}" placeholder="Start Time">
                                 @error("start_date")
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -60,7 +76,8 @@
                             {{-- End Date --}}
                             <div class="form-group col-md-6">
                                 <h6>End Date <span style="color: red">*</span></h6>
-                                <input type="date" name="end_date" class="form-control" placeholder="Start Time">
+                                <input type="date" name="end_date" class="form-control @error('end_date') is-invalid @enderror"
+                                    value="{{ old('end_date') }}" placeholder="End Time">
                                 @error("end_date")
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -74,7 +91,10 @@
                                 class="multi-batch mySelect2 form-control @error('batch_id') is-invalid @enderror"
                                 multiple="multiple">
                                 @forelse ($batches as $item)
-                                    <option vname="{{$item->name}}" value="{{ $item->id }}">{{ $item->name }}</option>
+                                    <option name="{{$item->name}}" value="{{ $item->id }}"
+                                        @if (old("batch_id")) {{ (in_array($item->id, old("batch_id")) ? "selected":"") }}@endif>
+                                        {{ $item->name }}
+                                    </option>
                                 @empty
                                     <option>No batch</option>
                                 @endforelse
@@ -95,7 +115,7 @@
                             <label for="note"><b>Exam Note</b> </label>
                             <textarea name="note" class="form-control" id="note" cols="40" rows="6"></textarea>
                             @error('note')
-                            <span class="text-danger" role="alert">
+                                <span class="text-danger" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror

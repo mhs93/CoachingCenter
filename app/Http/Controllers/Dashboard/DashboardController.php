@@ -33,12 +33,12 @@ class DashboardController extends Controller
         $total_income = $incomes;
 
         $expenses = Transaction::where('transaction_type', '2')->get();
-        $total_enpense = 0;
+        $total_expense = 0;
         foreach($expenses as $expense){
-            $total_enpense += $expense->amount;
+            $total_expense += $expense->amount;
         }
 
-        $total_profit  = $total_income - $total_enpense;
+        $total_profit  = $total_income - $total_expense;
 
 
         $user = User::findOrFail(Auth::id());
@@ -46,13 +46,13 @@ class DashboardController extends Controller
         if($user->type == '0'){
             return view('dashboard.admin_dashboard',
                 compact('totalStudent', 'totalTeacher', 'totalSubject', 'totalBatch',
-                'total_income', 'total_enpense', 'total_profit') );
+                'total_income', 'total_expense', 'total_profit') );
         }
         // User->type = 0 means Accountant
         else if($user->type == '3'){
             return view('dashboard.accountant_dashboard',
                 compact('totalStudent', 'totalTeacher', 'totalSubject', 'totalBatch',
-                'total_income', 'total_enpense', 'total_profit') );
+                'total_income', 'total_expense', 'total_profit') );
         }
         else{
             // User->type = 1 means Teacher
@@ -66,7 +66,5 @@ class DashboardController extends Controller
                     compact('totalStudent', 'totalTeacher', 'totalSubject', 'totalBatch'));
             }
         }
-
-
     }
 }

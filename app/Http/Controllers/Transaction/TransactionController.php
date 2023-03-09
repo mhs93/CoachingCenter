@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use PDF;
 use Carbon\Carbon;
 use App\Models\Batch;
 use App\Models\Account;
@@ -19,6 +20,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TransactionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:payment_manage');
+    }
+
     public function getList()
     {
         try {
@@ -26,6 +32,10 @@ class TransactionController extends Controller
                 ->select('id', 'date', 'account_id', 'amount', 'transaction_type', 'payment_type','cheque_number')
                 ->orderBy('id', 'DESC')->get();
             return DataTables::of($data)->addIndexColumn()
+                ->addColumn('date', function ($data) {
+                    return $data->date->format('d-m-Y');
+                })
+
                 ->addColumn('account_id', function ($data) {
                     if($data->account_id == 0){
                         return 'Cash';
@@ -46,14 +56,16 @@ class TransactionController extends Controller
                     if ($data->payment_type == 1) {
                         return 'Cheque';
                     } elseif ($data->payment_type == 2) {
-                        return 'Cash ';
+                        return 'Cash';
+                    } else {
+                        return '---';
                     }
                 })
                 ->addColumn('cheque_number', function ($data) {
                     if ($data->payment_type == 1) {
                         return '<span class="text-green">'.$data->cheque_number.'</span> ';
                     } else {
-                        return "--";
+                        return "---";
                     }
                 })
                 ->rawColumns(['transaction_type', 'payment_type','cheque_number'])
@@ -427,5 +439,16 @@ class TransactionController extends Controller
         } catch (\Exception $exception) {
             return redirect()->back()->with('error', $exception->getMessage());
         }
+    }
+
+    public function print(){
+        $transactions = Transaction::get();
+        return view('dashboard.transactions.print', compact('transactions') );
+    }
+
+    public function pdf(){
+        $transactions = Transaction::get();
+        $pdf = PDF::loadView('dashboard.transactions.pdf', compact('transactions') );
+        return $pdf->download('Transaction List.pdf');
     }
 }

@@ -19,9 +19,16 @@ return new class extends Migration
             $table->integer('status')->comment('1 = Active / 0 = Deactivate')->default('1');
             $table->json('subject_id');
             $table->string('note')->nullable();
-            $table->double('batch_fee')->nullable();
+            $table->string('image')->nullable();
             $table->string('start_date');
             $table->string('end_date');
+
+            $table->integer('adjustment_type')->nullable()->comment('1 = Addition / 2 = Subtraction');
+            $table->double('initial_amount')->nullable();
+            $table->double('adjustment_balance')->nullable();
+            $table->double('total_amount')->nullable();
+            $table->string('adjustment_cause')->nullable();
+
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();

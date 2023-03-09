@@ -21,7 +21,10 @@ class ProfileController extends Controller
         elseif($user->type == 2){
             $user = User::where('id',Auth::user()->id)->with('student')->first();
             return view('dashboard.profile.student',compact('user'));
-
+        }
+        elseif($user->type == 3){
+            $user = User::where('id',Auth::user()->id)->with('student')->first();
+            return view('dashboard.profile.accountant',compact('user'));
         }
 
     }

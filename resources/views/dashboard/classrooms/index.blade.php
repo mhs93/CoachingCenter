@@ -2,6 +2,7 @@
 
 @section('title', 'Class Room')
 
+
 @push('css')
     <style>
         table {
@@ -19,15 +20,19 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Special class lists</p>
-            @can('specialClass_manage')
+            @can('specialClass_modify')
                 <a type="button" href="{{route('admin.class-rooms.create')}}" class="btn btn-sm btn-info">
                     Create special class
                 </a>
             @endcan
         </div>
         <div class="card-body">
+            <div style="text-align: center">
+                <a class="btn btn-outline-dark" href="{{route('admin.class-rooms.print')}}" title="print">PDF</a>
+            </div>
+
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
+                <thead style="text-align:center">
                     <tr>
                         <th>Id</th>
                         <th>Batch</th>
@@ -42,6 +47,7 @@
                         <th>Action</th>
                     </tr>
                 </thead>
+
                 <tbody style="text-align: center">
                 </tbody>
             </table>
@@ -108,6 +114,83 @@
         {{--</div>--}}
     {{--</div>--}}
 
+    {{-- Show Modal --}}
+    <div class="modal fade" id="showModel" aria-hidden="true" >
+        <div class="modal-dialog" style="max-width: 800px">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitle"></h5>
+              <button class="btn-close" type="button" data-coreui-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <ul id="errors" class="mt-2"></ul>
+            <form id="getDataFrom">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>Batch Name</th>
+                                        <td id="batch_id"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Subject Name</th>
+                                        <td id="subject_id"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Date</th>
+                                        <td id="date"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Start Time</th>
+                                        <td id="start_time"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>End Time</th>
+                                        <td id="end_time"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Class Type</th>
+                                        <td id="class_type"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="class_link">Class Link</th>
+                                        <td id="class_link"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="access_key">Access Key</th>
+                                        <td id="access_key"></td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Duration</th>
+                                        <td id="duration"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Note</th>
+                                        <td id="note"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-sm btn-secondary" type="button" data-coreui-dismiss="modal">Close</button>
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
 @push('js')
     <script src="{{ asset('jquery/jQuery.js') }}"></script>
     <script src="{{ asset('datatable/js/jquery.dataTables.min.js') }}"></script>
@@ -147,6 +230,51 @@
                 ]
             });
         });
+
+        // show
+        $('.class_link').hide();
+            $('#class_link').hide();
+            $('.access_key').hide();
+            $('#access_key').hide();
+            function show(id) {
+                $('#getDataFrom').trigger("reset");
+                $('#modalTitle').html("Special Class Information");
+                $('#showModel').modal('show');
+                var url = '{{ route("admin.class-rooms.show", ":id") }}';
+                $.ajax({
+                    url: url.replace(':id', id ),
+                    type: 'get',
+                    success: function(response) {
+                        console.log(response);
+                        if (response.success === true) {
+                            $('#batch_id').html(response.data.batch.name);
+                            $('#subject_id').html(response.data.subject.name);
+                            $('#date').html(response.data.classroom.date);
+                            $('#start_time').html(response.data.classroom.start_time);
+                            $('#end_time').html(response.data.classroom.end_time);
+                            $('#duration').html(response.data.classroom.duration);
+
+                            if(response.class_type == 1){
+                                $('#class_type').html('Physical');
+                            }else{
+                                $('#class_type').html('Online');
+                                $('.class_link').show();
+                                $('#class_link').show();
+                                $('.access_key').show();
+                                $('#access_key').show();
+                                $('#class_link').html(response.data.classroom.class_link);
+                                $('#access_key').html(response.data.classroom.access_key);
+                            }
+                            if(response.data.classroom.note){
+                                $('#note').html(response.data.classroom.note);
+                            }else{
+                                $('#note').html('---');
+                            }
+                        }
+
+                    }
+                });
+            }
 
         //Show Details
         function showDetailsModal(id) {
@@ -258,4 +386,3 @@
 @endpush
 
 @endsection
-

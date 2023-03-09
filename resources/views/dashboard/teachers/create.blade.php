@@ -31,9 +31,20 @@
                         <a href="{{ route('admin.teachers.index') }}" class="btn btn-sm btn-dark">Back</a>
                     </div>
                     <div class="card-body">
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         {{-- Name --}}
                         <div class="form-group mt-3">
-                            <label for="name"><b>Name</b> </label>
+                            <label for="name"><b>Name <span style="color: red">*</span></b> </label>
                             <input type="text" name="name" id="name"
                                 class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"
                                 placeholder="Enter name">
@@ -59,9 +70,10 @@
 
                         {{-- Email --}}
                         <div class="form-group mt-3">
-                            <label for="email"><b>Email Address</b></label>
+                            <label for="email"><b>Email Address <span style="color: red">*</span></b></label>
                             <input type="email" name="email" id="email"
-                                class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
+                                class="form-control @error('email') is-invalid @enderror"
+                                value="{{ old('email') }}"
                                 placeholder="Enter email address">
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
@@ -72,13 +84,13 @@
 
                         {{-- Subjects --}}
                         <div class="form-group mt-3">
-                            <label for="subject_id"><b>Select subjects</b></label>
-                            <select name="subject_id[]"
-                                    class="multi-subject form-control @error('subject_id') is-invalid @enderror"
-                                multiple="multiple" id="mySelect2">
+                            <label for="subject_id"><b>Select Subjects <span style="color: red">*</span></b></label>
+                            <select name="subject_id[]" multiple="multiple" id="subject_id"
+                                    class="multi-subject form-control @error('subject_id') is-invalid @enderror">
                                 <option value="0">All Subject</option>
                                 @forelse ($subjects as $subject)
-                                    <option value="{{ $subject->id }}">
+                                    <option value="{{ $subject->id }}"
+                                        @if (old("subject_id")) {{ (in_array($subject->id, old("subject_id")) ? "selected":"") }}@endif>
                                         {{ $subject->name }}
                                     </option>
                                 @empty
@@ -92,13 +104,67 @@
                             @enderror
                         </div>
 
+                        {{-- Reference --}}
+                        <div class="form-group mt-3">
+                            <label for="reference"><b>Reference </b></label>
+                            <textarea type="text" name="reference" id="reference" class="form-control @error('reference') is-invalid @enderror" placeholder="Enter reference details">
+                                {{ old('reference') }}
+                            </textarea>
+                            @error('reference')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        {{-- ID Number --}}
+                        <div class="form-group mt-3">
+                            <label for="id_number"><b>ID Number <span style="color: red">*</span></b></label>
+                            <input type="text" name="id_number" id="id_number"
+                                    class="form-control @error('id_number') is-invalid @enderror"
+                                    value="{{ old('id_number') }}"  placeholder="Enter NID or Passport number">
+                            @error('id_number')
+                            <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        {{-- Qualification --}}
+                        <div class="form-group mt-3">
+                            <label for="qualification"><b>Qualification <span style="color: red">*</span></b></label>
+                            <input type="text" name="qualification" id="qualification"
+                                    class="form-control @error('qualification') is-invalid @enderror"
+                                    value="{{ old('qualification') }}"  placeholder="Enter qualification">
+                            @error('qualification')
+                            <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        {{-- Salary --}}
+                        <div class="form-group mt-3">
+                            <label for="monthly_salary"><b>Salary<span style="color: red">*</span></b></label>
+                            <input type="text" name="monthly_salary" id="monthly_salary"
+                                class="form-control @error('monthly_salary') is-invalid @enderror"
+                                value="{{ old('monthly_salary') }}" placeholder="Enter Monthly Salary">
+                            @error('monthly_salary')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
                         {{-- Gender --}}
                         <div class="form-group mt-3 ">
-                            <label for="gender"><b>Gender</b></label>
-                            <select name="gender" id="gender" class="form-select @error('gender') is-invalid @enderror">
+                            <label for="gender"><b>Gender <span style="color: red">*</span></b></label>
+                            <select name="gender" id="gender"
+                                class="form-select @error('gender') is-invalid @enderror"
+                                value="{{ old('gender') }}">
                                 <option>--Select gender--</option>
-                                <option value="1">Male</option>
-                                <option value="2">Female</option>
+                                <option value="1" @if (old('gender') == "1") {{ 'selected' }} @endif>Male</option>
+                                <option value="2" @if (old('gender') == "2") {{ 'selected' }} @endif>Female</option>
                             </select>
                             @error('gender')
                                 <span class="invalid-feedback" role="alert">
@@ -109,7 +175,7 @@
 
                         {{-- Contact Number --}}
                         <div class="form-group mt-3">
-                            <label for="contact_number"><b>Contact Number</b></label>
+                            <label for="contact_number"><b>Contact Number <span style="color: red">*</span></b></label>
                             <input type="text" name="contact_number" id="contact_number"
                                 class="form-control @error('contact_number') is-invalid @enderror"
                                 value="{{ old('contact_number') }}" placeholder="Enter contact number">
@@ -122,7 +188,7 @@
 
                         {{-- Present Address --}}
                         <div class="form-group mt-3">
-                            <label for="current_address"><b>Current Address</b></label>
+                            <label for="current_address"><b>Current Address<span style="color: red">*</span></b></label>
                             <textarea name="current_address" id="current_address" rows="3"
                                 class="form-control @error('current_address') is-invalid @enderror" placeholder="Current Address...">{{ old('current_address') }}</textarea>
                             @error('current_address')
@@ -134,23 +200,10 @@
 
                         {{-- Permanant Address --}}
                         <div class="form-group mt-3">
-                            <label for="permanent_address"><b>Permanent Address</b></label>
+                            <label for="permanent_address"><b>Permanent Address <span style="color: red">*</span></b></label>
                             <textarea name="permanent_address" id="permanent_address" rows="3"
                                 class="form-control @error('permanent_address') is-invalid @enderror" placeholder="Permanent address...">{{ old('permanent_address') }}</textarea>
                             @error('permanent_address')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        {{-- Salary --}}
-                        <div class="form-group mt-3">
-                            <label for="monthly_salary"><b>Salary</b></label>
-                            <input type="text" name="monthly_salary" id="monthly_salary"
-                                class="form-control @error('monthly_salary') is-invalid @enderror"
-                                placeholder="Enter Monthly Salary">
-                            @error('monthly_salary')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -170,7 +223,6 @@
                     </div>
                 </div>
             </div>
-
 
             {{-- Image --}}
             <div class="col-md-4">
@@ -211,29 +263,34 @@
         {{-- Dropify CDN --}}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
             integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
         <script>
             $(document).ready(function() {
                 $('.dropify').dropify();
-                // $('#mySelect2').on('change', function() {
-                //     var subjects = $('#mySelect2').val();
-                //     console.log(subjects.length);
-                //     if(subjects[0] == 0){
-                //         if(subjects.length==1){
-                //             $("select option").attr("disabled", "disabled");
-                //             $("select").prop("selectedIndex", -1)
-                //         }
+            });
 
-                //     }
-                //     if (subjects.length > 1) {
-                //         subjects.forEach(element => {
-                //             if (element == 0) {
-                //                 // document.getElementById("mySelect2").disabled = true;
-                //                 alert('You can not select');
-                //             }
-                //         });
-                //     }
-                // });
+            $(document).on("change", "#subject_id", function () {
+                let value = $(this).val();
+                console.log(value.includes("0"))
+                if(value.includes("0")){
+                    $(this).empty();
+                    $(this).append('<option selected value="0">All Subject</option>');
+                }
+                if(value == ''){
+                    $("#subject_id").empty();
+                    $.ajax({
+                        url: "{{ route('admin.batch.getAllSubject') }}",
+                        type: 'get',
+                        success: function(response) {
+                            $("#subject_id").append('<option value="0">All Subject</option>');
+                            $.each(response, function(key, value) {
+                                $("#subject_id").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                }
             });
         </script>
 

@@ -11,7 +11,7 @@
         </ol>
         <a href="{{ route('admin.teachers.index') }}" class="btn btn-sm btn-dark">Back to list</a>
     </nav>
-@endsection
+@endsection 
 
 @section('content')
     <div class="card">

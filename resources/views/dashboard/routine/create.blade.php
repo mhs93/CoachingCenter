@@ -5,7 +5,7 @@
 @push('css')
     <style>
         .ck-editor__editable[role="textbox"] {
-            min-height: 320px;
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -27,8 +27,10 @@
                         <select name="batch_id" id="batchSelect" class="form-control">
                             <option>Select</option>
                             @forelse ($batches as $batch)
-                                <option value="{{ $batch->id }}" {{ old('batch_id') === $batch->id ? 'selected' : '' }}>
-                                    {{ $batch->name }}</option>
+                                {{-- <option value="{{ $batch->id }}" {{ old('batch_id') === $batch->id ? 'selected' : '' }}> --}}
+                                <option value="{{ $batch->id }}" @if (old('batch_id') == $batch->id) {{ 'selected' }} @endif>
+                                    {{ $batch->name }}
+                                </option>
                             @empty
                                 <option>No batch</option>
                             @endforelse
@@ -108,8 +110,8 @@
                                     '<div style="padding:10px" class="new-day-row_'+key+'" id="newDay">'+
                                     '<div class="row">'+
                                     '<div class="form-group col-md-4">'+
-                                    '<label for="day">Day</label>'+
-                                    '<select name="day_'+value.id+'[]" id="day" class="form-select @error("day") is-invalid @enderror">'+
+                                    '<h6>Day <span style="color: red">*</span> </h6>'+
+                                    '<select name="day_'+value.id+'[]" id="day" class="form-select @error("day") is-invalid @enderror" required>'+
                                     '<option value="">--Select Day--</option>'+
                                     '<option value="1">Saturday</option>'+
                                     '<option value="2">Sunday</option>'+
@@ -127,12 +129,12 @@
 
                                     '</div>'+
                                     '<div class="form-group col-md-3">'+
-                                    '<h6>Class Start Time</h6>'+
-                                    '<input type="time" name="start_time[]" class="form-control">'+
+                                    '<h6>Class Start Time <span style="color: red">*</span></h6>'+
+                                    '<input type="time" name="start_time[]" class="form-control" required>'+
                                     '</div>'+
                                     '<div class="form-group col-md-3">'+
-                                    '<h6>Class End Time</h6>'+
-                                    '<input type="time" name="end_time[]" class="form-control">'+
+                                    '<h6>Class End Time <span style="color: red">*</span></h6>'+
+                                    '<input type="time" name="end_time[]" class="form-control" required>'+
                                     '@error("end_time")'+
                                     '<div class="text-danger">{{ $message }}</div>'+
                                     '@enderror'+
@@ -155,7 +157,7 @@
                 $('.new-day-row_'+key+'#newDay').append(
                     '<div class="row" id="append-row-'+counter+'">'+
                     '<div class="form-group col-md-4">'+
-                    '<label for="day">Day</label>'+
+                    '<h6>Day<span style="color: red">*</span></h6>'+
                     '<select name="day_'+value+'[]" id="day" class="form-select @error("day_'+value+'") is-invalid @enderror">'+
                     '<option value="">--Select Day--</option>'+
                     '<option value="1">Saturday</option>'+
@@ -173,11 +175,11 @@
                     '@enderror'+
                     '</div>'+
                     '<div class="form-group col-md-3">'+
-                    '<h6>Class Start Time</h6>'+
+                    '<h6>Class Start Time <span style="color: red">*</span></h6>'+
                     '<input type="time" name="start_time[]" class="form-control">'+
                     '</div>'+
                     '<div class="form-group col-md-3">'+
-                    '<h6>Class End Time</h6>'+
+                    '<h6>Class End Time <span style="color: red">*</span></h6>'+
                     '<input type="time" name="end_time[]" class="form-control">'+
                     '@error("end_time")'+
                     '<div class="text-danger">{{ $message }}</div>'+

@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subject;
+use PDF;
 use Illuminate\Http\Request;
+use App\Exports\ExportSubject;
+use App\Imports\ImportSubject;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class SubjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:subject_modify')->except(['index','getList','show']);
+    }
+
     public function getList()
     {
         try {
@@ -16,9 +25,8 @@ class SubjectController extends Controller
                 ->orderBy('id', 'DESC')->get();;
 
             return DataTables::of($data)->addIndexColumn()
-
                 ->addColumn('status', function ($data) {
-                    if(Auth::user()->can('subject_manage')){
+                    if(Auth::user()->can('subject_modify')){
                         $button = ' <div class="form-check form-switch">';
                         $button .= ' <input onclick="statusConfirm(' . $data->id . ')" type="checkbox" class="form-check-input" id="customSwitch' . $data->id . '" getAreaid="' . $data->id . '" name="status"';
 
@@ -45,16 +53,15 @@ class SubjectController extends Controller
                             $button .= "checked";
                         }
                     }
-
                 })
                 ->addColumn('action', function ($data) {
-                    if (Auth::user()->can('subject_manage')){
-                        $showButton = '<a href="'. route('admin.subjects.show', $data->id) .'" class="btn btn-sm btn-info text-white" title="View"><i class="bx bxs-low-vision"></i></a>';
+                    if (Auth::user()->can('subject_list')){
+                        $showButton = '<a href="javascript:void(0)" onclick="show(' . $data->id . ')" class="btn btn-sm btn-info text-white" title="Show"><i class="bx bxs-low-vision"></i></a>';
                     }else{
                         $showButton = '';
                     }
                     if(Auth::user()->can('subject_modify')){
-                        $editButton = '<a href="' . route('admin.subjects.edit', $data->id) . '" class="btn btn-sm btn-warning" title="Edit"><i class="bx bxs-edit-alt"></i></a>';
+                        $editButton = '<a href="javascript:void(0)" onclick="edit(' . $data->id . ')" class="btn btn-sm btn-warning" data-coreui-toggle="modal" data-coreui-target="#modalCollapse"><i class="bx bxs-edit-alt"></i></a>';
                     }else{
                         $editButton =  '';
                     }
@@ -68,7 +75,7 @@ class SubjectController extends Controller
                 })
                 ->rawColumns(['action', 'status'])
                 ->make(true);
-        } catch (\Exception $e) {
+        }catch(\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
@@ -100,12 +107,12 @@ class SubjectController extends Controller
         ), $messages);
 
         try {
-            $subject = new Subject();
-            $subject->name = $request->name;
-            $subject->code = $request->code;
-            $subject->note = strip_tags($request->note);
-            $subject->fee = $request->fee;
-            $subject->created_by = Auth::id();
+            $subject             =   new Subject();
+            $subject->name       =   $request->name;
+            $subject->code       =   $request->code;
+            $subject->note       =   strip_tags($request->note);
+            $subject->fee        =   $request->fee;
+            $subject->created_by =   Auth::id();
             $subject->save();
             return redirect()->route('admin.subjects.index')->with('t-success','Subject created successfully');
         } catch (\Exception $e) {
@@ -117,7 +124,10 @@ class SubjectController extends Controller
     {
         try {
             $subject = Subject::findOrFail($id);
-            return view('dashboard.subjects.show', compact('subject'));
+            return response()->json([
+                'success' => true,
+                'data' => $subject,
+            ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '$e');
         }
@@ -133,9 +143,13 @@ class SubjectController extends Controller
     public function edit(Subject $subject)
     {
         try {
-            return view('dashboard.subjects.edit',compact('subject'));
+            return response()->json([
+                'success' => true,
+                'data' => $subject,
+                'message' => 'Subject edit data get successfully',
+            ]);
         }catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -146,26 +160,29 @@ class SubjectController extends Controller
      * @return void
      */
 
-    public function update(Request $request, Subject $subject)
+    public function update(Request $request)
     {
-        $this->validate($request, [
-            'name'      =>      'required|string|unique:subjects,name,' . $subject->id . ',id,deleted_at,NULL',
-            'code'      =>      'required|string|unique:subjects,code,' . $subject->id . ',id,deleted_at,NULL',
-            'note'      =>      'nullable|max:255',
-            'fee'       =>      'required',
-            // 'status'    =>      'required|integer'
-        ]);
+        //dd($request->all());
+        // $this->validate($request, [
+        //     'name'  =>  'required|string|unique:subjects,name,' . $subject->id . ',id,deleted_at,NULL',
+        //     'code'  =>  'required|string|unique:subjects,code,' . $subject->id . ',id,deleted_at,NULL',
+        //     'note'  =>  'nullable|max:255',
+        //     'fee'   =>  'required',
+        //     // 'status'    =>      'required|integer'
+        // ]);
 
         try {
+            $subject = Subject::find($request->id);
             $subject->name = $request->name;
             $subject->code = $request->code;
             $subject->note = $request->note;
             $subject->fee = $request->fee;
-            // $subject->status = $request->status;
             $subject->updated_by = Auth::id();
             $subject->update();
-
-            return redirect()->route('admin.subjects.index')->with('t-success','Subject Updated successfully');
+            return response()->json([
+                'success' => true,
+                'message' => 'Subject Updated Successfully.',
+            ]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -182,7 +199,6 @@ class SubjectController extends Controller
     {
         try {
             $subject->delete();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Announcement Deleted Successfully.',
@@ -206,23 +222,43 @@ class SubjectController extends Controller
             if($subject->status == 1) {
                 $subject->status = 0;
                 $subject->update();
-
                 return response()->json([
                     'success' => true,
                     'message' => 'Subject inactivated successfully',
                 ]);
             }
-
             $subject->status = 1;
             $subject->update();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Subject activated successfully',
             ]);
-
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function importView(Request $request){
+        return view('dashboard.subjects.index');
+    }
+
+    public function importSubjects(Request $request){
+        Excel::import(new ImportSubject, request()->file('file'));
+        return redirect()->back()->with('message','Subject imported successfully');
+    }
+
+    public function exportSubjects(Request $request){
+        return Excel::download(new ExportSubject, 'subjects.xlsx');
+    }
+
+    public function print(){
+        $subjects = Subject::get();
+        return view('dashboard.subjects.print', compact('subjects') );
+    }
+
+    public function pdf(){
+        $subjects = Subject::get();
+        $pdf = PDF::loadView('dashboard.subjects.pdf', compact('subjects') );
+        return $pdf->download('subjectList.pdf');
     }
 }

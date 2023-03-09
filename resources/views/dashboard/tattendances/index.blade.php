@@ -47,7 +47,7 @@
                                     <option>No Teacher</option>
                                 @endforelse
                             </select>
-                        </div>
+                        </div> 
                         <div class="col-md-2 form-group">
                             <button type="submit" class="btn btn-primary" style="margin-top: 24px">
                                 Get Teacher

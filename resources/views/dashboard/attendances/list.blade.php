@@ -8,7 +8,7 @@
     <div class="card-header">
         <p class="m-0"> @if(!empty($attendances)) Update Attendance @else Take Attendance @endif </p>
     </div>
-    
+
     <div class="card-body">
         <div class="row mt-1">
             <div class="col-sm-4">

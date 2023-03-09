@@ -24,15 +24,15 @@ class UpdateTeacherRequest extends FormRequest
     public function rules()
     {
         return [
-            'subject_id'            => 'required',
-            'name'                  => "required|string",
-            'email'                 => "required|email|unique:teachers,email,{$this->teacher->id}",
-            // 'password'              => 'confirmed',
-            'gender'                => 'required|in:1,2',
-            'current_address'       => 'required|string',
-            'permanent_address'     => 'required|string',
-            'contact_number'        => 'required|string',
-            'profile'               => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'subject_id'        => 'required',
+            'name'              => "required|string",
+            'email'             => "required|email|unique:teachers,email,{$this->teacher->id}",
+            // 'password'         => 'confirmed',
+            'gender'            => 'required|in:1,2',
+            'current_address'   => 'required|string',
+            'permanent_address' => 'required|string',
+            'contact_number'    => 'required|string',
+            'profile'           => 'image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }

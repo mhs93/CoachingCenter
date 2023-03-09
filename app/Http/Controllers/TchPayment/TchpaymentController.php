@@ -6,24 +6,37 @@ use App\Http\Controllers\Controller;
 use App\Models\Tchpayment;
 use App\Models\Account;
 use App\Models\Teacher;
+use App\Models\User;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use function Termwind\ValueObjects;
 
 class TchpaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware('can:payment_manage')->except(['installments','show']);
+    }
     public function index($id)
     {
         $teacher = Teacher::findOrFail($id);
         $tchpayments = Tchpayment::where('tch_id', $id)->with('account')->get();
-        return view('dashboard.tch_payment.index',compact('teacher','tchpayments'));
+        $month = Carbon::now()->format('Y-m');
+        $tchpaymentmonth = Tchpayment::where('tch_id',$id)->where('month',$month)->with('account')->first();
+        if ($tchpaymentmonth != NULL){
+            if ($tchpaymentmonth->month == $month){
+//            $dueAmount = $teacher->monthly_fee - $tchpaymentmonth->total_amount;
+                $dueAmount = 0;
+            }else{
+                $dueAmount = $teacher->monthly_fee;
+            }
+        }else{
+            $dueAmount = 'No payment yet';
+        }
+        return view('dashboard.tch_payment.index',compact('teacher','tchpayments','dueAmount'));
     }
 
     /**
@@ -34,7 +47,7 @@ class TchpaymentController extends Controller
     public function create($id)
     {
         $teacher = Teacher::findOrFail($id);
-        $accounts = Account::all();
+        $accounts = Account::where('account_no','!=','cash')->get();
         return view('dashboard.tch_payment.create',compact('teacher', 'accounts'));
     }
 
@@ -47,14 +60,30 @@ class TchpaymentController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'month' => 'required|string',
-            'additional_amount' => 'integer|nullable',
-            'deduction_amount' => 'integer|nullable',
-            'payment_type' => 'required|integer',
-            'cheque_number' => 'nullable|string|unique:stdpayments,cheque_number,NULL,id,deleted_at,NULL',
-            'total_amount' => 'required|integer',
-            'note' => 'nullable|max:255',
+            'month'              => 'required|string',
+            'adjustment_type'    => 'nullable|integer',
+            'adjustment_balance' => 'nullable|string',
+            'adjustment_cause'   => 'nullable|string',
+            'payment_type'       => 'required|integer',
+            'cheque_number'      => 'nullable|string|unique:stdpayments,cheque_number,NULL,id,deleted_at,NULL',
+            'total_amount'       => 'required|integer',
+            'note'               => 'nullable|max:255',
         ]);
+
+        if($request->adjustment_type){
+            $this->validate($request,[
+                'adjustment_type'    => 'required|integer',
+                'adjustment_balance' => 'required|string',
+                'adjustment_cause'   => 'required|string',
+            ]);
+        }
+
+        if($request->payment_type == 1){
+            $this->validate($request,[
+                'account_id'    => 'required|integer',
+                'cheque_number' => 'required|string',
+            ]);
+        }
 
         if($request->total_amount > $request->current_balance){
             return redirect()->back()->with('error', "Don't have enough balance");
@@ -62,37 +91,38 @@ class TchpaymentController extends Controller
 
         try{
             DB::beginTransaction();
-            $tchpayment = new Tchpayment();
-            $tchpayment->tch_id = $request->tch_id;
-            $tchpayment->month = $request->month;
-            $tchpayment->additional_amount = $request->additional_amount;
-            $tchpayment->deduction_amount = $request->deduction_amount;
-            $tchpayment->payment_type = $request->payment_type;
-            if ($tchpayment->payment_type == 1){
-                $tchpayment->account_id = $request->account_id;
-                $tchpayment->cheque_number = $request->cheque_number;
+            $tchpayment                     = new Tchpayment();
+            $tchpayment->tch_id             = $request->tch_id;
+            $tchpayment->month              = $request->month;
+            $tchpayment->adjustment_type    = $request->adjustment_type;
+            $tchpayment->adjustment_balance = $request->adjustment_balance;
+            $tchpayment->adjustment_cause   = $request->adjustment_cause;
+            $tchpayment->payment_type       = $request->payment_type;
+            if ($tchpayment->payment_type   == 1){
+                $tchpayment->account_id     = $request->account_id;
+                $tchpayment->cheque_number  = $request->cheque_number;
             }elseif ($tchpayment->payment_type == 2){
-                $tchpayment->account_id = 0;
+                $tchpayment->account_id     = 1;
             }
             $tchpayment->total_amount = $request->total_amount;
-            $tchpayment->note = $request->note;
-            $tchpayment->created_by = Auth::id();
+            $tchpayment->note         = $request->note;
+            $tchpayment->created_by   = Auth::id();
             $tchpayment->save();
 
-            $transaction = new Transaction();
-            $transaction->date = Carbon::now();
-            $transaction->tchpayment_id = $tchpayment->id;
-            $transaction->transaction_type = '2';
-            $transaction->amount = $request->total_amount;
-            $transaction->payment_type = $request->payment_type;
-            if ($transaction->payment_type == 1){
-                $transaction->account_id = $request->account_id;
+            $transaction                    = new Transaction();
+            $transaction->date              = Carbon::now();
+            $transaction->tchpayment_id     = $tchpayment->id;
+            $transaction->transaction_type  = '2';
+            $transaction->amount            = $request->total_amount;
+            $transaction->payment_type      = $request->payment_type;
+            if ($transaction->payment_type  == 1){
+                $transaction->account_id    = $request->account_id;
                 $transaction->cheque_number = $request->cheque_number;
             }elseif ($transaction->payment_type == 2){
-                $transaction->account_id = 0;
+                $transaction->account_id    = 1;
             }
-            $transaction->note = $request->note;
-            $transaction->created_by = Auth::id();
+            $transaction->note              = $request->note;
+            $transaction->created_by        = Auth::id();
             $transaction->save();
 
             DB::commit();
@@ -124,8 +154,9 @@ class TchpaymentController extends Controller
     public function edit($id)
     {
         $tchpayment = Tchpayment::findOrFail($id);
-        $accounts = Account::all();
-        return view('dashboard.tch_payment.edit',compact( 'tchpayment','accounts'));
+        $accounts   = Account::all();
+        $balance    = $tchpayment->adjustment_balance;
+        return view('dashboard.tch_payment.edit',compact( 'tchpayment','accounts','balance'));
     }
 
     /**
@@ -138,47 +169,49 @@ class TchpaymentController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'month' => 'required|string',
-            'additional_amount' => 'integer|nullable',
-            'deduction_amount' => 'integer|nullable',
-            'payment_type' => 'required|integer',
-            'cheque_number' => 'nullable|string|unique:tchpayments,cheque_number,' . $request->id . ',id,deleted_at,NULL',
-            'total_amount' => 'required|integer',
-            'note' => 'nullable|max:255',
+            'month'              => 'required|string',
+            'adjustment_type'    => 'nullable|integer',
+            'adjustment_balance' => 'nullable|string',
+            'adjustment_cause'   => 'nullable|string',
+            'payment_type'       => 'required|integer',
+            'cheque_number'      => 'nullable|string|unique:tchpayments,cheque_number,' . $request->id . ',id,deleted_at,NULL',
+            'total_amount'       => 'required|integer',
+            'note'               => 'nullable|max:255',
         ]);
         try{
             DB::beginTransaction();
             $transaction = Transaction::where('tchpayment_id', $request->id)->first();
 
-            $tchpayment = Tchpayment::findOrFail($id);
-            $tchpayment->month = $request->month;
-            $tchpayment->additional_amount = $request->additional_amount;
-            $tchpayment->deduction_amount = $request->deduction_amount;
-            $tchpayment->payment_type = $request->payment_type;
+            $tchpayment                     = Tchpayment::findOrFail($id);
+            $tchpayment->month              = $request->month;
+            $tchpayment->adjustment_type    = $request->adjustment_type;
+            $tchpayment->adjustment_balance = $request->adjustment_balance;
+            $tchpayment->adjustment_cause   = $request->adjustment_cause;
+            $tchpayment->payment_type       = $request->payment_type;
             if ($request->payment_type == 2){
-                $tchpayment->cheque_number = NULL;
+                $tchpayment->cheque_number  = NULL;
             }else{
-                $tchpayment->cheque_number = $request->cheque_number;
+                $tchpayment->cheque_number  = $request->cheque_number;
             }
-            $tchpayment->account_id = $request->account_id;
-            $tchpayment->total_amount = $request->total_amount;
-            $tchpayment->note = $request->note;
-            $tchpayment->updated_by = Auth::id();
+            $tchpayment->account_id         = $request->account_id;
+            $tchpayment->total_amount       = $request->total_amount;
+            $tchpayment->note               = $request->note;
+            $tchpayment->updated_by         = Auth::id();
             $tchpayment->update();
 
-            $transaction->date = Carbon::now();
-            $transaction->tchpayment_id = $tchpayment->id;
-            $transaction->transaction_type = '2';
-            $transaction->amount = $request->total_amount;
-            $transaction->payment_type = $request->payment_type;
-            if ($transaction->payment_type == 1){
-                $transaction->account_id = $request->account_id;
+            $transaction->date              = Carbon::now();
+            $transaction->tchpayment_id     = $tchpayment->id;
+            $transaction->transaction_type  = '2';
+            $transaction->amount            = $request->total_amount;
+            $transaction->payment_type      = $request->payment_type;
+            if ($transaction->payment_type  == 1){
+                $transaction->account_id    = $request->account_id;
                 $transaction->cheque_number = $request->cheque_number;
             }elseif ($transaction->payment_type == 2){
-                $transaction->account_id = 0;
+                $transaction->account_id    = 1;
             }
-            $transaction->note = $request->note;
-            $transaction->created_by = Auth::id();
+            $transaction->note              = $request->note;
+            $transaction->created_by        = Auth::id();
             $transaction->update();
 
             DB::commit();
@@ -216,5 +249,27 @@ class TchpaymentController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    public function installments()
+    {
+        $id = User::select('teacher_id')->where('id', Auth::id())->first();
+        $tchId=$id->teacher_id;
+        $teacher = Teacher::findOrFail($tchId);
+        $tchpayments = Tchpayment::where('tch_id', $tchId)->with('account')->get();
+        $month = Carbon::now()->format('Y-m');
+        $tchpaymentmonth = Tchpayment::where('tch_id', $tchId)->where('month', $month)->with('account')->first();
+
+//        dd($tchpaymentmonth);
+        if ($tchpaymentmonth != NULL){
+            if ($tchpaymentmonth->month == $month){
+                $dueAmount = '0 tk';
+            }else{
+                $dueAmount = $teacher->monthly_fee;
+            }
+        }else{
+            $dueAmount = 'No payment yet';
+        }
+        return view('dashboard.tch_payment.index',compact('teacher','tchpayments','dueAmount'));
     }
 }

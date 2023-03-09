@@ -26,18 +26,26 @@
             @endcan
         </div>
         <div class="card-body">
+            <form action="{{ route('admin.import-teachers') }}" method="post" enctype="multipart/form-data" style="text-align: center">
+                @csrf
+                <a class="btn btn-outline-dark" href="{{route('admin.teachers.print')}}" title="print">PDF</a>
+                <a class="btn btn-outline-dark" href="{{ route('admin.export-teachers') }}">Export</a>
+                <input class="btn btn-outline-dark" type="file" name="file" required>
+                <input class="btn btn-outline-dark" type="submit" value="import">
+            </form>
+
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Subjects</th>
-                    <th>Status</th>
-                    <th scope="col">Actions</th>
-                </tr>
+                <thead style="text-align: center">
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Subjects</th>
+                        <th>Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
         </div>

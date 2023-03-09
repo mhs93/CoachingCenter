@@ -20,11 +20,12 @@
                     </td>
                     <td>
                         <div>
-                            <div class="row">
+                            <div class="row my-2">
                                 {{-- Date --}}
                                 <div class="form-group col-md-4">
                                     <h6>Date <span style="color: red">*</span></h6>
-                                    <input type="date" name="date[]" class="form-control" placeholder="Start Time">
+                                    <input type="date" name="date[]" class="form-control" placeholder="Start Time"
+                                        value="{{ old('date') }}">
                                     @error("date")
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -33,7 +34,8 @@
                                 {{-- Start Time --}}
                                 <div class="form-group col-md-4">
                                     <h6>Start Time <span style="color: red">*</span></h6>
-                                    <input type="time" name="start_time[]" class="form-control" placeholder="Start Time">
+                                    <input type="time" name="start_time[]" class="form-control" placeholder="Start Time"
+                                        value="{{ old('start_time') }}">
                                     @error("start_time")
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -42,7 +44,8 @@
                                 {{-- End Time --}}
                                 <div class="form-group col-md-4">
                                     <h6>End Time <span style="color: red">*</span></h6>
-                                    <input type="time" name="end_time[]" class="form-control" placeholder="End Time">
+                                    <input type="time" name="end_time[]" class="form-control" placeholder="End Time"
+                                        value="{{ old('end_time') }}">
                                     @error("end_time")
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror

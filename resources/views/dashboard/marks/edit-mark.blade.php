@@ -33,26 +33,26 @@
                         @endforeach
                         @foreach ($marks as $key => $mark)
                         <tr>
-                            <td style="vertical-align: middle;">{{$key + 1}}</td>
+                            <td style="vertical-align: middle;">{{$key + 1}}</td> 
 
                             <td style="vertical-align: middle;">
                                 {{$mark->student->name}}
                                 <input type="hidden" name="student_id[]" value="{{$mark->student->id}}">
                             </td>
 
-                            <td>
+                            <td style="text-align: center">
                                 @php
                                     $subMark = json_decode($mark->mark);
                                     $subjects = App\Models\Subject::whereIn('id', $subjectIds)->get();
                                 @endphp
 
                                 @foreach ($subjects as $k => $subject)
-                                    <div class="row" style="width: 500px;">
-                                        <div class="col-md-8" style="text-align: right;">
+                                    <div class="row" style="width: 500px; text-align: right">
+                                        <div class="col-md-6">
                                             {{$subject->name}} :
 
                                         </div>
-                                        <div class="col-md-4" style="text-align: left; width: 100px;">
+                                        <div class="col-md-6" style="text-align: left; width: 100px;">
                                             <input type="number" name="mark[]" value="{{$subMark[$k]}}"
                                                 class="form-control mark{{$mark->student->id}}"
                                                 oninput="calTotal('mark{{ $mark->student->id }}')">

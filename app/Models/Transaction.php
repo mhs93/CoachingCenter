@@ -12,7 +12,13 @@ class Transaction extends Model
 
     /**
      * @return mixed
-     */
+    */
+    protected $dates = [
+        'date',
+        'created_at',
+        'updated_at'
+    ];
+
     public function account(){
         return $this->belongsTo(Account::class,'account_id','id')->select('id', 'account_no','account_holder')->withTrashed();
     }

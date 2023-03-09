@@ -29,7 +29,8 @@
                         <select name="batch_id" id="batchIdEx" class="form-control">
                             <option value="">--Select batch--</option>
                             @forelse ($batches as $batch)
-                                <option value="{{ $batch->id }}" {{ old('batch_id') === $batch->id ? 'selected' : '' }}>
+                                <option value="{{ $batch->id }}"
+                                    @if (old('batch_id') == $batch->id) {{ 'selected' }} @endif>
                                     {{ $batch->name }}</option>
                             @empty
                                 <option>No batch</option>

@@ -1,0 +1,1822 @@
+﻿/*--------------------------------------------------------------
+# General
+--------------------------------------------------------------*/
+@font-face {
+    font-family: HindiShiliguriBold;
+    src: url(../lib/fonts/Hind_Siliguri-Bold.ttf);
+}
+
+@font-face {
+    font-family: HindiShiliguriSemiBold;
+    src: url(../lib/fonts/Hind_Siliguri_SemiBold-Regular.ttf);
+}
+
+@font-face {
+    font-family: HindiShiliguriRegular;
+    src: url(../lib/fonts/Hind_Siliguri-Regular_GhOgZt6.ttf);
+}
+
+@font-face {
+    font-family: LatoRegular;
+    src: url(../lib/fonts/Lato-Regular.ttf);
+}
+
+@font-face {
+    font-family: LatoBold;
+    src: url(../lib/fonts/Lato-Bold.ttf);
+}
+
+@font-face {
+    font-family: BalooDa2;
+    src: url(../lib/fonts/BalooDa2-Regular.ttf);
+}
+
+@font-face {
+    font-family: LatoHeavy;
+    src: url(../lib/fonts/Lato-Heavy.ttf);
+}
+
+.container {
+    max-width: 1164px;
+}
+
+:root {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: "HindiShiliguriRegular", "Open Sans", sans-serif;
+    color: #000;
+}
+
+section {
+    padding: 60px 0;
+    overflow: hidden;
+}
+
+a {
+    color: #772397;
+    text-decoration: none;
+}
+
+    a:hover {
+        color: #FF0000;
+        text-decoration: none;
+    }
+
+/*Button color*/
+.btn {
+    border-radius: 26px;
+    color: #fff;
+    text-align: center;
+    padding: 8px 40px;
+    border: none;
+    line-height: 24px;
+    font-family: HindiShiliguriSemiBold;
+    font-size: 18px;
+    box-shadow: 0px 5px 15px -5px rgb(0 0 0 / 78%);
+    background: transparent linear-gradient(110deg, #EF512E 0%, #DE0655 100%) 0% 0% no-repeat padding-box;
+}
+
+    .btn:hover {
+        color: #fff;
+        background: transparent linear-gradient(249deg, #EF512E 0%, #DE0655 100%) 0% 0% no-repeat padding-box;
+    }
+
+.btn-primary.Inactive,
+.btn-secondary.Inactive,
+.btn-loadmore.Inactive {
+    background: #B29AB2;
+}
+
+.btn-primary {
+    background: transparent linear-gradient(111deg, #302C88 0%, #1B2132 100%) 0% 0% no-repeat padding-box;
+}
+
+    .btn-primary:hover {
+        background: transparent linear-gradient(249deg, #302C88 0%, #1B2132 100%) 0% 0% no-repeat padding-box;
+    }
+
+.btn-secondary {
+    background: transparent linear-gradient(111deg, #EB7900 0%, #FCB400 100%) 0% 0% no-repeat padding-box;
+}
+
+    .btn-secondary:hover {
+        background: transparent linear-gradient(249deg, #EB7900 0%, #FCB400 100%) 0% 0% no-repeat padding-box;
+    }
+
+.btn-loadmore {
+    background: transparent linear-gradient(111deg, #EE4B30 0%, #E00E4C 100%) 0% 0% no-repeat padding-box;
+}
+
+    .btn-loadmore:hover {
+        background: transparent linear-gradient(249deg, #EE4B30 0%, #E00E4C 100%) 0% 0% no-repeat padding-box;
+    }
+
+.infoMessage {
+    background-color: #2E31CD;
+    color: #ffffff;
+    padding: 10px;
+}
+
+.errorMessage {
+    background-color: #FFB9B9;
+    color: #FF0000;
+    padding: 10px;
+}
+
+.warningMessage {
+    background-color: #FFFFC6;
+    color: #FCB400;
+    padding: 10px;
+}
+
+h1 {
+    font-family: "HindiShiliguriBold";
+}
+
+p {
+    font-family: "BalooDa2";
+}
+
+h2,
+h3,
+h4,
+h5,
+h6,
+a {
+    font-family: "HindiShiliguriRegular";
+}
+
+.row {
+    row-gap: 24px;
+}
+
+.see-more {
+    background: linear-gradient(to right, #332E94, #1B212F);
+    border: 0px;
+}
+
+.play-button, .hero-play-button, .course-play-button {
+    color: #FF3E48;
+    border-radius: 50%;
+    border: 4px solid #FF3E48;
+    height: 80px;
+    width: 80px;
+    font-size: 50px;
+    line-height: 0px;
+    opacity: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #0000007e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*.iframe-video .video-iframe, .iframe-video2 .video-iframe2,
+.hero-iframe-video .hero-video-iframe, .course-iframe-video .video-iframe {
+    display: none;
+}*/
+
+.iframe-video
+.hero-iframe-video, .course-iframe-video {
+    position: relative;
+}
+
+.modal-body {
+    padding: 0;
+}
+
+.btn-close {
+    position: absolute;
+    right: 10%;
+    top: 6%;
+    opacity: 1;
+    background: transparent;
+}
+
+    .btn-close::after {
+        content: "\f62a";
+        font-family: bootstrap-icons !important;
+        color: #fff;
+        font-size: 60px;
+    }
+
+.head1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 55px;
+    font-family: HindiShiliguriBold;
+    margin-bottom: 50px;
+    border-bottom: 0.5px solid;
+    width: fit-content;
+}
+
+.English {
+    font: normal normal bold 18px/22px LatoBold;
+}
+
+.banglish {
+    font: normal normal bold 20px/22px HindiShiliguriBold;
+}
+
+iframe {
+    border-radius: 5px;
+}
+
+input.form-control:focus {
+    outline-style: none;
+    box-shadow: none;
+}
+
+section::before,
+section::after {
+    content: "";
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -1;
+}
+
+@media screen and (max-width: 768px) {
+    section {
+        padding: 30px 0;
+    }
+
+    .head1 {
+        margin-bottom: 30px;
+    }
+}
+
+
+/*--------------------------------------------------------------
+# Hero Section
+--------------------------------------------------------------*/
+.hero {
+    position: relative;
+    padding: 0px;
+    background-color: rgb(117, 116, 116);
+}
+
+    .hero::before, .hero::after {
+        width: 140px;
+        height: 153px;
+        background-image: url(../img/heroPattern.html);
+    }
+
+    .hero::before {
+        top: 40px;
+        left: 0;
+    }
+
+    .hero::after {
+        bottom: 40px;
+        right: 0;
+    }
+
+    .hero h1 {
+        margin-bottom: 20px;
+        font-size: 60px;
+        color: #fff;
+        border-bottom: 2px solid #DB3B3E;
+    }
+
+    .hero h2 {
+        font-size: 45px;
+        color: #fff;
+        font-family: HindiShiliguriBold;
+    }
+
+    .hero p {
+        color: #fff;
+        margin: 15px 0 0 0;
+        font-size: 20px;
+        line-height: 30px;
+        font-weight: normal;
+    }
+
+    .hero .btn-get-started {
+        margin-top: 50px;
+        transition: 0.5s;
+        box-shadow: 0px 6px 6px rgba(0, 0, 0, 16%);
+        font-size: 18px;
+        font-family: HindiShiliguriSemiBold;
+        padding: 13px 30px;
+    }
+
+    .hero .scaleImg {
+        transform: scale(1.5);
+    }
+
+    .hero .carousel-item {
+        width: 100%;
+        min-height: 640px;
+        height: auto;
+    }       
+
+        .hero .carousel-item .container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            margin: 0;
+        }
+
+    .hero .carousel-indicators {
+        margin-bottom: 1rem;
+    }
+
+        .hero .carousel-indicators [data-bs-target] {
+            width: 15px;
+            height: 15px;
+            border-bottom: 0px;
+            border-top: 0px;
+            border-radius: 50%;
+            background-color: #fff;
+            opacity: 1;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+            .hero .carousel-indicators [data-bs-target].active {
+                background-color: #F0532D;
+                opacity: 1;
+            }
+
+@media (max-width: 1140px) {
+    .hero .carousel-item {
+        min-height: 620px;
+    }
+
+    .hero h1 {
+        font-size: 50px;
+    }
+
+    .hero h2 {
+        font-size: 35px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        text-align: center;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+        .hero::before {
+            display: none;
+        }
+
+        .hero::after {
+            bottom: -80px;
+            right: -80px;
+        }
+
+        .hero .carousel-item .container {
+            padding: 10px;
+        }
+
+        .hero h1 {
+            font-size: 37px;
+            line-height: 45px;
+        }
+
+        .hero p {
+            font-size: 14px;
+            margin-top: 0px;
+        }
+
+        .hero h2 {
+            font-size: 28px;
+        }
+
+        .hero .btn-get-started {
+            margin-top: 10px;
+        }
+
+        .hero .carousel-indicators [data-bs-target] {
+            width: 11px;
+            height: 11px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+}
+
+
+/*--------------------------------------------------------------
+# Index Page
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+# Course Section Start
+--------------------------------------------------------------*/
+.course-home-section {
+    position: relative;
+    margin-bottom: 0px;
+    z-index: 1;
+}
+
+    .course-home-section .row {
+        row-gap: 30px;
+    }
+
+    .course-home-section::before {
+        background-image: url(../../media/Images/UDVASH/Common/courseBefore.png);
+        left: 0;
+        top: 0;
+        width: 1000px;
+        height: 480px;
+    }
+
+    .course-home-section::after {
+        background-image: url(../../media/Images/UDVASH/Common/courseafter.png);
+        right: 0;
+        bottom: 0;
+        width: 1000px;
+        height: 480px;
+    }
+
+    .course-home-section .options {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .course-home-section .custom-select {
+        position: absolute;
+        width: 31%;
+        margin-left: 3px;
+    }
+
+    .course-home-section .card .card-header, .course-home-section .card .card-header img {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        box-shadow: -5px 5px 19px rgb(22,22,22, 16%) !important;
+    }
+
+        .course-home-section .card .card-header img {
+            width: 100%;
+            min-height: 190px;
+        }
+
+    .course-home-section .card {
+        position: relative;
+        border-radius: 20px;
+        background: #fff;
+        min-width: -webkit-fill-available;
+        min-width: -moz-available;
+    }
+
+        .course-home-section .card.shadow {
+            box-shadow: -5px 5px 19px rgb(22,22,22, 16%) !important;
+        }
+
+        .course-home-section .card .card-body {
+            margin-bottom: 50px;
+        }        
+        .course-home-section .card .card-body h3 a {
+            color: #000000;
+            font-size: 22px;
+            font-family: "HindiShiliguriBold";
+            display: -webkit-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            min-height: 52px;
+            line-height: initial;
+        }
+            .course-home-section .card .card-body h3 a::after {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                content: ' ';
+            }
+
+        .course-home-section .card:hover .card-body h3 {
+            color: #1e059b;
+        }
+
+        .course-home-section .card .card-body ul {
+            padding-left: 25px;
+            font-family: "BalooDa2";
+            font-size: 17px;
+            color: #4A4A4A;
+        }
+
+        .course-home-section .card .card-footer {
+            background: #fff;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 0%);
+            width: 100%;
+        }
+
+            .course-home-section .card .card-footer .btn-enroll {
+                font-family: "LatoRegular";
+                font-size: 16px;
+                padding: 9.5px 15px;
+                width: 50%;
+                margin-left: 10px;
+            }
+
+            .course-home-section .card .card-footer .btn-details {
+                margin-right: 10px;
+                margin-left: 0px;
+            }
+
+        .course-home-section .card .card-body ul li::marker {
+            font-size: 23px !important;
+        }
+
+    .course-home-section .load-more {
+        position: relative;
+        min-width: 100%;
+        margin-top: -220px;
+        margin-bottom: -60px;
+        padding-bottom: 60px;
+    }
+
+    .course-home-section .btn-more {
+        color: #fff;
+        font-family: "HindiShiliguriSemiBold";
+        font-size: 18px;
+        padding: 10px 30px;
+    }
+
+        .course-home-section .btn-more .bi-chevron-down {
+            padding-left: 10px;
+        }
+
+    .course-home-section .course {
+        display: none;
+        padding: 0px 15px;
+    }
+
+        /*.course-home-section .course:nth-child(1), .course-home-section .course:nth-child(2), .course-home-section .course:nth-child(3),
+        .course-home-section .course:nth-child(4), .course-home-section .course:nth-child(5), .course-home-section .course:nth-child(6) {
+            display: flex;
+        }
+
+        .course-home-section .course:nth-child(7), .course-home-section .course:nth-child(8), .course-home-section .course:nth-child(9) {
+            display: flex;
+        }*/
+
+@media screen and (max-width: 1100px) {
+    .course-home-section .card .card-footer .btn-enroll {
+        padding: 9.5px 15px;
+    }
+
+    .course-home-section .options {
+        margin-bottom: 50px;
+    }
+
+    .course-home-section .custom-select {
+        width: 30%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .course-home-section::before {
+        width: 250px;
+        height: 200px;
+    }
+
+    .course-home-section::after {
+        z-index: -1;
+    }
+
+    .course-home-section .custom-select {
+        width: 100%;
+        position: relative;
+        margin-left: 0px;
+    }
+
+    .course-home-section .select-items {
+        position: initial;
+        border-radius: 26px;
+        margin-top: 0px;
+        margin-bottom: -50px;
+    }
+
+        .course-home-section .select-items div:nth-child(1) {
+            margin-top: 35px;
+        }
+
+    .course-home-section .custom-select {
+        margin-bottom: 30px;
+    }
+
+    .course-home-section h1 {
+        font-size: 30px;
+    }
+
+    .course-home-section .course:nth-child(11), .course-home-section .course:nth-child(12) {
+        display: none;
+    }
+
+    .course-home-section .card .card-footer .btn-enroll {
+        padding: 9.5px 10px;
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 460px) {
+    .course-home-section .options {
+        margin-bottom: 30px;
+    }
+}
+
+/*--------------------------------------------------------------
+# Course card Details Page Start
+--------------------------------------------------------------*/
+
+.course-details {
+    padding-bottom: 170px;
+    padding-top: 80px;
+}
+
+    .course-details .details-images {
+        transform: scale(1.5);
+    }
+
+    .course-details .content h1 {
+        color: #FFFF84;
+        font-size: 42px;
+        margin-bottom: 15px;
+        border-left: 5px solid;
+        padding-left: 15px;
+    }
+
+    .course-details .content p {
+        color: #fff;
+        font-size: 20px;
+        padding-left: 20px;
+        margin-bottom: 30px;
+    }
+
+    .course-details .btn-enroll {
+        font-family: "LatoRegular";
+    }
+
+.tab-section {
+    margin-top: -115px;
+    padding-bottom: 100px;
+}
+
+    .tab-section .content-title {
+        font-size: 30px;
+        padding-left: 10px;
+    }
+
+        .tab-section .content-title span {
+            font-size: 16px;
+        }
+
+    .tab-section .nav-pills .nav-item {
+        width: 30%;
+        padding-right: 0px;
+        background: linear-gradient(to bottom, #000000, #545454);
+        margin: 0px 5px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        margin-left: 0px;
+    }
+
+        .tab-section .nav-pills .nav-item .nav-link {
+            width: 100%;
+            color: #fff;
+            font-size: 21px;
+            font-family: LatoBold;
+        }
+
+    .tab-section .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        background: linear-gradient(to bottom, #FFFFFF, #DFDFDF);
+        width: 100%;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        color: #000;
+    }
+
+    .tab-section #pills-tabContent {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .tab-section .tab-pane {
+        transition: .3s;
+    }
+
+    .tab-section .accordion-item {
+        margin: 10px;
+    }
+
+    .tab-section p {
+        font-family: BalooDa2;
+        margin-bottom: 0px;
+        font-size: 18px;
+    }
+
+    .tab-section .download-routine-item {
+        position: relative;
+        width: 100%;
+        background-color: #F1F1F1;
+        border-radius: 26px !important;
+    }
+
+    .tab-section .download-routine-btn {
+        background-color: #0078FF !important;
+        color: #fff !important;
+        padding: 13px 20px;
+        border-radius: 26px !important;
+        font-size: 18px !important;
+        font-family: LatoRegular;
+        box-shadow: none;
+    }
+
+    .tab-section .accordion-button {
+        background: #E4E4E4;
+        color: #3B3849;
+        font-size: 25px;
+        font-family: HindiShiliguriBold;
+        box-shadow: none;
+    }
+
+        .tab-section .accordion-button::after {
+            background-color: #fff;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            background-size: 25px;
+            background-image: none;
+            content: "\f282";
+            font-family: bootstrap-icons !important;
+            color: #3B3849;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+    .tab-section .accordion-body {
+        font-family: BalooDa2;
+        font-size: 18px;
+    }
+
+    .tab-section .download-routine-item ul {
+        list-style: none;
+        padding-left: 0px;
+    }
+
+        .tab-section .download-routine-item ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .tab-section .download-routine-item ul li a::after {
+                content: "\f356";
+                font-family: bootstrap-icons !important;
+                right: 25px;
+                position: absolute;
+                transition: 0s;
+            }
+
+    .tab-section .btn-danger {
+        font-size: 18px;
+        font-family: LatoRegular;
+    }
+
+    .tab-section .download-routine-item ul li a {
+        width: 100%;
+        color: #242424;
+        font-size: 18px;
+        font-family: BalooDa2;
+        border-bottom: 1px solid gray;
+        padding: 10px 20px 10px 0px;
+        display: flex;
+        align-items: center;
+    }
+
+    .tab-section .download-routine-item .collapse:not(.show) > ul li a::after {
+        position: relative;
+    }
+
+
+
+.materials .card {
+    border-radius: 15px;
+    border: none;
+}
+
+    .materials .card h2 {
+        font-size: 22px;
+        font-family: HindiShiliguriSemiBold;
+        color: #262626;
+    }
+
+    .materials .card h6 {
+        font-size: 14px;
+        font-family: HindiShiliguriRegular;
+        color: #5E5E5E;
+    }
+
+.materials .card-header {
+    border-radius: 15px;
+    background-color: #fff;
+    padding: 10px 0px;
+}
+
+.materials .card-footer {
+    border-radius: 15px;
+    background-color: #fff;
+}
+
+    .materials .card-footer iframe {
+        height: 90vh;
+        width: 100%;
+    }
+
+.materials .card .btn-primary {
+    font-size: 13px;
+    font-family: HindSiliguriRegular;
+    padding: 10px 20px;
+    border: 0;
+}
+
+.materials .card-footer .modal .modal-body {
+    border: 5px solid #c1c1c1;
+    margin: 10px;
+}
+
+.materials .card-footer .modal .frameImage {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.materials .card-footer .modal .btn-close {
+    right: 8%;
+    top: -30px;
+    position: fixed;
+}
+
+    .materials .card-footer .modal .btn-close::after {
+        color: red;
+    }
+
+/**FAQ Tab Start**/
+.faq h2 {
+    color: #3A3A3A;
+    font-family: BalooDa2;
+    font-size: 30px;
+}
+
+.faq .accordion-item {
+    border: none;
+    margin: 10px 0px;
+}
+
+.faq .accordion-body {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: #f1f1f1;
+}
+
+.faq .collapsed {
+    border-radius: 10px !important;
+}
+
+.faq .accordion-button {
+    color: #3B3849;
+    font-size: 20px;
+    font-family: BalooDa2;
+    background-color: #E4E4E4;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+}
+
+    .faq .accordion-button[aria-expanded="true"] {
+        border-top-left-radius: 10px !important;
+        border-top-right-radius: 10px !important;
+    }
+
+    .faq .accordion-button:focus {
+        box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
+    }
+
+    .faq .accordion-button::after {
+        background-image: none;
+        background-color: transparent;
+        content: "";
+    }
+
+    .faq .accordion-button::after {
+        content: "\f2ea";
+        font-family: bootstrap-icons !important;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        margin-right: 0px;
+        border: 2px solid #3B3849;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #3B3849;
+    }
+
+.faq .collapsed::after {
+    content: "\f4fe";
+    font-family: bootstrap-icons !important;
+}
+
+@media screen and (max-width: 768px) {
+    .tab-section .accordion-item {
+        margin: 0px;
+        margin-bottom: 10px;
+    }
+
+    .tab-section #pills-tabContent {
+        padding: 10px;
+    }
+
+    .tab-section .download-routine-item {
+        width: 50%;
+    }
+
+    .tab-section .nav-pills .nav-item {
+        width: 30%;
+    }
+
+        .tab-section .nav-pills .nav-item .nav-link {
+            font-size: 12px;
+            padding: 7px 0px;
+        }
+
+    .tab-section .accordion-button {
+        font-size: 18px;
+    }
+
+    .course-details {
+        padding-top: 30px;
+        padding-bottom: 140px;
+    }
+
+        .course-details .images {
+            min-height: 30vh;
+        }
+
+        .course-details .content h1 {
+            font-size: 24px;
+        }
+
+        .course-details .content p {
+            font-size: 16px;
+        }
+
+    .tab-section .download-routine-item {
+        width: 100%;
+    }
+
+    .materials .card-footer iframe {
+        height: 80vh;
+    }
+
+    .faq .accordion-button {
+        font-size: 14px;
+    }
+
+    .faq .accordion-item {
+        margin-bottom: 10px;
+    }
+
+    .tab-section .content-title {
+        font-size: 20px;
+    }
+
+    .tab-section .accordion-body {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .tab-section p {
+        font-size: 14px;
+    }
+}
+/*--------------------------------------------------------------
+# success Section Start
+--------------------------------------------------------------*/
+.success-section {
+    position: relative;   
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+    .success-section .images img {
+        border-radius: 10px;
+    }
+
+    .success-section .carousel-indicators {
+        margin-bottom: -3rem;
+    }
+
+        .success-section .carousel-indicators [data-bs-target] {
+            width: 15px;
+            height: 15px;
+            border-bottom: 0px;
+            border-top: 0px;
+            border-radius: 50%;
+            background-color: #8E9DD8;
+            opacity: 1;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+            .success-section .carousel-indicators [data-bs-target].active {
+                background-color: #112780;
+                opacity: 1;
+                width: 50px;
+                border-radius: 8px;
+            }
+
+@media screen and (max-width: 768px) {
+    .success-section h1 {
+        font-size: 35px;
+    }
+
+    .success-section .carousel-indicators {
+        margin-bottom: -1.5rem;
+    }
+
+        .success-section .carousel-indicators [data-bs-target] {
+            width: 11px;
+            height: 11px;
+        }
+
+            .success-section .carousel-indicators [data-bs-target].active {
+                width: 40px;
+            }
+}
+
+/*--------------------------------------------------------------
+# Counter Section Start
+--------------------------------------------------------------*/
+.counter-section {
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+    .counter-section h2 {
+        padding: 15px 0px 10px 0px;
+        font-weight: 600;
+    }
+
+    .counter-section p {
+        font-size: 20px;
+    }
+
+    .counter-section img {
+        border-radius: 50%;
+        width: 130px;
+        height: 130px;
+    }
+    .counter-section .card {
+        border-radius: 20px;
+        margin: 0px 18px;
+        position: relative;
+        box-shadow: 3px 4px 0px #28363D;
+    }
+
+        .counter-section .card hr {
+            background-color: #28363D;
+            width: 27%;
+            height: 8px;
+            bottom: -1px;
+            left: 37%;
+            position: absolute;
+            opacity: 1;
+            margin-bottom: 0px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+    .counter-section .purecounter {
+        margin-left: 0px;
+    }
+
+@media screen and (max-width: 768px) {
+    .counter-section p {
+        font-size: 16px;
+    }
+
+    .counter-section img {
+        width: 84px;
+        height: 84px;
+    }
+}
+
+/*--------------------------------------------------------------
+# testimonial Section Start
+--------------------------------------------------------------*/
+.testimonial-section {
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+    .testimonial-section .row {
+        row-gap: 40px;
+    }
+
+    .testimonial-section .testmonial {
+        padding: 0px 20px;
+    }
+
+    .testimonial-section .card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        box-shadow: 0px 1px 10px rgb(0 0 0 / 13%);
+        border: 4px solid #B3C022;
+    }
+
+    .testimonial-section .card {
+        border-radius: 20px;
+        background-color: #FEFFF6;
+        box-shadow: inset 0px 3px 6px #B3C022;
+        position: relative;
+        height: 100%;
+    }    
+
+        .testimonial-section .card .card-body {
+            margin-bottom: 10px;
+        }
+
+            .testimonial-section .card .card-body .testRead {
+                color: #0094D0;
+                font-size: 18px;
+                position: absolute;
+                left: 50%;
+                bottom: 0;
+                transform: translate(-50%, -50%);
+            }
+
+        .testimonial-section .card .card-header {
+            background: transparent;
+        }
+
+        .testimonial-section .card hr {
+            background-color: #B3C022;
+            width: 60%;
+            height: 5px;
+            bottom: 0;
+            left: 20%;
+            position: absolute;
+            margin-bottom: 0px;
+        }
+
+        .testimonial-section .card .card-body h3 {
+            color: #000000;
+            font-size: 20px;
+            font-family: HindiShiliguriBold;
+        }
+
+        .testimonial-section .card .card-body h5 {
+            color: #000000;
+            font-size: 12px;
+            font-family: HindiShiliguriBold;
+        }
+
+        .testimonial-section .card .card-body h6 {
+            color: #B3C022;
+            font-size: 22px;
+            font-family: HindiShiliguriBold;
+        }
+
+    .testimonial-section .btn-more {
+        font-family: "HindiShiliguriSemiBold";
+        font-size: 18px;
+    }
+    .testimonial-section .testmonial .card::after {
+        position: absolute;
+        content: "";
+        width: 39px;
+        height: 50px;
+        top: 20px;
+        right: 20px;
+    }
+    .testimonial-section .udvash .card::after {
+        background: url(../../media/Images/UDVASH/Testimonial/udvashAfter.png);
+    }
+    .testimonial-section .unmesh .card::after {
+        background: url(../../media/Images/UDVASH/Testimonial/unmeshAfter.png);
+    }
+
+.testimonial-section .testmonial {
+    display: none;
+}
+
+    .testimonial-section .testmonial:nth-child(1), .testimonial-section .testmonial:nth-child(2), .testimonial-section .testmonial:nth-child(3) {
+        display: flex;
+    }
+
+.testimonialPage-section .testmonial {
+    display: none;
+}
+
+    .testimonialPage-section .testmonial:nth-child(1), .testimonialPage-section .testmonial:nth-child(2),
+    .testimonialPage-section .testmonial:nth-child(3), .testimonialPage-section .testmonial:nth-child(4),
+    .testimonialPage-section .testmonial:nth-child(5), .testimonialPage-section .testmonial:nth-child(6) {
+        display: flex;
+    }
+
+.single-line-testimonial {
+    background: none;
+}
+
+/*--------------------------------------------------------------
+# Testimonial Details Page Start
+--------------------------------------------------------------*/
+.testimonial-details {
+    position: relative;
+}
+
+    .testimonial-details h1 {
+        color: #580000;
+    }
+
+    .testimonial-details h3 {
+        color: #000;
+        font-family: HindiShiliguriBold;
+        font-size: 23px;
+    }
+
+    .testimonial-details h5, .testimonial-details h6 {
+        color: #B2BF21;
+        font-size: 21px;
+        font-family: HindiShiliguriRegular;
+    }
+
+    .testimonial-details p {
+        font-size: 18px;
+        font-family: BalooDa2;
+    }
+
+    .testimonial-details .profile img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid #B2BF21;
+    }
+
+    .testimonial-details .profile .text {
+        text-align: right;
+    }
+
+    .testimonial-details .video-gallery h3 {
+        font-size: 30px;
+        font-family: LatoBold;
+        color: #E9A900;
+        text-transform: capitalize;
+        margin-bottom: 20px;
+    }
+
+    .testimonial-details .video-gallery .video-gallery-img {
+        position: relative;
+    }
+
+@media screen and (max-width: 420px) {
+    .testimonial-section h1, .testimonial-details h1 {
+        font-size: 30px;
+    }
+
+    .testimonial-section .card .card-body p {
+        font-size: 16px;
+    }
+
+    .testimonial-section .testmonial .card img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .testimonial-section .testmonial {
+        padding: 0px 40px;
+    }
+}
+
+/*--------------------------------------------------------------
+# service Section Start
+--------------------------------------------------------------*/
+.service-section {
+    position: relative;
+    z-index: 1;
+}    
+
+    .service-section img {
+        width: 115px;
+        height: 110px;
+    }
+
+    .service-section p {
+        color: #333333;
+        font-size: 24px;
+        padding-top: 20px;
+        font-family: HindiShiliguriRegular;
+    }
+
+@media screen and (max-width: 420px) {
+    .service-section::before {
+        width: 250px;
+        height: 200px;
+    }
+
+    .service-section::after {
+        width: 300px;
+        height: 200px;
+    }
+
+    .service-section h1 {
+        font-size: 35px;
+    }
+
+    .service-section img {
+        width: 74px;
+        height: 72px;
+    }
+
+    .service-section p {
+        font-size: 16px;
+    }
+}
+
+/*--------------------------------------------------------------
+# HaselFree Section Start
+--------------------------------------------------------------*/
+.hasel-free-section {
+    position: relative;
+}  
+
+    .hasel-free-section h2 {
+        color: #F0532D;
+        font-size: 45px;
+        font-family: HindiShiliguriBold;
+    }
+
+    .hasel-free-section h1 {
+        font-size: 55px;
+    }
+
+    .hasel-free-section p {
+        color: #2B2B2B;
+        font-size: 18px;
+        font-family: HindiShiliguriRegular;
+        text-align: justify;
+    }
+
+    .hasel-free-section ul li {
+        color: #1E1E1E;
+        font-size: 20px;
+        font-family: HindiShiliguriRegular;
+    }
+
+        .hasel-free-section ul li::marker {
+            font-size: 23px;
+        }
+
+@media screen and (max-width: 768px) {
+    .hasel-free-section h1 {
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .hasel-free-section h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .hasel-free-section ul li {
+        font-size: 14px;
+    }
+
+        .hasel-free-section ul li::marker {
+            font-size: 16px;
+        }
+
+    .hasel-free-section p {
+        font-size: 14px;
+    }
+}
+
+/*--------------------------------------------------------------
+# easy written Section Start
+--------------------------------------------------------------*/
+.easy-written-section {
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+    .easy-written-section p {
+        color: #2B2B2B;
+        font-size: 18px;
+        font-family: HindiShiliguriRegular;
+        text-align: justify;
+    }
+
+    .easy-written-section h2 {
+        font-size: 45px;
+        font-family: HindiShiliguriBold;
+    }
+
+    .easy-written-section h1 {
+        font-size: 55px;
+    }
+
+@media screen and (max-width: 768px) {
+    .easy-written-section h1 {
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .easy-written-section h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .easy-written-section p {
+        font-size: 14px;
+    }
+}
+
+/*--------------------------------------------------------------
+# Video Section Start
+--------------------------------------------------------------*/
+.video-section {
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+    .video-section h2 {
+        font-family: HindiShiliguriBold;
+        text-align: center;
+        color: #F0532D;
+        font-size: 45px;
+    }
+    .video-section .images img {
+        border: 3px solid #05056a;
+        border-radius: 10px;
+        max-height: 425px;
+    }
+
+    .video-section .carousel-indicators {
+        margin-bottom: -2.5rem;
+    }
+
+        .video-section .carousel-indicators [data-bs-target] {
+            width: 15px;
+            height: 15px;
+            border-bottom: 0px;
+            border-top: 0px;
+            border-radius: 50%;
+            background-color: #fff;
+            opacity: 1;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+            .video-section .carousel-indicators [data-bs-target].active {
+                background-color: #F0532D;
+                opacity: 1;
+            }
+
+@media screen and (max-width: 768px) {
+    .video-section h2 {
+        padding-left: 0%;
+        font-size: 20px;
+    }
+
+    .video-section h1 {
+        font-size: 25px;
+    }
+
+    .video-section .carousel-indicators {
+        margin-bottom: -1.3rem;
+    }
+        .video-section .carousel-indicators [data-bs-target] {
+            width: 11px;
+            height: 11px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+}
+/*--------------------------------------------------------------
+# Routine Page Start
+--------------------------------------------------------------*/
+.routine-section .routine {
+    min-width: -webkit-fill-available;
+    min-width: -moz-available;
+    text-decoration: none;
+    background: linear-gradient(to right, #2e75b6, #2f5597);
+    color: #fff;
+    font-size: 25px;
+    min-height: 120px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-weight: bold;
+    padding: 15px;
+}
+
+    .routine-section .routine:hover {
+        color: #fff;
+        text-decoration: none;
+        background: linear-gradient(to left, #2e75b6, #2f5597);
+    }
+
+    .routine-section .routine span {
+        display: block;
+        text-align: center;
+    }
+
+.routine-section h2 span {
+    color: #002060;
+    display: block;
+    text-align: center;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+    font-size: 40px;
+    line-height: 60px;
+    font-family: HindiShiliguriBold;
+}
+
+.routine-section h3 {
+    font-size: 40px;
+    color: #2d057a;
+}
+
+.routine-section h4 {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+@media screen and (max-width:768px) {
+    .routine-section h2 span {
+        font-size: 20px;
+        line-height: 40px;
+    }
+
+    .routine-section h4 {
+        font-size: 18px;
+    }
+}
+/*--------------------------------------------------------------
+# Branch Page Start
+--------------------------------------------------------------*/
+
+    .branch-section h1 {
+        font-size: 40px;
+        color: #fff;
+    }
+
+    .branch-section a {
+        color: #000;
+    }
+
+    .branch-section .branch-select .selectize-input,
+    .branch-section .branch-select .selectize-input.input-active {
+        min-width: 200px;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+        .branch-section .branch-select .selectize-input input {
+            color: #fff;
+        }
+
+    .branch-section .branch-select .selectize-control.single .selectize-input input::placeholder {
+        color: #FFFFFF;
+        opacity: 50%;
+    }
+
+    .branch-section .branch-select .selectize-input,
+    .branch-section .branch-select .selectize-input.input-active {
+        color: #fff;
+        background: transparent;
+        box-shadow: none;
+        border: 2px solid #fff;
+        border-radius: 26px;
+    }
+
+    .branch-section .branch-select .selectize-control.single .selectize-input.dropdown-active {
+        border-radius: 0px;
+        border-top-left-radius: 26px;
+        border-top-right-radius: 26px;
+    }
+
+    .branch-section .branch-select .selectize-control.single .selectize-input:after {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        border: none;
+        right: 25px;
+        top: 10px;
+    }
+
+    .branch-section .branch-select .selectize-control.single .selectize-input.dropdown-active:after {
+        top: 11px;
+        right: 25px;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        border: none;
+    }
+
+    .branch-section .branch-select .selectize-input::after {
+        content: "\f52a";
+        font-family: bootstrap-icons !important;
+    }
+
+    .branch-section .branch-select .selectize-dropdown.single {
+        top: 36px !important;
+        border-radius: 0px;
+        border-bottom-left-radius: 26px;
+        border-bottom-right-radius: 26px;
+    }
+
+    .branch-section .branch-select .selectize-dropdown .selectize-dropdown-content {
+        max-height: 300px;
+        overflow: auto;
+    }
+
+        .branch-section .branch-select .selectize-dropdown .selectize-dropdown-content .option {
+            padding: 10px;
+            margin: 10px 0px;
+        }
+
+    .branch-section label {
+        color: #fff;
+        font-size: 30px;
+        font-weight: 600;
+        margin-right: 15px;
+    }
+
+    .branch-section .card {
+        border-radius: 20px;
+        min-width: -webkit-fill-available;
+        min-width: -moz-available;
+    }
+
+        .branch-section .card .card-body {
+            display: grid;
+        }
+
+        .branch-section .card .phoneNo a:nth-child(1) {
+            display: none;
+        }
+
+        .branch-section .card .phoneNo .number::before {
+            content: "\f5b4";
+            font-family: bootstrap-icons !important;
+            color: #fff;
+            border-radius: 50%;
+            margin-right: 5px;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .branch-section .card .phoneNo .number {
+            font-family: HindiShiliguriRegular;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .branch-section .card .card-body h1 {
+            font-size: 20px;
+            color: #000000;
+            margin-bottom: 0px;
+        }
+
+    .branch-section .centerArrow img {
+        width: 30px;
+    }
+
+.branch-details {
+    padding: 25px 0px;
+}
+
+    .branch-details h2 {
+        margin-bottom: 0px;
+    }
+
+.branch-details-view {
+    background: #E0E0E0;
+}
+
+    .branch-details-view .address span::before {
+        content: "\f3e7";
+        font-family: bootstrap-icons !important;
+        color: #fff;
+        border-radius: 50%;
+        padding: 5px;
+        margin-right: 5px;
+    }
+
+    .branch-details-view .card .phoneNo {
+        display: flex;
+    }
+
+        .branch-details-view .card .phoneNo .number {
+            font-family: HindiShiliguriRegular;
+            font-size: 18px;
+            color: #000;
+            display: flex;
+            align-items: center;
+        }
+
+            .branch-details-view .card .phoneNo .number:first-child {
+                margin-right: 10px;
+            }
+
+            .branch-details-view .card .phoneNo .number::before {
+                content: "\f5b4";
+                font-family: bootstrap-icons !important;
+                color: #fff;
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                display: flex;
+                justify-content: center;
+                margin-right: 5px;
+            }
+
+    .branch-details-view .btn-back {
+        padding: 8px 30px;
+        font-size: 18px;
+        font-family: LatoBold;
+        border: none;
+    }
+
+@media screen and (max-width:768px) {
+    .branch-section .custom-select {
+        width: 50%;
+    }
+
+    .branch-section h1 {
+        font-size: 18px;
+    }
+}
+.footer-section {
+    padding: 50px 0px 0px;
+}
+
+    .footer-section ul {
+        list-style: none;
+        padding-left: 0px;
+    }
+
+    .footer-section h4 {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .footer-section ul li a {
+        color: #fff;
+        line-height: 35px;
+        font-size: 14px;
+        font-family: HindiShiliguriRegular;
+    }
+
+        .footer-section ul li a:hover {
+            color: #89affa;
+        }
+
+    .footer-section p {
+        font-size: 14px;
+        font-family: HindiShiliguriRegular;
+        color: #fff;
+    }
+
+    .footer-section .media a {
+        padding-right: 12px;
+    }

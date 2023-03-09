@@ -33,6 +33,19 @@
                         <a href="{{ route('admin.batches.index') }}" class="btn btn-sm btn-dark">Back</a>
                     </div>
                     <div class="card-body">
+
+                        <div>
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                        </div>
+
                         <div class="row">
                             <div class="form-group">
                                 <input type="hidden" name="batch_id" id="batchId">
@@ -44,15 +57,15 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="form-group col-md-6">
                                 <label for="subject_id"> <b>Select Subjects</b> <span style="color: red">*</span></label>
-                                <select name="subject_id[]" class="multi-subject form-control @error('subject_id') is-invalid @enderror" multiple="multiple" id="mySelect2">
-                                    <option value="0">
-                                        All Subject
-                                    </option>
+                                <select name="subject_id[]" class="multi-subject form-control @error('subject_id') is-invalid @enderror"
+                                    multiple="multiple" id="subject_id">
+                                    <option value="0"> All Subject </option>
                                     @forelse ($subjects as $subject)
-                                        <option value="{{ $subject->id }}" {{ old('subject_id') === $subject->id ? 'selected' : '' }}>
+                                        <option value="{{ $subject->id }}"
+                                            @if (old("subject_id")){{ (in_array($subject->id, old("subject_id")) ? "selected":"") }}@endif>
                                             {{ $subject->name }}
                                         </option>
                                     @empty
@@ -66,39 +79,119 @@
                                 @enderror
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="batch_fee"><b>Batch fee</b> <span style="color: red">*</span></label>
-                                <input type="number" class="form-control my-1" id="batch_fee" value="{{ old('batch_fee') }}"  name="batch_fee" placeholder="Enter Batch Fee" >
-                                @error('batch_fee')
+                                <label for="initial_amount"><b>Initial Batch Fee</b> <span style="color: red">*</span></label>
+                                <input type="number" readonly class="form-control my-1" id="initial_amount"
+                                    value="{{ old('initial_amount') }}"  name="initial_amount">
+                                @error('initial_amount')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div class="row mt-2">
+                            <div class="col-12 mb-2">
+                                <div class="form-group">
+                                    <label><b>Adjustment</b></label>
+                                    <input class="form-check-input " type="checkbox" id="adjustment-btn" value="">
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="form-group adjustment" style="display: none">
+                                    <label><b>Adjustment Type <span style="color: red">*</span></b></label>
+                                    <select class="form-control" id="adjustment_type" name="adjustment_type"
+                                            onchange="adjustmentBalanceCount()">
+                                        <option value="" selected>--Select--</option>
+                                        <option value="1" @if (old('adjustment_type') == "1") {{ 'selected' }} @endif>Addition</option>
+                                        <option value="2" @if (old('adjustment_type') == "2") {{ 'selected' }} @endif>Subtraction</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="form-group adjustment" style="display: none">
+                                    <label><b>Adjustment Balance <span style="color: red">*</span></b></label>
+                                    <input type="number" name="adjustment_balance" id="adjustment_balance"
+                                           class="form-control " value="{{ old('adjustment_balance') }}" placeholder="0.00"
+                                           onkeyup="adjustmentBalanceCount()">
+                                    @error('adjustment_balance')
+                                    <span class="text-danger" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label><b>Final Balance </b><span class="text-danger" style="color: red">*</span></label>
+                                    <input type="hidden" value="" id="amount_balance">
+                                    <input type="number" name="total_amount" id="total_amount" class="form-control "
+                                           value="{{old('total_amount')}}" placeholder="0.00" readonly >
+                                    @error('total_amount')
+                                    <span class="text-danger" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-2 adjustment" style="display: none">
+                                <label for="description"><b>Adjustment Cuase <span style="color: red">*</span></b></label>
+                                <textarea name="adjustment_cause" class="form-control" id="adjustment_cause" rows="4">
+                                    {{ old('adjustment_cause') }}
+                                </textarea>
+                                @error('adjustment_cause')
+                                <span class="text-danger" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
                             <div class="form-group col-md-6">
-                                <label for="start_time"><b>Start Date</b> <span style="color: red">*</span></label>
-                                <input type="date" name="start_date" class="form-control" placeholder="Start Time" value="{{ old('start_time') }}">
-                                @error('start_time')
+                                <label for="start_date"><b>Start Date</b> <span style="color: red">*</span></label>
+                                <input type="date" name="start_date" class="form-control" placeholder="Start Time"
+                                    value="{{ old('start_date') }}">
+                                @error('start_date')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="end_time"><b>End Date</b> <span style="color: red">*</span></label>
-                                <input type="date" name="end_date" class="form-control" placeholder="End Time" value="{{ old('end_time') }}">
-                                @error('end_time')
+                                <label for="end_date"><b>End Date</b> <span style="color: red">*</span></label>
+                                <input type="date" name="end_date" class="form-control" placeholder="End Time"
+                                    value="{{ old('end_date') }}">
+                                @error('end_date')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label for="description"><b>Batch Note</b></label>
-                            <textarea name="note" class="form-control" id="note" rows="10"></textarea>
-                            @error('note')
-                            <span class="text-danger" role="alert">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mt-3">
+                                    <label for="description"><b>Batch Note</b></label>
+                                    <textarea name="note" class="form-control" id="note" rows="10"></textarea>
+                                    @error('note')
+                                    <span class="text-danger" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                            @enderror
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mt-3">
+                                    <label for="image"><b>Batch Image<span style="color: red">*</span></b></label>
+                                        <input type="file" id="image" name="image"
+                                               class="dropify form-control @error('image') is-invalid @enderror" required>
+                                        @error('image')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group mt-3">
@@ -112,28 +205,103 @@
     <div class="mb-5"></div>
 
     @push('js')
-        {{-- Select2 CDN --}}
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('.multi-subject').select2();
-                $('#subject_id').on('change', function () {
-                    let val = $('#subject_id').val();
-                    console.log(val);
-                    if (val == 0) {
-                        $('#subject_id').attr('disabled', true);
-                    } else {
-                        $('#subject_id').attr('disabled', false);
-                    }
-                })
-            ;})
-
-
-        </script>
-
-
         {{-- Ckeditor5 --}}
         <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
+        {{-- Select2 CDN --}}
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
+                integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
+                crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('.dropify').dropify();
+            });
+        </script>
+
+        <script>
+            $('.multi-subject').select2();
+            $(document).on("change", "#subject_id", function () {
+                let value = $(this).val();
+                console.log(value.includes("0"))
+                if(value.includes("0")){
+                    $(this).empty();
+                    $(this).append('<option selected value="0">All Subject</option>');
+                }
+                if(value == ''){
+                    $("#subject_id").empty();
+                    $.ajax({
+                        url: "{{ route('admin.batch.getAllSubject') }}",
+                        type: 'get',
+                        success: function(response) {
+                            $("#subject_id").append('<option value="0">All Subject</option>');
+                            $.each(response, function(key, value) {
+                                $("#subject_id").append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                }
+
+
+                // Batch Fee
+                let subject_id = $(this).val();
+                $.ajax({
+                    url: "{{ route('admin.batch.getSubjectFee') }}",
+                    type: 'get',
+                    data: { subjectId: subject_id},
+                    success: function(response) {
+                        console.log(response);
+                        let balance = 0;
+                        if(response.status == true){
+                            let result = response.data;
+                            for(let i=0; i<result.length; i++){
+                                balance+= parseFloat(result[i].fee)
+                            }
+                        }
+                        else if(response.status == 'fee'){
+                            balance = response.data;
+                        }
+                        else{
+                            balance = 0;
+                        }
+                        $("#initial_amount").val(balance);
+                        $("#total_amount").val(balance);
+                    }
+                });
+            });
+
+            $(document).on("click", "#adjustment-btn", function () {
+                if ($('#adjustment-btn').is(":checked"))
+                    $(".adjustment").show();
+                else
+                    $(".adjustment").hide();
+                $('#adjustment_balance').val(0);
+                adjustmentBalanceCount();
+            });
+
+             // Adjustment Balance Count
+            function adjustmentBalanceCount() {
+                var adjustmentType    = document.getElementById('adjustment_type').value;
+                var initialAmount     = document.getElementById('initial_amount').value;
+                var adjustmentBalance = document.getElementById('adjustment_balance').value;
+                $("#total_amount").val(initialAmount);
+                var totalBalance = document.getElementById('total_amount').value;
+
+                if (adjustmentType == 1) {
+                    if (adjustmentBalance) {
+                        var finalBalance = parseFloat(totalBalance) + parseFloat(adjustmentBalance);
+                        $("#total_amount").val(finalBalance);
+                    }
+                } else if (adjustmentType == 2) {
+                    if (adjustmentBalance) {
+                        var finalBalance = totalBalance - adjustmentBalance;
+                        $("#total_amount").val(finalBalance);
+                    }
+                }
+            }
+        </script>
+
         <script>
             ClassicEditor
                 .create(document.querySelector('#note'), {

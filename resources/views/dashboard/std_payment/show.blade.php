@@ -8,18 +8,20 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Payment Information</p>
-            <a href="{{ route('admin.student.payment',$details->std_id ) }}" class="btn btn-sm btn-info">Back</a>
+            @can('payment_manage')
+                <a href="{{ route('admin.student.payment',$details->std_id ) }}" class="btn btn-sm btn-info">Back</a>
+            @endcan
         </div>
         <div class="card-body">
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
+                <thead style="text-align: center">
                 <tr>
                     <th scope="col">Student Name</th>
                     <th scope="col">Month of The Payment</th>
                     <th scope="col">Payment Type</th>
                     <th scope="col">Check Number</th>
-                    <th scope="col">Extra Amount</th>
-                    <th scope="col">Discount Amount</th>
+                    <th scope="col">Adjustment Type</th>
+                    <th scope="col">Adjustment Balance</th>
                     <th scope="col">Total Amount</th>
                     <th scope="col">Account Number</th>
                     <th scope="col">Payment Date</th>
@@ -42,17 +44,19 @@
                     @endif
                 </td>
                 <td>
-                    @if($details->additional_amount == Null)
+                    @if($details->adjustment_type == Null)
                         {{"--"}}
-                    @else
-                        {{$details->additional_amount}}
+                    @elseif($details->adjustment_type == 1)
+                        {{"Addition"}}
+                    @elseif($details->adjustment_type == 2)
+                        {{"Subtraction"}}
                     @endif
                 </td>
                 <td>
-                    @if($details->discount_amount == Null)
+                    @if($details->adjustment_balance == Null)
                         {{"--"}}
                     @else
-                        {{$details->discount_amount}}
+                        {{$details->adjustment_balance}}
                     @endif
                 </td>
                 <td>{{$details->total_amount}}</td>

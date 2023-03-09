@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AccountController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:payment_manage');
+    }
+
     public function getlist(Request $request){
         try {
             if($request->ajax()){
@@ -82,30 +88,30 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'account_no' => 'required|string',
-            'account_holder' => 'required|string',
-            'bank_name' => 'required|string',
-            'branch_name' => 'required|string',
+            'account_no'      => 'required|string',
+            'account_holder'  => 'required|string',
+            'bank_name'       => 'required|string',
+            'branch_name'     => 'required|string',
             'initial_balance' => 'required|integer',
         ]);
 
         DB::beginTransaction();
         try {
-//            dd($request->all());
             $account = new Account();
-            $account->account_no = $request->account_no;
+            $account->account_no     = $request->account_no;
             $account->account_holder = $request->account_holder;
-            $account->bank_name = $request->bank_name;
-            $account->branch_name = $request->branch_name;
-            $account->description = $request->description;
-            $account->created_by = Auth::user()->id;
+            $account->bank_name      = $request->bank_name;
+            $account->branch_name    = $request->branch_name;
+            $account->description    = $request->description;
+            $account->created_by     = Auth::user()->id;
             $account->save();
 
             $transaction = new Transaction();
-            $transaction->date = Carbon::now();
+            $transaction->date       = Carbon::now();
             $transaction->account_id = $account->id;
             $transaction->transaction_type = 3;
-            $transaction->amount = $request->initial_balance;
+            $transaction->payment_type = '---';
+            $transaction->amount     = $request->initial_balance;
             $transaction->updated_by = Auth::user()->id;
             $transaction->save();
 
@@ -132,21 +138,22 @@ class AccountController extends Controller
 
     public function update(Request $request, $id)
     {
+        dd($request->all());
         $request->validate([
-            'account_no' => 'required|string',
+            'account_no'     => 'required|string',
             'account_holder' => 'required|string',
-            'bank_name' => 'required|string',
-            'branch_name' => 'required|string',
+            'bank_name'      => 'required|string',
+            'branch_name'    => 'required|string',
         ]);
 
         try {
             $account =  Account::findOrFail($request->id);
-            $account->account_no = $request->account_no;
+            $account->account_no     = $request->account_no;
             $account->account_holder = $request->account_holder;
-            $account->bank_name = $request->bank_name;
-            $account->branch_name = $request->branch_name;
-            $account->description = $request->description;
-            $account->updated_by = Auth::user()->id;
+            $account->bank_name      = $request->bank_name;
+            $account->branch_name    = $request->branch_name;
+            $account->description    = $request->description;
+            $account->updated_by     = Auth::user()->id;
             $account->save();
             return redirect()->route('admin.account.index')->with('t-success','account updated successfully');
         } catch (\Exception $e) {
@@ -196,5 +203,16 @@ class AccountController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', '$e');
         }
+    }
+
+    public function print(){
+        $accounts = Account::get();
+        return view('dashboard.account.print', compact('accounts') );
+    }
+
+    public function pdf(){
+        $accounts = Account::get();
+        $pdf = PDF::loadView('dashboard.account.pdf', compact('accounts') );
+        return $pdf->download('Account List.pdf');
     }
 }

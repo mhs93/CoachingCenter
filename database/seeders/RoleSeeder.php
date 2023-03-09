@@ -1,19 +1,12 @@
 <?php
 
 namespace Database\Seeders;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $giveAllPermission = Permission::all();
@@ -27,18 +20,17 @@ class RoleSeeder extends Seeder
             'name' => 'Teacher',
             'guard_name' => 'web',
         ])->givePermissionTo(['attendance_manage','student_attendance','attendance_report','subject_list',
-            'batches_manage','student_list','teacher_list','routine_list','routine_modify','attendance_manage',
-            'student_attendance','attendance_report','exam_list','exam_modify','announcement_manage',
-            'announcement_list','specialClass_list','specialClass_manage','resources_list','resource_upload',
-            'resource_manage']);
+            'batches_list','student_list','teacher_list','routine_list','routine_modify','attendance_manage',
+            'student_attendance','attendance_report','exam_list','exam_modify','announcement_modify',
+            'announcement_list','specialClass_list','specialClass_modify','resources_list','resource_upload',
+            'resource_manage','payment_list_teacher']);
         Role::updateOrCreate([
             'id' => 3,
             'name' => 'Student',
             'guard_name' => 'web',
-        ])->givePermissionTO(['attendance_manage','attendance_report','subject_list','batches_manage',
-            'student_list','teacher_list','routine_list','attendance_manage','attendance_report',
+        ])->givePermissionTO(['attendance_report','routine_list','attendance_manage','attendance_report',
             'exam_list','announcement_list','specialClass_list','resources_list','resource_upload',
-            ]);
+            'payment_list_student']);
 
         Role::updateOrCreate([
             'id' => 4,

@@ -45,8 +45,13 @@
             @endcan
         </div>
         <div class="card-body">
+
+            {{--<div style="text-align: center">--}}
+                {{--<a class="btn btn-outline-dark" href="{{route('admin.exams.print')}}" title="print">PDF</a>--}}
+            {{--</div>--}}
+
             <table id="table" class="table table-bordered data-table" style="width: 100%">
-                <thead>
+                <thead style="text-align: center">
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
@@ -58,7 +63,7 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align: center">
                 </tbody>
             </table>
         </div>

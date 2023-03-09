@@ -152,7 +152,7 @@
 									<th> SN </th>
 									<th> Date </th>
 									<th> Name </th>
-									<th> Regitration No. </th>
+									<th> Registration No. </th>
 									<th> Contact  </th>
 									<th> Batch </th>
 									<th> Status </th>

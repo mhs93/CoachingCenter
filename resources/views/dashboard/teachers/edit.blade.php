@@ -49,7 +49,7 @@
                     <div class="card-body">
 
                         <div class="form-group">
-                            <label for="name"><b>Name</b> </label>
+                            <label for="name"><b>Name <span style="color: red">*</span></b> </label>
                             <input type="text" name="name" id="name"
                                 class="form-control @error('name') is-invalid @enderror" value="{{ $teacher->name }}">
                             @error('name')
@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="email"><b>Email Address</b></label>
+                            <label for="email"><b>Email Address <span style="color: red">*</span></b></label>
                             <input type="email" name="email" id="email"
                                 class="form-control @error('email') is-invalid @enderror" value="{{ $teacher->email }}">
                             @error('email')
@@ -76,8 +76,9 @@
                         @endphp
 
                         <div class="form-group mt-3 ">
-                            <label for="subject_id"><b>Select subject</b></label>
-                            <select name="subject_id[]" class="multi-subject form-control @error('subjects') is-invalid @enderror" multiple="multiple" id="mySelect2">
+                            <label for="subject_id"><b>Select subject <span style="color: red">*</span></b></label>
+                            <select name="subject_id[]" class="multi-subject form-control @error('subjects') is-invalid @enderror"
+                                multiple="multiple" id="subject_id">
                                 <option value="0"
                                     @if (in_array("0", $subjectIds))
                                         selected
@@ -105,8 +106,57 @@
                             @enderror
                         </div>
 
+                        <div class="form-group mt-3">
+                            <label for="reference"><b>Reference </b></label>
+                            <textarea type="text" name="reference" id="reference"
+                                   class="form-control @error('reference') is-invalid @enderror">
+                                {!! $teacher->reference !!}
+                            </textarea>
+                            @error('reference')
+                            <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="id_number"><b>ID Number <span style="color: red">*</span></b></label>
+                            <input type="text" name="id_number" id="id_number"
+                                      class="form-control @error('id_number') is-invalid @enderror"
+                                      value="{{ $teacher->id_number }}">
+                            @error('id_number')
+                            <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="qualification"><b>Qualification <span style="color: red">*</span></b></label>
+                            <input type="text" name="qualification" id="qualification"
+                                      class="form-control @error('qualification') is-invalid @enderror"
+                                      value="{{ $teacher->qualification }}">
+                            @error('qualification')
+                            <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="monthly_salary"><b>Salary<span style="color: red">*</span></b></label>
+                            <input type="text" name="monthly_salary" id="monthly_salary"
+                                class="form-control @error('monthly_salary') is-invalid @enderror"
+                                value="{{ $teacher->monthly_salary }}">
+                            @error('monthly_salary')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
                         <div class="form-group mt-3 ">
-                            <label for="gender"><b>Gender</b></label>
+                            <label for="gender"><b>Gender <span style="color: red">*</span></b></label>
                             <select name="gender" id="gender" value="{{ $teacher->gender }}"
                                 class="form-select @error('gender') is-invalid @enderror">
                                 <option>--Select gender--</option>
@@ -121,7 +171,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="contact_number"><b>Contact Number</b></label>
+                            <label for="contact_number"><b>Contact Number <span style="color: red">*</span></b></label>
                             <input type="text" name="contact_number" id="contact_number"
                                 class="form-control @error('contact_number') is-invalid @enderror"
                                 value="{{ $teacher->contact_number }}">
@@ -133,7 +183,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="current_address"><b>Current Address</b></label>
+                            <label for="current_address"><b>Current Address <span style="color: red">*</span></b></label>
                             <textarea name="current_address" id="current_address" rows="3"
                                 class="form-control @error('current_address') is-invalid @enderror"> {{ $teacher->current_address }}</textarea>
                             @error('current_address')
@@ -144,7 +194,7 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="permanent_address"><b>Permanent Address</b></label>
+                            <label for="permanent_address"><b>Permanent Address <span style="color: red">*</span></b></label>
                             <textarea name="permanent_address" id="permanent_address" rows="3"
                                 class="form-control @error('permanent_address') is-invalid @enderror">{{ $teacher->current_address }}</textarea>
                             @error('permanent_address')
@@ -199,11 +249,7 @@
     @push('js')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
             integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script>
-            $(document).ready(function() {
-                $('.dropify').dropify();
-            });
+            crossorigin="anonymous" referrerpolicy="no-referrer">
         </script>
 
         {{-- Select2 CDN --}}
@@ -212,6 +258,34 @@
             $(document).ready(function() {
                 $('.multi-subject').select2();
             });
+
+            $(document).ready(function() {
+                $('.dropify').dropify();
+            });
+
+            $(document).on("change", "#subject_id", function () {
+                let value = $(this).val();
+                console.log(value.includes("0"))
+                if(value.includes("0")){
+                    $(this).empty();
+                    $(this).append('<option selected value="0">All Subject</option>');
+                }
+                if(value == ''){
+                    $("#subject_id").empty();
+                    $.ajax({
+                        url: "{{ route('admin.batch.getAllSubject') }}",
+                        type: 'get',
+                        success: function(response) {
+                            $("#subject_id").append('<option value="0">All Subject</option>');
+                            $.each(response, function(key, value) {
+                                $("#subject_id").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
         </script>
 
         {{-- Ckeditor5 --}}

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use App\Models\User;
 use App\Models\Batch;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,16 +14,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AnnouncementController extends Controller
 {
-    /**
-     * Get all announcement lists
-     *
-     * @return void
-     */
+    public function __construct()
+    {
+        $this->middleware('can:announcement_modify')->except(['getList','index','show']);
+    }
 
     public function getList()
     {
         try {
-
             $user = User::findOrFail(Auth::id());
             if($user->type == '0'){
                 $data = Announcement::select('id', 'batch_id', 'title', 'status')
@@ -38,7 +38,6 @@ class AnnouncementController extends Controller
                     $student = Student::where('id', $user->student_id)->first();
                     $data = Announcement::select('id', 'batch_id', 'title', 'status')
                             ->orderBy('id', 'DESC')
-                            // ->orWhere('batch_id', 0)
                             ->get();
                     $announcement = [];
                     foreach($data as $item){
@@ -72,7 +71,6 @@ class AnnouncementController extends Controller
                     }else{
                         $batches='';
                     }
-                    // Remove last 2 elements from the $batchSubs string
                     $batchSubs = substr($batchSubs, 0, -2);
                     return $batchSubs;
                 })
@@ -89,7 +87,7 @@ class AnnouncementController extends Controller
                         return $button;
                     }else{
                         if ($data->status == 1) {
-                            return '<div class="form-check form-switch">
+                            return '<div class="form-check form-switch" >
                                        <input type="checkbox" class="form-check-input" onclick="return false;"  checked />
                                     </div>';
                         }else{
@@ -103,7 +101,8 @@ class AnnouncementController extends Controller
                 ->addColumn('action', function ($data) {
 
                     if (Auth::user()->can('announcement_manage')){
-                        $showButton = '<a href="' . route('admin.announcements.show', $data->id) . '" class="btn btn-sm btn-info" title="Show"><i class=\'bx bxs-low-vision\'></i></a>';
+                        $showButton = '<a onclick="showDetailsModal(' . $data->id . ')" class="btn btn-sm btn-info"><i class=\'bx bxs-low-vision\'></i></a>';
+
                     }else{
                         $showButton = '';
                     }
@@ -113,11 +112,16 @@ class AnnouncementController extends Controller
                         $editButton = '';
                     }
                     if (Auth::user()->can('announcement_manage')){
+                        $sms = '<a href="' . route('admin.announcements.sms', $data->id) . '" class="btn btn-sm btn-info" title="SMS"><i class=\'bx bxs-chat\'></i></a>';
+                    }else{
+                        $sms = '';
+                    }
+                    if (Auth::user()->can('announcement_manage')){
                         $deleteButton = '<a class="btn btn-sm btn-danger text-white" onclick="showDeleteConfirm(' . $data->id . ')" title="Delete"><i class="bx bxs-trash"></i></a>';
                     }else{
                         $deleteButton = '';
                     }
-                    return '<div class = "btn-group">'.$showButton.$editButton.$deleteButton.'</div>';
+                    return '<div class = "btn-group">'.$showButton.$editButton.$sms.$deleteButton.'</div>';
                 })
                 ->rawColumns(['action', 'status', 'batch_id'])
                 ->make(true);
@@ -169,7 +173,6 @@ class AnnouncementController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         $this->validate($request, [
             'batch_id'    => 'required',
             'title'       => 'required|string',
@@ -203,29 +206,34 @@ class AnnouncementController extends Controller
      * @param  \App\Models\Announcement  $announcement
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+
+    public function show(Announcement $announcement)
     {
         try {
-            $announcement = Announcement::findOrFail($id);
             $subjectIds = json_decode($announcement->batch_id);
             $batchSubs= '';
             if(in_array("0", $subjectIds)){
-                // $subjects = Batch::get(['id','name']);
-                $bathces = Batch::all();
-                foreach($bathces as $key=>$item) {
-                    $batchSubs .= $item->name.", ";
-                }
+                $batchSubs = "All Batch, ";
             }else{
                 $bathces = Batch::whereIn('id',$subjectIds)->get(['id','name']);
                 foreach($bathces as $key=>$item) {
                     $batchSubs .= $item->name.", ";
                 }
             }
-            // Remove last 2 elements from the $batchSubs string
             $batchSubs = substr($batchSubs, 0, -2);
-            return view('dashboard.announcements.show', compact('announcement', 'bathces', 'batchSubs'));
+
+            $array = [
+                'announcement' => $announcement,
+                'batchSubs'    => $batchSubs
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data' => $array,
+                'message' => 'Announcement Get Data Successfully.',
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', '$e');
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -329,5 +337,25 @@ class AnnouncementController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function getAllBatch(){
+        return Batch::get();
+    }
+
+    public function getAllSubject(){
+        return Subject::get();
+    }
+
+    public function print(){
+        $announcements = Announcement::get();
+        // dd($batches);
+        return view('dashboard.announcements.print', compact('announcements') );
+    }
+
+    public function pdf(){
+        $announcements = Announcement::get();
+        $pdf = PDF::loadView('dashboard.announcements.pdf', compact('announcements') );
+        return $pdf->download('Announcement List.pdf');
     }
 }

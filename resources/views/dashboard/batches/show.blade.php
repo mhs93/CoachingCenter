@@ -8,7 +8,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <p class="m-0">Batch Information</p>
             <a href="{{ route('admin.batches.index') }}" class="btn btn-sm btn-dark">Back</a>
-        </div>
+        </div> 
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
@@ -26,10 +26,7 @@
                                 <td>Status</td>
                                 <td>{{ $batch->status ? 'Active' : 'Dead' }}</td>
                             </tr>
-                            <tr>
-                                <td>Batch Fee</td>
-                                <td>{{ $batch->batch_fee }}</td>
-                            </tr>
+
                             <tr>
                                 <td>Start Date</td>
                                 <td>{{ $batch->start_date }}</td>
@@ -38,6 +35,34 @@
                                 <td>End Date</td>
                                 <td>{{ $batch->end_date }}</td>
                             </tr>
+
+                            <tr>
+                                <td>Initial Batch Fee</td>
+                                <td>{{ $batch->initial_amount }}</td>
+                            </tr>
+
+                            @if ($balance)
+                                <tr>
+                                    <td>Adjustment Balance</td>
+                                    <td>{{ $batch->adjustment_balance }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Adjustment Type</td>
+                                    <td>{{ $batch->adjustment_type }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Adjustment Cause</td>
+                                    <td>{{ $batch->adjustment_cause }}</td>
+                                </tr>
+                            @endif
+
+                            <tr>
+                                <td>Totol Batch Fee</td>
+                                <td>{{ $batch->total_amount }}</td>
+                            </tr>
+
                             <tr>
                                 <td>Description</td>
                                 <td>{!! $batch->note !!}</td>
